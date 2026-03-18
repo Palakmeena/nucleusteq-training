@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 
-<!-- This is the basic structure of an HTML document -->
-<!-- I started with this to build my portfolio step by step -->
 
 <html>
 
@@ -23,7 +21,6 @@
     <!-- Author of the page -->
     <meta name="author" content="Palak Meena">
 
-    <link rel="stylesheet" href="../css/PalakMeena_styles.css">
 </head>
 
 <body>
@@ -45,7 +42,6 @@
     <!-- Navigation section for internal links -->
     <nav>
 
-        <!-- Navigation menu to move between sections of the page -->
         <ul>
 
             <!-- Each link points to a section using its id -->
@@ -77,69 +73,84 @@
             </p>
 
             <p>
-                I enjoy learning new technologies and improving my skills every day.
+                Apart from coding, I believe in continuous learning and always try to enhance my skills
+                by exploring new tools and concepts. My goal is to grow as a developer and build applications
+                that create real value.
             </p>
 
             <hr>
 
         </section>
 
+
+
         <section id="skills">
 
-            <!-- Skills section with categorized lists -->
+            <!-- Skills section with separate dropdowns -->
             <h2>My Skills</h2>
 
-            <ul type="disc">
+            <!-- Technical Skills Dropdown -->
+            <details open>
+                <summary><strong>Technical Skills</strong></summary>
 
-                <li>Programming Languages
-                    <ul type="circle">
-                        <li>Java</li>
-                        <li>SQL</li>
-                        <li>JavaScript</li>
-                    </ul>
-                </li>
+                <ul type="disc">
 
-                <li>Web Technologies
-                    <ul type="square">
-                        <li>HTML</li>
-                        <li>CSS</li>
-                        <li>Spring Boot</li>
-                        <li>JPA</li>
-                        <li>RESTful APIs</li>
-                    </ul>
-                </li>
+                    <li><strong>Programming Languages</strong>
+                        <ul type="circle">
+                            <li>Java ★★★★★</li>
+                            <li>SQL ★★★★☆</li>
+                            <li>JavaScript ★★★★☆</li>
+                        </ul>
+                    </li>
 
-                <li>Databases
-                    <ul type="circle">
-                        <li>MySQL</li>
-                        <li>MongoDB</li>
+                    <li><strong>Web Technologies</strong>
+                        <ul type="square">
+                            <li>HTML ★★★★★</li>
+                            <li>CSS ★★★★☆</li>
+                            <li>Spring Boot ★★★★★</li>
+                            <li>JPA ★★★★☆</li>
+                            <li>RESTful APIs ★★★★☆</li>
+                        </ul>
+                    </li>
 
-                    </ul>
-                </li>
+                    <li><strong>Databases</strong>
+                        <ul type="circle">
+                            <li>MySQL ★★★★☆</li>
+                            <li>MongoDB ★★★☆☆</li>
+                        </ul>
+                    </li>
 
-                <li>Tools & Platforms
-                    <ul type="square">
-                        <li>Git</li>
-                        <li>GitHub</li>
-                        <li>Maven</li>
-                        <li>Postman</li>
-                        <li>IntelliJ IDEA</li>
-                        <li>Visual Studio Code</li>
-                    </ul>
-                </li>
+                    <li><strong>Tools & Platforms</strong>
+                        <ul type="square">
+                            <li>Git & GitHub ★★★★☆</li>
+                            <li>Maven ★★★★☆</li>
+                            <li>Postman ★★★☆☆</li>
+                            <li>IntelliJ IDEA ★★★★☆</li>
+                            <li>VS Code ★★★★☆</li>
+                        </ul>
+                    </li>
 
-                <li>Soft Skills
-                    <ul type="circle">
-                        <li>Communication</li>
-                        <li>Teamwork</li>
-                        <li>Problem Solving</li>
-                        <li>Adaptability</li>
-                    </ul>
-                </li>
+                </ul>
 
-            </ul>
+            </details>
+
+            <!-- Soft Skills Dropdown -->
+            <details>
+                <summary><strong>Soft Skills</strong></summary>
+
+                <ul type="disc">
+                    <li>Communication ★★★★☆</li>
+                    <li>Teamwork ★★★★★</li>
+                    <li>Problem Solving ★★★★★</li>
+                    <li>Adaptability ★★★★☆</li>
+                    <li>Time Management ★★★★☆</li>
+                </ul>
+
+            </details>
 
         </section>
+
+
         <!-- Education details -->
         <section id="education">
 
@@ -185,20 +196,31 @@
         <!-- Projects section -->
         <section id="projects">
 
-            <!-- Projects section showcasing my work -->
             <h2>Projects</h2>
 
             <ol>
 
                 <li>
                     <article>
+
                         <h3>Book Sharing Web Application</h3>
+
                         <p>
-                            A platform where users can lend and borrow books nearby using location-based
-                            search and manage the borrowing lifecycle efficiently.
+                            A location-based platform that enables users to lend and borrow books within their
+                            community,
+                            promoting sustainable reading and easy access to resources.
                         </p>
-                        <a href="https://github.com/Palakmeena/BookSwap" target="_blank">
-                            View Project
+
+                        <ul>
+                            <li>Implemented user-friendly interface for browsing and listing books.</li>
+                            <li>Enabled location-based search for nearby book availability.</li>
+                            <li>Designed system to manage borrowing and return lifecycle.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Node.js, Express.js, MongoDB</p>
+
+                        <a href="https://github.com/Palakmeena/BookSwap" target="_blank" rel="noopener noreferrer">
+                            View Source Code
                         </a>
 
                     </article>
@@ -206,25 +228,36 @@
 
                 <li>
                     <article>
+
                         <h3>Money Manager Application</h3>
+
                         <p>
-                            A web app that helps users track expenses, set budgets, and manage personal finances
-                            efficiently using a clean, intuitive interface.
+                            A web application designed to help users manage personal finances by tracking expenses,
+                            setting budgets, and analyzing spending habits.
                         </p>
-                        <a href="https://github.com/Palakmeena/money-manager-frontend" target="_blank">
-                            View Project
+
+                        <ul>
+                            <li>Developed intuitive dashboard for expense tracking.</li>
+                            <li>Implemented budget management features for financial planning.</li>
+                            <li>Focused on clean UI for better user experience.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Spring Boot, MySQL</p>
+
+                        <a href="https://github.com/Palakmeena/money-manager-frontend" target="_blank"
+                            rel="noopener noreferrer">
+                            View Source Code
                         </a>
+
                     </article>
                 </li>
 
             </ol>
 
         </section>
-
         <!-- Contact form section -->
         <section id="contact">
 
-            <!-- Contact section to collect user details -->
             <h2>Contact Me</h2>
 
             <form>
@@ -262,7 +295,39 @@
                 <select id="role" name="role">
                     <option value="student">Student</option>
                     <option value="recruiter">Recruiter</option>
+                    <option value="developer">Developer</option>
                     <option value="other">Other</option>
+                </select>
+
+                <br><br>
+
+                <!-- Technology interest dropdown -->
+                <label for="tech">Technology Interest:</label>
+                <select id="tech" name="tech">
+                    <option value="frontend">Frontend Development</option>
+                    <option value="backend">Backend Development</option>
+                    <option value="fullstack">Full Stack Development</option>
+                    <option value="ai">AI / Machine Learning</option>
+                </select>
+
+                <br><br>
+
+                <!-- Preferred contact method -->
+                <label>Preferred Contact Method:</label><br>
+                <input type="checkbox" id="emailContact" name="contactMethod" value="email">
+                <label for="emailContact">Email</label>
+
+                <input type="checkbox" id="callContact" name="contactMethod" value="call">
+                <label for="callContact">Call</label>
+
+                <br><br>
+
+                <!-- Experience level -->
+                <label for="experience">Experience Level:</label>
+                <select id="experience" name="experience">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
                 </select>
 
                 <br><br>
@@ -279,7 +344,6 @@
     <!-- Footer section -->
     <footer>
 
-        <!-- Footer contains copyright and external links -->
         <p>© 2026 Palak Meena. All rights reserved.</p>
 
         <!-- External link to professional profile -->
