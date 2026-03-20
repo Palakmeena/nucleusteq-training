@@ -1,0 +1,36 @@
+/* 1. GLOBAL SETTINGS & VARIABLES */
+
+/* I defined color variables to keep the theme consistent and easy to update later */
+/* Used a single font throughout the website to maintain visual consistency */
+
+:root {
+  --color-bg: #f7f4ef;
+  --color-surface: #ffffff;
+  --color-ink: #1c1c1e;
+  --color-accent: #c0533a;
+  --color-border: #e0dbd4;
+
+  --font-main: "Poppins", sans-serif;
+}
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BODY */
+body {
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  line-height: 1.7;
+}
+
+/* HEADINGS */
+h1,
+h2,
+h3 {
+  font-weight: 600;
+}
