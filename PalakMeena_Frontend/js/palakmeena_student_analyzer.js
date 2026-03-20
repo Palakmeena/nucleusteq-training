@@ -60,3 +60,15 @@ for (let i = 0; i < students.length; i++) {
     students[i].name + " Total Marks: " + calculateTotal(students[i]),
   );
 }
+
+// ---------------- AVERAGE ----------------
+function calculateAverage(student) {
+  let total = calculateTotal(student);
+  let avg = total / student.marks.length;
+  return parseFloat(avg.toFixed(1));
+}
+
+console.log("===== AVERAGE MARKS =====");
+for (let i = 0; i < students.length; i++) {
+  console.log(students[i].name + " Average: " + calculateAverage(students[i]));
+}
