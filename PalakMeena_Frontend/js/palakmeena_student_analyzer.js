@@ -98,3 +98,24 @@ for (let s = 0; s < subjectNames.length; s++) {
     "Highest in " + subjectName + ": " + topperName + " (" + highest + ")",
   );
 }
+
+// ---------------- SUBJECT AVERAGE ----------------
+console.log("===== SUBJECT-WISE AVERAGE SCORE =====");
+
+var subjectNames = ["Math", "English", "Science", "History", "Computer"];
+
+for (let s = 0; s < subjectNames.length; s++) {
+  let subjectName = subjectNames[s];
+  let total = 0;
+
+  for (let i = 0; i < students.length; i++) {
+    for (let j = 0; j < students[i].marks.length; j++) {
+      if (students[i].marks[j].subject === subjectName) {
+        total = total + students[i].marks[j].score;
+      }
+    }
+  }
+
+  let avg = parseFloat((total / students.length).toFixed(1));
+  console.log("Average " + subjectName + " Score: " + avg);
+}
