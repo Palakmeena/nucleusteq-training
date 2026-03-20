@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 
-<!-- This is the basic structure of an HTML document -->
-<!-- I started with this to build my portfolio step by step -->
 
 <html>
 
 <head>
-    <title>My Portfolio</title>
-
     <title>Palak Meena Portfolio</title>
 
     <!-- This defines character encoding -->
@@ -24,11 +20,10 @@
 
     <!-- Author of the page -->
     <meta name="author" content="Palak Meena">
+
 </head>
 
 <body>
-
-    <!-- Content will be added step by step in different sections -->
 
     <!-- Header section will contain my name and profile -->
     <header>
@@ -64,280 +59,287 @@
 
     </nav>
 
-    <!-- About section for introduction -->
-    <section id="about">
+    <main>
 
-        <h2>About Me</h2>
+        <!-- About section for introduction -->
+        <section id="about">
 
-        <p>
-            Hello! My name is <strong>Palak Meena</strong>.
-            I am a <em>Computer Science student</em> who is passionate about
-            <u>web development</u> and building real-world projects.
-        </p>
+            <h2>About Me</h2>
 
-        <p>
-            I enjoy learning new technologies and improving my skills every day.
-        </p>
+            <p>
+                Hello! My name is <strong>Palak Meena</strong>.
+                I am a <em>Computer Science student</em> who is passionate about
+                <strong>full-stack development</strong> and building real-world projects.
+            </p>
 
-        <hr>
+            <p>
+                Apart from coding, I believe in continuous learning and always try to enhance my skills
+                by exploring new tools and concepts. My goal is to grow as a developer and build applications
+                that create real value.
+            </p>
 
-    </section>
+            <hr>
 
-    <!-- Skills section -->
-    <section id="skills">
+        </section>
 
-        <h2>My Skills</h2>
 
-        <!-- Technical Skills  -->
-        <details>
-            <summary><strong>Technical Skills</strong></summary>
 
-            <ul type="disc">
+        <section id="skills">
 
-                <li><strong>Programming Languages</strong>
-                    <ul type="circle">
-                        <li>Java ★★★★★</li>
-                        <li>SQL ★★★★☆</li>
-                        <li>JavaScript ★★★★☆</li>
-                    </ul>
+            <!-- Skills section with separate dropdowns -->
+            <h2>My Skills</h2>
+
+            <!-- Technical Skills Dropdown -->
+            <details>
+                <summary><strong>Technical Skills</strong></summary>
+
+                <ul type="disc">
+
+                    <li><strong>Programming Languages</strong>
+                        <ul type="circle">
+                            <li>Java ★★★★★</li>
+                            <li>SQL ★★★★☆</li>
+                            <li>JavaScript ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Web Technologies</strong>
+                        <ul type="square">
+                            <li>HTML ★★★★★</li>
+                            <li>CSS ★★★★☆</li>
+                            <li>Spring Boot ★★★★★</li>
+                            <li>JPA ★★★★☆</li>
+                            <li>RESTful APIs ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Databases</strong>
+                        <ul type="circle">
+                            <li>MySQL ★★★★☆</li>
+                            <li>MongoDB ★★★☆☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Tools & Platforms</strong>
+                        <ul type="square">
+                            <li>Git & GitHub ★★★★☆</li>
+                            <li>Maven ★★★★☆</li>
+                            <li>Postman ★★★☆☆</li>
+                            <li>IntelliJ IDEA ★★★★☆</li>
+                            <li>VS Code ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+            </details>
+
+            <!-- Soft Skills Dropdown -->
+            <details>
+                <summary><strong>Soft Skills</strong></summary>
+
+                <ul type="disc">
+                    <li>Communication ★★★★☆</li>
+                    <li>Teamwork ★★★★★</li>
+                    <li>Problem Solving ★★★★★</li>
+                    <li>Adaptability ★★★★☆</li>
+                    <li>Time Management ★★★★☆</li>
+                </ul>
+
+            </details>
+
+        </section>
+
+
+        <!-- Education details -->
+        <section id="education">
+
+            <h2>Education</h2>
+
+            <table border="1">
+
+                <!-- Header row -->
+                <tr>
+                    <th>Qualification</th>
+                    <th>Institution</th>
+                    <th>Year</th>
+                    <th>Grade</th>
+                </tr>
+
+                <!-- B.Tech -->
+                <tr>
+                    <td>B.Tech (Computer Science)</td>
+                    <td>Medi-Caps University</td>
+                    <td>2022 - 2026</td>
+                    <td>8.46 CGPA</td>
+                </tr>
+
+                <!-- 12th -->
+                <tr>
+                    <td>12th Grade</td>
+                    <td rowspan="2">MarThoma Public School</td>
+                    <td>2022</td>
+                    <td>89.6%</td>
+                </tr>
+
+                <!-- 10th -->
+                <tr>
+                    <td>10th Grade</td>
+                    <td>2020</td>
+                    <td>90.0%</td>
+                </tr>
+
+            </table>
+
+        </section>
+
+        <!-- Projects section -->
+        <section id="projects">
+
+            <h2>Projects</h2>
+
+            <ol>
+
+                <li>
+                    <article>
+
+                        <h3>Book Sharing Web Application</h3>
+
+                        <p>
+                            A location-based platform that enables users to lend and borrow books within their
+                            community,
+                            promoting sustainable reading and easy access to resources.
+                        </p>
+
+                        <ul>
+                            <li>Implemented user-friendly interface for browsing and listing books.</li>
+                            <li>Enabled location-based search for nearby book availability.</li>
+                            <li>Designed system to manage borrowing and return lifecycle.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Node.js, Express.js, MongoDB</p>
+
+                        <a href="https://github.com/Palakmeena/BookSwap" target="_blank" rel="noopener noreferrer">
+                            View Source Code
+                        </a>
+
+                    </article>
                 </li>
 
-                <li><strong>Web Technologies</strong>
-                    <ul type="square">
-                        <li>HTML ★★★★★</li>
-                        <li>CSS ★★★★☆</li>
-                        <li>Spring Boot ★★★★★</li>
-                        <li>JPA ★★★★☆</li>
-                        <li>RESTful APIs ★★★★☆</li>
-                    </ul>
+                <li>
+                    <article>
+
+                        <h3>Money Manager Application</h3>
+
+                        <p>
+                            A web application designed to help users manage personal finances by tracking expenses,
+                            setting budgets, and analyzing spending habits.
+                        </p>
+
+                        <ul>
+                            <li>Developed intuitive dashboard for expense tracking.</li>
+                            <li>Implemented budget management features for financial planning.</li>
+                            <li>Focused on clean UI for better user experience.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Spring Boot, MySQL</p>
+
+                        <a href="https://github.com/Palakmeena/money-manager-frontend" target="_blank"
+                            rel="noopener noreferrer">
+                            View Source Code
+                        </a>
+
+                    </article>
                 </li>
 
-                <li><strong>Databases</strong>
-                    <ul type="circle">
-                        <li>MySQL ★★★★☆</li>
-                        <li>MongoDB ★★★☆☆</li>
-                    </ul>
-                </li>
+            </ol>
 
-                <li><strong>Tools & Platforms</strong>
-                    <ul type="square">
-                        <li>Git & GitHub ★★★★☆</li>
-                        <li>Maven ★★★★☆</li>
-                        <li>Postman ★★★☆☆</li>
-                        <li>IntelliJ IDEA ★★★★☆</li>
-                        <li>VS Code ★★★★☆</li>
-                    </ul>
-                </li>
+        </section>
+        <!-- Contact form section -->
+        <section id="contact">
 
-            </ul>
+            <h2>Contact Me</h2>
 
-        </details>
+            <form>
 
-        <!-- Soft Skills  -->
-        <details>
-            <summary><strong>Soft Skills</strong></summary>
+                <!-- Name input field -->
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
 
-            <ul type="disc">
-                <li>Communication ★★★★☆</li>
-                <li>Teamwork ★★★★★</li>
-                <li>Problem Solving ★★★★★</li>
-                <li>Adaptability ★★★★☆</li>
-                <li>Time Management ★★★★☆</li>
-            </ul>
+                <br><br>
 
-        </details>
+                <!-- Email input field -->
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
 
-    </section>
+                <br><br>
 
+                <!-- Message input -->
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
 
-    <!-- Education details -->
-    <section id="education">
+                <br><br>
 
-        <h2>Education</h2>
+                <!-- Radio buttons for selection -->
+                <label>Gender:</label>
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label>
 
-        <table border="1">
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label>
 
-            <!-- Header row -->
-            <tr>
-                <th>Qualification</th>
-                <th>Institution</th>
-                <th>Year</th>
-                <th>Grade</th>
-            </tr>
+                <br><br>
 
-            <!-- B.Tech -->
-            <tr>
-                <td>B.Tech (Computer Science)</td>
-                <td>Medi-Caps University</td>
-                <td>2022 - 2026</td>
-                <td>8.46 CGPA</td>
-            </tr>
+                <!-- Dropdown selection -->
+                <label for="role">Select your role:</label>
+                <select id="role" name="role">
+                    <option value="student">Student</option>
+                    <option value="recruiter">Recruiter</option>
+                    <option value="developer">Developer</option>
+                    <option value="other">Other</option>
+                </select>
 
-            <!-- 12th -->
-            <tr>
-                <td>12th Grade</td>
-                <td rowspan="2">MarThoma Public School</td>
-                <td>2022</td>
-                <td>89.6%</td>
-            </tr>
+                <br><br>
 
-            <!-- 10th -->
-            <tr>
-                <td>10th Grade</td>
-                <td>2020</td>
-                <td>90.0%</td>
-            </tr>
+                <!-- Technology interest dropdown -->
+                <label for="tech">Technology Interest:</label>
+                <select id="tech" name="tech">
+                    <option value="frontend">Frontend Development</option>
+                    <option value="backend">Backend Development</option>
+                    <option value="fullstack">Full Stack Development</option>
+                    <option value="ai">AI / Machine Learning</option>
+                </select>
 
-        </table>
+                <br><br>
 
-    </section>
+                <!-- Preferred contact method -->
+                <label>Preferred Contact Method:</label><br>
+                <input type="checkbox" id="emailContact" name="contactMethod" value="email">
+                <label for="emailContact">Email</label>
 
-    <!-- Projects section -->
-    <section id="projects">
+                <input type="checkbox" id="callContact" name="contactMethod" value="call">
+                <label for="callContact">Call</label>
 
-        <h2>Projects</h2>
+                <br><br>
 
-        <ol>
+                <!-- Experience level -->
+                <label for="experience">Experience Level:</label>
+                <select id="experience" name="experience">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
 
-            <li>
-                <article>
+                <br><br>
 
-                    <h3>Book Sharing Web Application</h3>
+                <!-- Submit button -->
+                <input type="submit" value="Send">
 
-                    <p>
-                        A location-based platform that enables users to lend and borrow books within their
-                        community,
-                        promoting sustainable reading and easy access to resources.
-                    </p>
+            </form>
 
-                    <ul>
-                        <li>Implemented user-friendly interface for browsing and listing books.</li>
-                        <li>Enabled location-based search for nearby book availability.</li>
-                        <li>Designed system to manage borrowing and return lifecycle.</li>
-                    </ul>
+        </section>
 
-                    <p><strong>Technologies Used:</strong>React.js, Node.js, Express.js, MongoDB</p>
-
-                    <a href="https://github.com/Palakmeena/BookSwap" target="_blank" rel="noopener noreferrer">
-                        View Source Code
-                    </a>
-
-                </article>
-            </li>
-
-            <li>
-                <article>
-
-                    <h3>Money Manager Application</h3>
-
-                    <p>
-                        A web application designed to help users manage personal finances by tracking expenses,
-                        setting budgets, and analyzing spending habits.
-                    </p>
-
-                    <ul>
-                        <li>Developed intuitive dashboard for expense tracking.</li>
-                        <li>Implemented budget management features for financial planning.</li>
-                        <li>Focused on clean UI for better user experience.</li>
-                    </ul>
-
-                    <p><strong>Technologies Used:</strong>React.js, Spring Boot, MySQL</p>
-
-                    <a href="https://github.com/Palakmeena/money-manager-frontend" target="_blank"
-                        rel="noopener noreferrer">
-                        View Source Code
-                    </a>
-
-                </article>
-            </li>
-
-        </ol>
-
-    </section>
-
-    <!-- Contact form section -->
-    <section id="contact">
-
-        <h2>Contact Me</h2>
-
-        <form>
-
-            <!-- Name input field -->
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-
-            <br><br>
-
-            <!-- Email input field -->
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <br><br>
-
-            <!-- Message input -->
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-
-            <br><br>
-
-            <!-- Radio buttons for selection -->
-            <label>Gender:</label>
-            <input type="radio" id="male" name="gender" value="male">
-            <label for="male">Male</label>
-
-            <input type="radio" id="female" name="gender" value="female">
-            <label for="female">Female</label>
-
-            <br><br>
-
-            <!--  selection -->
-            <label for="role">Select your role:</label>
-            <select id="role" name="role">
-                <option value="student">Student</option>
-                <option value="recruiter">Recruiter</option>
-                <option value="developer">Developer</option>
-                <option value="other">Other</option>
-            </select>
-
-            <br><br>
-
-            <!-- Technology interest  -->
-            <label for="tech">Technology Interest:</label>
-            <select id="tech" name="tech">
-                <option value="frontend">Frontend Development</option>
-                <option value="backend">Backend Development</option>
-                <option value="fullstack">Full Stack Development</option>
-                <option value="ai">AI / Machine Learning</option>
-            </select>
-
-            <br><br>
-
-            <!-- Preferred contact method -->
-            <label>Preferred Contact Method:</label><br>
-            <input type="checkbox" id="emailContact" name="contactMethod" value="email">
-            <label for="emailContact">Email</label>
-
-            <input type="checkbox" id="callContact" name="contactMethod" value="call">
-            <label for="callContact">Call</label>
-
-            <br><br>
-
-            <!-- Experience level -->
-            <label for="experience">Experience Level:</label>
-            <select id="experience" name="experience">
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-            </select>
-
-            <br><br>
-
-            <!-- Submit button -->
-            <input type="submit" value="Send">
-
-        </form>
-
-    </section>
+    </main>
 
     <!-- Footer section -->
     <footer>
@@ -352,7 +354,6 @@
         </p>
 
     </footer>
-
 
 </body>
 
