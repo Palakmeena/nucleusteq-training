@@ -34,3 +34,23 @@ h2,
 h3 {
   font-weight: 600;
 }
+
+/* 2. HEADER */
+
+/* Centered the header content to keep focus on profile and make it visually balanced */
+
+header {
+  background-color: var(--color-surface);
+  text-align: center;
+  padding: 50px 20px;
+  border-bottom: 4px solid var(--color-accent);
+}
+
+header img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid var(--color-accent);
+  margin-top: 15px;
+  object-fit: cover;
+}
