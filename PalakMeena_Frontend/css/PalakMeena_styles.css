@@ -312,3 +312,24 @@ footer {
   padding: 30px;
   font-size: 0.85rem; /* ✅ ADDED */
 }
+
+/* 10. RESPONSIVE DESIGN */
+
+/* Navigation switches to vertical layout for better usability on mobile */
+
+@media (max-width: 600px) {
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul li a {
+    padding: 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  section {
+    padding: 20px;
+  }
+}
