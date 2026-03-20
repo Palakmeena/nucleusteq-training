@@ -143,3 +143,59 @@ th {
 tr:nth-child(even) {
   background-color: #faf8f5;
 }
+
+/* 6. CONTACT FORM */
+
+/* Made all inputs full width for better alignment and user experience */
+
+form {
+  display: block;
+}
+
+#contact label {
+  display: block;
+  font-weight: 500;
+  margin: 15px 0 5px 0;
+  font-size: 0.9rem;
+}
+
+#contact input[type="text"],
+#contact input[type="email"],
+#contact textarea,
+#contact select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  font-family: var(--font-main);
+  border-radius: 4px; /* ✅ ADDED */
+}
+
+#contact input[type="radio"],
+#contact input[type="checkbox"] {
+  margin-right: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+#contact label[for="male"],
+#contact label[for="female"],
+#contact label[for="emailContact"],
+#contact label[for="callContact"] {
+  display: inline-block;
+  font-weight: 400;
+  margin: 0 20px 0 0;
+  cursor: pointer;
+}
+
+input[type="submit"] {
+  display: block;
+  width: 100%;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 15px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
