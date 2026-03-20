@@ -172,3 +172,17 @@ console.log("===== GRADES =====");
 for (let i = 0; i < students.length; i++) {
   console.log(students[i].name + " Grade: " + assignGrade(students[i]));
 }
+
+// ---------------- STUDENT REPORT ----------------
+console.log("========== FULL STUDENT REPORT ==========");
+
+for (let i = 0; i < students.length; i++) {
+  console.log("------------------------------------------");
+  console.log("Name       : " + students[i].name);
+  console.log("Total      : " + calculateTotal(students[i]));
+  console.log("Average    : " + calculateAverage(students[i]));
+  console.log("Attendance : " + students[i].attendance + "%");
+  console.log("Grade      : " + assignGrade(students[i]));
+}
+
+console.log("==========================================");
