@@ -300,3 +300,15 @@ input[type="submit"] {
 #projects a:hover {
   text-decoration: underline;
 }
+
+/* 9. FOOTER */
+
+/* Reduced font size to give less visual weight compared to main content */
+
+footer {
+  text-align: center;
+  background-color: var(--color-ink);
+  color: #9a9a9f;
+  padding: 30px;
+  font-size: 0.85rem; /* ✅ ADDED */
+}
