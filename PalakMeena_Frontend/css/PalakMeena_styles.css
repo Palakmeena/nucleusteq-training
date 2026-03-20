@@ -92,3 +92,30 @@ nav ul li a:hover {
 nav ul li a:active {
   color: var(--color-accent);
 }
+
+/* 4. SECTION LAYOUT */
+
+/*  Added spacing and card-like styling to separate sections clearly */
+
+main {
+  max-width: 850px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
+
+section {
+  background-color: var(--color-surface);
+  padding: 35px;
+  margin-bottom: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  display: inline-block;
+  padding-bottom: 5px;
+}
