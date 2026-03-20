@@ -6,9 +6,9 @@ const students = [
       { subject: "English", score: 82 },
       { subject: "Science", score: 74 },
       { subject: "History", score: 69 },
-      { subject: "Computer", score: 88 }
+      { subject: "Computer", score: 88 },
     ],
-    attendance: 82
+    attendance: 82,
   },
   {
     name: "Rahul",
@@ -17,9 +17,9 @@ const students = [
       { subject: "English", score: 85 },
       { subject: "Science", score: 80 },
       { subject: "History", score: 76 },
-      { subject: "Computer", score: 92 }
+      { subject: "Computer", score: 92 },
     ],
-    attendance: 91
+    attendance: 91,
   },
   {
     name: "Aman",
@@ -28,9 +28,9 @@ const students = [
       { subject: "English", score: 60 },
       { subject: "Science", score: 38 },
       { subject: "History", score: 50 },
-      { subject: "Computer", score: 62 }
+      { subject: "Computer", score: 62 },
     ],
-    attendance: 80
+    attendance: 80,
   },
   {
     name: "Riya",
@@ -39,10 +39,24 @@ const students = [
       { subject: "English", score: 68 },
       { subject: "Science", score: 75 },
       { subject: "History", score: 70 },
-      { subject: "Computer", score: 80 }
+      { subject: "Computer", score: 80 },
     ],
-    attendance: 70
-  }
+    attendance: 70,
+  },
 ];
 
+// ---------------- TOTAL MARKS ----------------
+function calculateTotal(student) {
+  let total = 0;
+  for (let i = 0; i < student.marks.length; i++) {
+    total = total + student.marks[i].score;
+  }
+  return total;
+}
 
+console.log("===== TOTAL MARKS =====");
+for (let i = 0; i < students.length; i++) {
+  console.log(
+    students[i].name + " Total Marks: " + calculateTotal(students[i]),
+  );
+}
