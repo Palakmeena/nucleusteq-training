@@ -119,3 +119,19 @@ for (let s = 0; s < subjectNames.length; s++) {
   let avg = parseFloat((total / students.length).toFixed(1));
   console.log("Average " + subjectName + " Score: " + avg);
 }
+
+// ---------------- TOPPER ----------------
+console.log("===== CLASS TOPPER =====");
+
+let highestTotal = -1;
+let topperName = "";
+
+for (let i = 0; i < students.length; i++) {
+  let total = calculateTotal(students[i]);
+  if (total > highestTotal) {
+    highestTotal = total;
+    topperName = students[i].name;
+  }
+}
+
+console.log("Class Topper: " + topperName + " with " + highestTotal + " marks");
