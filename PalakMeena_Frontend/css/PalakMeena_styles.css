@@ -54,3 +54,41 @@ header img {
   margin-top: 15px;
   object-fit: cover;
 }
+
+/* 3. NAVIGATION */
+
+/* I used flexbox to keep navigation links centered and responsive */
+/* Added hover and active effects to improve user interaction */
+
+nav {
+  background-color: var(--color-ink);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 10px 0;
+}
+
+nav ul li a {
+  color: var(--color-bg);
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  transition: 0.3s;
+  font-weight: 500;
+}
+
+nav ul li a:hover {
+  color: var(--color-accent);
+}
+
+nav ul li a:active {
+  color: var(--color-accent);
+}
