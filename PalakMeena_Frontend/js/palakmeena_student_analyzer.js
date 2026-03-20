@@ -135,3 +135,40 @@ for (let i = 0; i < students.length; i++) {
 }
 
 console.log("Class Topper: " + topperName + " with " + highestTotal + " marks");
+
+// ---------------- GRADE ----------------
+function assignGrade(student) {
+  let avg = calculateAverage(student);
+
+  // fail condition 1 - low attendance
+  if (student.attendance < 75) {
+    return "Fail (Low Attendance)";
+  }
+
+  // fail condition 2 - any subject score 40 or below
+  let failedSubject = "";
+  for (let i = 0; i < student.marks.length; i++) {
+    if (student.marks[i].score <= 40) {
+      failedSubject = student.marks[i].subject;
+    }
+  }
+  if (failedSubject !== "") {
+    return "Fail (Failed in " + failedSubject + ")";
+  }
+
+  // normal grade
+  if (avg >= 85) {
+    return "A";
+  } else if (avg >= 70) {
+    return "B";
+  } else if (avg >= 50) {
+    return "C";
+  } else {
+    return "Fail";
+  }
+}
+
+console.log("===== GRADES =====");
+for (let i = 0; i < students.length; i++) {
+  console.log(students[i].name + " Grade: " + assignGrade(students[i]));
+}
