@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+
+<html>
+
+<head>
+    <title>Palak Meena Portfolio</title>
+
+    <!-- This defines character encoding -->
+    <meta charset="UTF-8">
+
+    <!-- Helps with responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Short description for search engines -->
+    <meta name="description" content="Portfolio of Palak Meena, Full Stack Developer">
+
+    <!-- Keywords related to my profile -->
+    <meta name="keywords" content="Palak Meena, Developer, Portfolio, Java, Full Stack">
+
+    <!-- Author of the page -->
+    <meta name="author" content="Palak Meena">
+
+</head>
+
+<body>
+
+    <!-- Header section will contain my name and profile -->
+    <header>
+
+        <!-- I used h1 here because it represents my name as the main heading of the page -->
+        <h1>Palak Meena</h1>
+
+        <!-- This line shows my role in a simple way -->
+        <p>Java Developer</p>
+
+        <!-- Adding profile image with alt text so it is accessible -->
+        <img src="profile.jpg" alt="Profile photo of Palak Meena" width="150" height="150">
+
+    </header>
+
+    <!-- Navigation section for internal links -->
+    <nav>
+
+        <ul>
+
+            <!-- Each link points to a section using its id -->
+            <li><a href="#about">About</a></li>
+
+            <li><a href="#skills">Skills</a></li>
+
+            <li><a href="#education">Education</a></li>
+
+            <li><a href="#projects">Projects</a></li>
+
+            <li><a href="#contact">Contact</a></li>
+
+        </ul>
+
+    </nav>
+
+    <main>
+
+        <!-- About section for introduction -->
+        <section id="about">
+
+            <h2>About Me</h2>
+
+            <p>
+                Hello! My name is <strong>Palak Meena</strong>.
+                I am a <em>Computer Science student</em> who is passionate about
+                <strong>full-stack development</strong> and building real-world projects.
+            </p>
+
+            <p>
+                Apart from coding, I believe in continuous learning and always try to enhance my skills
+                by exploring new tools and concepts. My goal is to grow as a developer and build applications
+                that create real value.
+            </p>
+
+            <hr>
+
+        </section>
+
+
+
+        <section id="skills">
+
+            <!-- Skills section with separate dropdowns -->
+            <h2>My Skills</h2>
+
+            <!-- Technical Skills Dropdown -->
+            <details open>
+                <summary><strong>Technical Skills</strong></summary>
+
+                <ul type="disc">
+
+                    <li><strong>Programming Languages</strong>
+                        <ul type="circle">
+                            <li>Java ★★★★★</li>
+                            <li>SQL ★★★★☆</li>
+                            <li>JavaScript ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Web Technologies</strong>
+                        <ul type="square">
+                            <li>HTML ★★★★★</li>
+                            <li>CSS ★★★★☆</li>
+                            <li>Spring Boot ★★★★★</li>
+                            <li>JPA ★★★★☆</li>
+                            <li>RESTful APIs ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Databases</strong>
+                        <ul type="circle">
+                            <li>MySQL ★★★★☆</li>
+                            <li>MongoDB ★★★☆☆</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Tools & Platforms</strong>
+                        <ul type="square">
+                            <li>Git & GitHub ★★★★☆</li>
+                            <li>Maven ★★★★☆</li>
+                            <li>Postman ★★★☆☆</li>
+                            <li>IntelliJ IDEA ★★★★☆</li>
+                            <li>VS Code ★★★★☆</li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+            </details>
+
+            <!-- Soft Skills Dropdown -->
+            <details>
+                <summary><strong>Soft Skills</strong></summary>
+
+                <ul type="disc">
+                    <li>Communication ★★★★☆</li>
+                    <li>Teamwork ★★★★★</li>
+                    <li>Problem Solving ★★★★★</li>
+                    <li>Adaptability ★★★★☆</li>
+                    <li>Time Management ★★★★☆</li>
+                </ul>
+
+            </details>
+
+        </section>
+
+
+        <!-- Education details -->
+        <section id="education">
+
+            <h2>Education</h2>
+
+            <table border="1">
+
+                <!-- Header row -->
+                <tr>
+                    <th>Qualification</th>
+                    <th>Institution</th>
+                    <th>Year</th>
+                    <th>Grade</th>
+                </tr>
+
+                <!-- B.Tech -->
+                <tr>
+                    <td>B.Tech (Computer Science)</td>
+                    <td>Medi-Caps University</td>
+                    <td>2022 - 2026</td>
+                    <td>8.46 CGPA</td>
+                </tr>
+
+                <!-- 12th -->
+                <tr>
+                    <td>12th Grade</td>
+                    <td rowspan="2">MarThoma Public School</td>
+                    <td>2022</td>
+                    <td>89.6%</td>
+                </tr>
+
+                <!-- 10th -->
+                <tr>
+                    <td>10th Grade</td>
+                    <td>2020</td>
+                    <td>90.0%</td>
+                </tr>
+
+            </table>
+
+        </section>
+
+        <!-- Projects section -->
+        <section id="projects">
+
+            <h2>Projects</h2>
+
+            <ol>
+
+                <li>
+                    <article>
+
+                        <h3>Book Sharing Web Application</h3>
+
+                        <p>
+                            A location-based platform that enables users to lend and borrow books within their
+                            community,
+                            promoting sustainable reading and easy access to resources.
+                        </p>
+
+                        <ul>
+                            <li>Implemented user-friendly interface for browsing and listing books.</li>
+                            <li>Enabled location-based search for nearby book availability.</li>
+                            <li>Designed system to manage borrowing and return lifecycle.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Node.js, Express.js, MongoDB</p>
+
+                        <a href="https://github.com/Palakmeena/BookSwap" target="_blank" rel="noopener noreferrer">
+                            View Source Code
+                        </a>
+
+                    </article>
+                </li>
+
+                <li>
+                    <article>
+
+                        <h3>Money Manager Application</h3>
+
+                        <p>
+                            A web application designed to help users manage personal finances by tracking expenses,
+                            setting budgets, and analyzing spending habits.
+                        </p>
+
+                        <ul>
+                            <li>Developed intuitive dashboard for expense tracking.</li>
+                            <li>Implemented budget management features for financial planning.</li>
+                            <li>Focused on clean UI for better user experience.</li>
+                        </ul>
+
+                        <p><strong>Technologies Used:</strong>React.js, Spring Boot, MySQL</p>
+
+                        <a href="https://github.com/Palakmeena/money-manager-frontend" target="_blank"
+                            rel="noopener noreferrer">
+                            View Source Code
+                        </a>
+
+                    </article>
+                </li>
+
+            </ol>
+
+        </section>
+        <!-- Contact form section -->
+        <section id="contact">
+
+            <h2>Contact Me</h2>
+
+            <form>
+
+                <!-- Name input field -->
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <br><br>
+
+                <!-- Email input field -->
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <br><br>
+
+                <!-- Message input -->
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+
+                <br><br>
+
+                <!-- Radio buttons for selection -->
+                <label>Gender:</label>
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label>
+
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label>
+
+                <br><br>
+
+                <!-- Dropdown selection -->
+                <label for="role">Select your role:</label>
+                <select id="role" name="role">
+                    <option value="student">Student</option>
+                    <option value="recruiter">Recruiter</option>
+                    <option value="developer">Developer</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <br><br>
+
+                <!-- Technology interest dropdown -->
+                <label for="tech">Technology Interest:</label>
+                <select id="tech" name="tech">
+                    <option value="frontend">Frontend Development</option>
+                    <option value="backend">Backend Development</option>
+                    <option value="fullstack">Full Stack Development</option>
+                    <option value="ai">AI / Machine Learning</option>
+                </select>
+
+                <br><br>
+
+                <!-- Preferred contact method -->
+                <label>Preferred Contact Method:</label><br>
+                <input type="checkbox" id="emailContact" name="contactMethod" value="email">
+                <label for="emailContact">Email</label>
+
+                <input type="checkbox" id="callContact" name="contactMethod" value="call">
+                <label for="callContact">Call</label>
+
+                <br><br>
+
+                <!-- Experience level -->
+                <label for="experience">Experience Level:</label>
+                <select id="experience" name="experience">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+
+                <br><br>
+
+                <!-- Submit button -->
+                <input type="submit" value="Send">
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <!-- Footer section -->
+    <footer>
+
+        <p>© 2026 Palak Meena. All rights reserved.</p>
+
+        <!-- External link to professional profile -->
+        <p>
+            <a href="https://www.linkedin.com/in/palak-meena-b01104245/" target="_blank">
+                Visit my LinkedIn
+            </a>
+        </p>
+
+    </footer>
+
+</body>
+
+</html>
