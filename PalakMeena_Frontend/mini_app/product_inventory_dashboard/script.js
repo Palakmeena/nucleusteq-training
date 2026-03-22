@@ -87,3 +87,126 @@ function getBadgeClass(category) {
   };
   return classes[category] || "badge-electronics";
 }
+
+// Generate product cards dynamically and display them
+function renderProducts(filteredProducts) {
+  const grid = document.getElementById("productGrid");
+  const emptyMsg = document.getElementById("emptyMsg");
+  const pagination = document.getElementById("paginationControls");
+  const countBadge = document.getElementById("productCountBadge");
+
+  grid.innerHTML = "";
+
+  // Update product count display
+  countBadge.textContent =
+    filteredProducts.length +
+    " item" +
+    (filteredProducts.length !== 1 ? "s" : "");
+
+  // Show empty state if no products match filters
+  if (filteredProducts.length === 0) {
+    grid.style.display = "none";
+    emptyMsg.style.display = "flex";
+    pagination.style.display = "none";
+    return;
+  }
+
+  emptyMsg.style.display = "none";
+  grid.style.display = "grid";
+
+  // Pagination setup - calculate which products to show on current page
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const pageProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Create a card for each product on this page
+  pageProducts.forEach((product, index) => {
+    const card = document.createElement("div");
+    card.classList.add("product-card");
+    card.style.animationDelay = index * 0.06 + "s";
+
+    // Determine stock status text and styling
+    let stockText = "In Stock: " + product.stock;
+    let stockClass = "stock";
+
+    if (product.stock === 0) {
+      stockText = "Out of Stock";
+      stockClass = "stock low";
+    } else if (product.stock < 5) {
+      stockText = "Low Stock: " + product.stock;
+      stockClass = "stock low";
+    }
+
+    // Build product card HTML with all information
+    card.innerHTML = `
+      <h3>${product.name}</h3>
+      <span class="category-badge ${getBadgeClass(product.category)}">${product.category}</span>
+      <hr class="card-divider" />
+      <p class="price">₹${product.price.toLocaleString("en-IN")}</p>
+      <p class="${stockClass}">${stockText}</p>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-edit" data-id="${product.id}">Edit</button>
+        <button class="btn-delete" data-id="${product.id}">Remove</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // Attach event listeners to new buttons
+  attachDeleteEvents();
+  attachEditEvents();
+
+  // Show pagination controls
+  renderPagination(totalPages, filteredProducts);
+}
+
+// Create pagination buttons (Previous, page numbers, Next)
+function renderPagination(totalPages, filteredProducts) {
+  const pagination = document.getElementById("paginationControls");
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) {
+    pagination.style.display = "none";
+    return;
+  }
+
+  pagination.style.display = "flex";
+
+  // Previous button
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "← Prev";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderProducts(filteredProducts);
+    }
+  });
+  pagination.appendChild(prevBtn);
+
+  // Page number buttons
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      renderProducts(filteredProducts);
+    });
+    pagination.appendChild(btn);
+  }
+
+  // Next button
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next →";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderProducts(filteredProducts);
+    }
+  });
+  pagination.appendChild(nextBtn);
+}
