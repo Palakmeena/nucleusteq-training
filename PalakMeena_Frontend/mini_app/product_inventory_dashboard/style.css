@@ -812,3 +812,80 @@ body {
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* Form for adding new products */
+.form-section {
+  background: var(--white);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 32px 32px 36px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+} /* Two-column form layout */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+} /* Form input group with label */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.1px;
+} /* Red asterisk for required fields */
+.req {
+  color: var(--red);
+  margin-left: 4px;
+  font-weight: 700;
+} /* Error message display */
+.error-msg {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--red);
+  min-height: 18px;
+} /* Form button container */
+.form-actions {
+  padding-top: 6px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+} /* Add product button */
+.btn-add {
+  padding: 12px 32px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(91, 127, 222, 0.35);
+  letter-spacing: 0.2px;
+}
+.btn-add:hover {
+  background: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(91, 127, 222, 0.45);
+}
+.btn-add:active {
+  transform: translateY(-1px);
+}
