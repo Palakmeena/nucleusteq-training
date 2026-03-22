@@ -1,0 +1,44 @@
+// Product Inventory Dashboard - main.js
+
+// Sample data with 10 products across 4 categories
+const defaultProducts = [
+  { id: 1, name: "Laptop", price: 55000, stock: 5, category: "electronics" },
+  {
+    id: 2,
+    name: "Wireless Mouse",
+    price: 799,
+    stock: 20,
+    category: "electronics",
+  },
+  {
+    id: 3,
+    name: "Bluetooth Speaker",
+    price: 2499,
+    stock: 0,
+    category: "electronics",
+  },
+  { id: 4, name: "Men's T-Shirt", price: 399, stock: 50, category: "clothing" },
+  { id: 5, name: "Denim Jacket", price: 1899, stock: 3, category: "clothing" },
+  { id: 6, name: "The Alchemist", price: 299, stock: 15, category: "books" },
+  { id: 7, name: "Atomic Habits", price: 399, stock: 8, category: "books" },
+  {
+    id: 8,
+    name: "Leather Wallet",
+    price: 699,
+    stock: 0,
+    category: "accessories",
+  },
+  { id: 9, name: "Sunglasses", price: 1299, stock: 4, category: "accessories" },
+  {
+    id: 10,
+    name: "USB-C Hub",
+    price: 1499,
+    stock: 12,
+    category: "electronics",
+  },
+];
+
+// Keep track of all products, current page, and items per page
+let allProducts = [];
+let currentPage = 1;
+const ITEMS_PER_PAGE = 6;
