@@ -42,3 +42,23 @@ const defaultProducts = [
 let allProducts = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 6;
+
+// Simulate API call delay with Promise - mimics real server response time
+function fetchProducts(products) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(products);
+    }, 1500);
+  });
+}
+
+// Save products to browser storage for persistence
+function saveToLocalStorage(products) {
+  localStorage.setItem("inventoryProducts", JSON.stringify(products));
+}
+
+// Load products from storage or return null if empty
+function loadFromLocalStorage() {
+  const data = localStorage.getItem("inventoryProducts");
+  return data ? JSON.parse(data) : null;
+}
