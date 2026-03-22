@@ -506,3 +506,26 @@ function setupEditFormListener() {
     closeEditModal();
   });
 }
+
+// Setup modal close buttons and outside click handling
+function setupEditModalEventListeners() {
+  const modal = document.getElementById("editModal");
+  const closeBtn = document.getElementById("modalClose");
+  const cancelBtn = document.getElementById("modalCancel");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeEditModal);
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", closeEditModal);
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeEditModal();
+      }
+    });
+  }
+}
