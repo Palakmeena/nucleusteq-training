@@ -76,3 +76,14 @@ function updateAnalytics(products) {
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
   document.getElementById("outOfStock").textContent = outOfStockCount;
 }
+
+// Get the CSS class for product badge based on category
+function getBadgeClass(category) {
+  const classes = {
+    electronics: "badge-electronics",
+    clothing: "badge-clothing",
+    books: "badge-books",
+    accessories: "badge-accessories",
+  };
+  return classes[category] || "badge-electronics";
+}
