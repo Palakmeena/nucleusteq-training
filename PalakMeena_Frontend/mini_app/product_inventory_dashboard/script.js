@@ -393,3 +393,116 @@ function setupControlListeners() {
     .getElementById("sortSelect")
     .addEventListener("change", applyFiltersAndRender);
 }
+
+// Count and display products in each category
+function updateCategoryCounts() {
+  const categories = ["electronics", "clothing", "books", "accessories"];
+
+  categories.forEach((cat) => {
+    const count = allProducts.filter((p) => p.category === cat).length;
+    const countElement = document.getElementById(cat + "Count");
+    if (countElement) countElement.textContent = count;
+  });
+}
+
+// Handle edit modal functionality
+let currentEditProductId = null;
+
+function openEditModal(productId) {
+  const product = allProducts.find((p) => p.id === productId);
+  if (!product) return;
+
+  currentEditProductId = productId;
+
+  document.getElementById("editProductName").value = product.name;
+  document.getElementById("editProductPrice").value = product.price;
+  document.getElementById("editProductStock").value = product.stock;
+  document.getElementById("editProductCategory").value = product.category;
+
+  document.getElementById("editNameError").textContent = "";
+  document.getElementById("editPriceError").textContent = "";
+  document.getElementById("editStockError").textContent = "";
+  document.getElementById("editCategoryError").textContent = "";
+
+  document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEditModal() {
+  document.getElementById("editModal").style.display = "none";
+  document.getElementById("editProductForm").reset();
+  currentEditProductId = null;
+
+  document.getElementById("editNameError").textContent = "";
+  document.getElementById("editPriceError").textContent = "";
+  document.getElementById("editStockError").textContent = "";
+  document.getElementById("editCategoryError").textContent = "";
+}
+
+// Validate edit form
+function validateEditForm() {
+  let isValid = true;
+
+  const name = document.getElementById("editProductName").value.trim();
+  const price = parseFloat(document.getElementById("editProductPrice").value);
+  const stock = parseInt(document.getElementById("editProductStock").value);
+  const category = document.getElementById("editProductCategory").value;
+
+  document.getElementById("editNameError").textContent = "";
+  document.getElementById("editPriceError").textContent = "";
+  document.getElementById("editStockError").textContent = "";
+  document.getElementById("editCategoryError").textContent = "";
+
+  if (name === "") {
+    document.getElementById("editNameError").textContent =
+      "Product name is required.";
+    isValid = false;
+  }
+
+  if (isNaN(price) || price <= 0) {
+    document.getElementById("editPriceError").textContent =
+      "Enter a price greater than 0.";
+    isValid = false;
+  }
+
+  if (isNaN(stock) || stock < 0) {
+    document.getElementById("editStockError").textContent =
+      "Stock cannot be negative.";
+    isValid = false;
+  }
+
+  if (category === "") {
+    document.getElementById("editCategoryError").textContent =
+      "Please select a category.";
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+// Handle edit form submission
+function setupEditFormListener() {
+  const form = document.getElementById("editProductForm");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!validateEditForm()) return;
+
+    const product = allProducts.find((p) => p.id === currentEditProductId);
+    if (!product) return;
+
+    product.name = document.getElementById("editProductName").value.trim();
+    product.price = parseFloat(
+      document.getElementById("editProductPrice").value,
+    );
+    product.stock = parseInt(document.getElementById("editProductStock").value);
+    product.category = document.getElementById("editProductCategory").value;
+
+    saveToLocalStorage(allProducts);
+    updateAnalytics(allProducts);
+    updateCategoryCounts();
+    applyFiltersAndRender();
+
+    closeEditModal();
+  });
+}
