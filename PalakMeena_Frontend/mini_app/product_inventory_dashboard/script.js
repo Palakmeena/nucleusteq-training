@@ -256,3 +256,15 @@ function initializeDeleteModal() {
     confirmDeleteBtn.addEventListener("click", confirmDelete);
   }
 }
+
+// Handle edit button clicks
+function attachEditEvents() {
+  const editButtons = document.querySelectorAll(".btn-edit");
+
+  editButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const idToEdit = parseInt(e.target.getAttribute("data-id"));
+      openEditModal(idToEdit);
+    });
+  });
+}
