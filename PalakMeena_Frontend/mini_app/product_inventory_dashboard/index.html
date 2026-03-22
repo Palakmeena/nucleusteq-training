@@ -205,6 +205,85 @@
       </form>
     </section>
 
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Product Inventory Dashboard &mdash; NucleusTeq Training Assignment</p>
+  </footer>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="deleteConfirmModal" class="modal" style="display:none;">
+    <div class="modal-content modal-confirm">
+      <div class="modal-header confirm-header">
+        <h2>Confirm Deletion</h2>
+        <span class="modal-close" id="confirmClose" onclick="closeDeleteConfirm()">&times;</span>
+      </div>
+      <div class="modal-body-confirm">
+        <p class="confirm-icon">⚠️</p>
+        <p class="confirm-text">Are you sure you want to remove this product?</p>
+        <p class="confirm-sub">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer-confirm">
+        <button class="btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+        <button class="btn-confirm-delete" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PRODUCT MODAL -->
+  <div id="editModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Product</h2>
+        <span class="modal-close" id="modalClose">&times;</span>
+      </div>
+      <form id="editProductForm" class="add-form" novalidate>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editProductName">Product Name <span class="req">*</span></label>
+            <input type="text" id="editProductName" placeholder="e.g. Wireless Mouse" />
+            <span class="error-msg" id="editNameError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="editProductPrice">Price (₹) <span class="req">*</span></label>
+            <input type="number" id="editProductPrice" placeholder="e.g. 499" min="1" />
+            <span class="error-msg" id="editPriceError"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editProductStock">Stock Quantity <span class="req">*</span></label>
+            <input type="number" id="editProductStock" placeholder="e.g. 10" min="0" />
+            <span class="error-msg" id="editStockError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="editProductCategory">Category <span class="req">*</span></label>
+            <select id="editProductCategory">
+              <option value="">— Select a Category —</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="books">Books</option>
+              <option value="accessories">Accessories</option>
+            </select>
+            <span class="error-msg" id="editCategoryError"></span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Save Changes</button>
+          <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+
 </body>
 
 </html>
