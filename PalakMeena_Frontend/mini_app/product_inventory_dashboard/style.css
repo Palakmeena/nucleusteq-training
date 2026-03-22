@@ -889,3 +889,236 @@ body {
 .btn-add:active {
   transform: translateY(-1px);
 }
+
+/* Page footer */
+.footer {
+  text-align: center;
+  padding: 24px 24px;
+  background: var(--white);
+  border-top: 2px solid var(--primary);
+  font-size: 0.82rem;
+  color: var(--text-light);
+  font-weight: 600;
+  margin-top: 16px;
+} /* Modal background overlay */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.modal[style*="display: flex"] {
+  display: flex;
+} /* Fade in animation for modal */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+} /* Modal window box */
+.modal-content {
+  background-color: var(--white);
+  padding: 0;
+  border-radius: var(--radius-lg);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+}
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+} /* Slide in animation for modal content */
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+} /* Modal header with title */
+.modal-header {
+  background: var(--primary);
+  color: var(--white);
+  padding: 18px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  position: relative;
+}
+.modal-header h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+} /* Close button for modal */
+.modal-close {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--white);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.modal-close:hover {
+  transform: scale(1.2);
+} /* Delete confirmation modal styling */
+.modal-confirm {
+  max-width: 420px;
+}
+.confirm-header {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  justify-content: center;
+}
+.confirm-header h2 {
+  text-align: center;
+} /* Delete confirmation message area */
+.modal-body-confirm {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.confirm-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+.confirm-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.confirm-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+} /* Delete confirmation buttons */
+.modal-footer-confirm {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--bg-dark);
+  justify-content: center;
+}
+.btn-cancel {
+  padding: 12px 24px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.btn-cancel:hover {
+  background: var(--bg-dark);
+  border-color: var(--text-light);
+} /* Red confirm delete button */
+.btn-confirm-delete {
+  padding: 12px 24px;
+  background: #f44336;
+  border: 2px solid #f44336;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.btn-confirm-delete:hover {
+  background: #d32f2f;
+  border-color: #d32f2f;
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+} /* Edit form styling */
+#editProductForm {
+  padding: 24px;
+}
+#editProductForm .form-group {
+  margin-bottom: 16px;
+}
+#editProductForm label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+#editProductForm input,
+#editProductForm select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  transition: border-color 0.3s ease;
+}
+#editProductForm input:focus,
+#editProductForm select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(91, 127, 222, 0.1);
+}
+#editProductForm .form-actions {
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+#editProductForm .btn-save {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+#editProductForm .btn-save:hover {
+  background: #4a6bc4;
+  transform: translateY(-2px);
+}
+#editProductForm .btn-cancel {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+#editProductForm .btn-cancel:hover {
+  background: #e6ecf9;
+  transform: translateY(-2px);
+}
