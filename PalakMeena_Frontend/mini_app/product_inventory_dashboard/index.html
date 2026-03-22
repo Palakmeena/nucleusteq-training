@@ -158,6 +158,53 @@
       <div id="paginationControls" class="pagination" style="display:none;"></div>
     </section>
 
+
+    <!-- ADD PRODUCT FORM SECTION -->
+    <section class="form-section">
+      <h2 class="section-title">Add New Product</h2>
+      <form id="addProductForm" class="add-form" novalidate>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productName">Product Name <span class="req">*</span></label>
+            <input type="text" id="productName" placeholder="e.g. Wireless Mouse" />
+            <span class="error-msg" id="nameError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="productPrice">Price (₹) <span class="req">*</span></label>
+            <input type="number" id="productPrice" placeholder="e.g. 499" min="1" />
+            <span class="error-msg" id="priceError"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productStock">Stock Quantity <span class="req">*</span></label>
+            <input type="number" id="productStock" placeholder="e.g. 10" min="0" />
+            <span class="error-msg" id="stockError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="productCategory">Category <span class="req">*</span></label>
+            <select id="productCategory">
+              <option value="">— Select a Category —</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="books">Books</option>
+              <option value="accessories">Accessories</option>
+            </select>
+            <span class="error-msg" id="categoryError"></span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-add">+ Add Product</button>
+        </div>
+
+      </form>
+    </section>
+
 </body>
 
 </html>
