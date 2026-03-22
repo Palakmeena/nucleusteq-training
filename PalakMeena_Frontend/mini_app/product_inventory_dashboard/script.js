@@ -62,3 +62,17 @@ function loadFromLocalStorage() {
   const data = localStorage.getItem("inventoryProducts");
   return data ? JSON.parse(data) : null;
 }
+
+// Update the statistics cards at the top
+function updateAnalytics(products) {
+  document.getElementById("totalProducts").textContent = products.length;
+
+  // Calculate total value (price × stock) for all products
+  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
+  document.getElementById("totalValue").textContent =
+    "₹" + totalValue.toLocaleString("en-IN");
+
+  // Count products with no stock
+  const outOfStockCount = products.filter((p) => p.stock === 0).length;
+  document.getElementById("outOfStock").textContent = outOfStockCount;
+}
