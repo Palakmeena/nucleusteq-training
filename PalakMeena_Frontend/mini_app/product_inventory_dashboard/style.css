@@ -491,3 +491,324 @@ body {
   min-width: 32px;
   text-align: center;
 }
+
+/* Product listing section with grid layout */
+.products-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Section header with title and count badge */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 4px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+/* Badge showing number of products */
+.product-count-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #9db3e8;
+}
+
+/* Loading state with spinner */
+.loading-box {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 64px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-muted);
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+/* Spinning loader animation */
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state message */
+.empty-box {
+  background: var(--white);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 64px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  opacity: 0.7;
+}
+.empty-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.empty-sub {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* Responsive grid for product cards */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
+}
+
+/* Product card with animation and hover effect */
+.product-card {
+  background: var(--white);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: cardIn 0.4s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(91, 127, 222, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.product-card:hover::before {
+  left: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-dark);
+}
+
+/* Entrance animation for cards */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Product name heading */
+.product-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+/* Category badge styling */
+.category-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.4px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.badge-electronics {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #9db3e8;
+}
+.badge-clothing {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #9db3e8;
+}
+.badge-books {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #9db3e8;
+}
+.badge-accessories {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #9db3e8;
+}
+
+/* Price display in green */
+.price {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--success);
+  letter-spacing: -0.4px;
+}
+
+/* Stock level - red if low or out of stock */
+.stock {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.stock.low {
+  color: var(--error);
+  font-weight: 700;
+}
+
+/* Divider line in card */
+.card-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+/* Delete button styling */
+.btn-delete {
+  padding: 11px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+  flex: 1;
+}
+
+.btn-delete:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(91, 127, 222, 0.35);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+/* Edit button styling */
+.btn-edit {
+  padding: 11px;
+  background: var(--primary);
+  color: var(--white);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-edit:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(91, 127, 222, 0.35);
+}
+
+.btn-edit:active {
+  transform: translateY(0);
+}
+
+/* Navigation buttons for moving between pages */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+.pagination button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--text-muted);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.87rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.pagination button.active {
+  background: var(--primary);
+  color: var(--white);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(91, 127, 222, 0.4);
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
