@@ -349,3 +349,47 @@ function validateForm() {
 
   return isValid;
 }
+
+// Handle adding a new product through the form
+function setupFormListener() {
+  const form = document.getElementById("addProductForm");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const newProduct = {
+      id: Date.now(),
+      name: document.getElementById("productName").value.trim(),
+      price: parseFloat(document.getElementById("productPrice").value),
+      stock: parseInt(document.getElementById("productStock").value),
+      category: document.getElementById("productCategory").value,
+    };
+
+    allProducts.push(newProduct);
+    saveToLocalStorage(allProducts);
+
+    updateAnalytics(allProducts);
+    updateCategoryCounts();
+    applyFiltersAndRender();
+
+    form.reset();
+  });
+}
+
+// Setup listeners for search, filter, and sort controls
+function setupControlListeners() {
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", applyFiltersAndRender);
+  document
+    .getElementById("categoryFilter")
+    .addEventListener("change", applyFiltersAndRender);
+  document
+    .getElementById("lowStockFilter")
+    .addEventListener("change", applyFiltersAndRender);
+  document
+    .getElementById("sortSelect")
+    .addEventListener("change", applyFiltersAndRender);
+}
