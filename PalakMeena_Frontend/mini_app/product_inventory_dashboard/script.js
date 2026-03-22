@@ -529,3 +529,56 @@ function setupEditModalEventListeners() {
     });
   }
 }
+
+// Main initialization - run when page loads
+async function init() {
+  const loadingMsg = document.getElementById("loadingMsg");
+  const productGrid = document.getElementById("productGrid");
+
+  loadingMsg.style.display = "flex";
+  productGrid.style.display = "none";
+
+  // Disable filters during loading
+  document.getElementById("searchInput").disabled = true;
+  document.getElementById("categoryFilter").disabled = true;
+  document.getElementById("lowStockFilter").disabled = true;
+  document.getElementById("sortSelect").disabled = true;
+
+  // Load from storage or use defaults
+  const savedProducts = loadFromLocalStorage();
+  const productsToLoad =
+    savedProducts !== null ? savedProducts : defaultProducts;
+
+  // Simulate API call with 1.5 second delay
+  const loadedProducts = await fetchProducts(productsToLoad);
+  allProducts = loadedProducts;
+
+  // Save defaults on first visit
+  if (savedProducts === null) {
+    saveToLocalStorage(allProducts);
+  }
+
+  loadingMsg.style.display = "none";
+
+  // Re-enable filters
+  document.getElementById("searchInput").disabled = false;
+  document.getElementById("categoryFilter").disabled = false;
+  document.getElementById("lowStockFilter").disabled = false;
+  document.getElementById("sortSelect").disabled = false;
+
+  // Update displays
+  updateAnalytics(allProducts);
+  updateCategoryCounts();
+  applyFiltersAndRender();
+
+  // Attach all event listeners
+  setupFormListener();
+  setupControlListeners();
+  setupEditFormListener();
+  setupEditModalEventListeners();
+  initializeDeleteModal();
+}
+
+// Start the app when HTML loads
+
+document.addEventListener("DOMContentLoaded", init);
