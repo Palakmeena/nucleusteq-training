@@ -210,3 +210,49 @@ function renderPagination(totalPages, filteredProducts) {
   });
   pagination.appendChild(nextBtn);
 }
+
+// Handle delete button clicks - show confirmation modal first
+let pendingDeleteId = null;
+
+function attachDeleteEvents() {
+  const deleteButtons = document.querySelectorAll(".btn-delete");
+
+  deleteButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const idToDelete = parseInt(e.target.getAttribute("data-id"));
+      showDeleteConfirm(idToDelete);
+    });
+  });
+}
+
+function showDeleteConfirm(productId) {
+  pendingDeleteId = productId;
+  document.getElementById("deleteConfirmModal").style.display = "flex";
+}
+
+function closeDeleteConfirm() {
+  pendingDeleteId = null;
+  document.getElementById("deleteConfirmModal").style.display = "none";
+}
+
+// Execute delete and refresh everything
+function confirmDelete() {
+  if (pendingDeleteId === null) return;
+
+  allProducts = allProducts.filter((p) => p.id !== pendingDeleteId);
+
+  saveToLocalStorage(allProducts);
+  updateAnalytics(allProducts);
+  updateCategoryCounts();
+  applyFiltersAndRender();
+
+  closeDeleteConfirm();
+}
+
+// Initialize delete modal event listeners
+function initializeDeleteModal() {
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", confirmDelete);
+  }
+}
