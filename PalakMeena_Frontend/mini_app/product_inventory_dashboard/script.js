@@ -268,3 +268,43 @@ function attachEditEvents() {
     });
   });
 }
+
+// Apply all active filters and sort, then render products
+function applyFiltersAndRender() {
+  currentPage = 1;
+
+  const query = document
+    .getElementById("searchInput")
+    .value.trim()
+    .toLowerCase();
+  const category = document.getElementById("categoryFilter").value;
+  const lowStockOnly = document.getElementById("lowStockFilter").checked;
+  const sortOption = document.getElementById("sortSelect").value;
+
+  let result = [...allProducts];
+
+  // Search filter - case insensitive name matching
+  if (query !== "") {
+    result = result.filter((p) => p.name.toLowerCase().includes(query));
+  }
+
+  // Category filter
+  if (category !== "all") {
+    result = result.filter((p) => p.category === category);
+  }
+
+  // Low stock filter - items with less than 5 in stock
+  if (lowStockOnly) {
+    result = result.filter((p) => p.stock < 5);
+  }
+
+  // Apply sorting
+  if (sortOption === "price-low") result.sort((a, b) => a.price - b.price);
+  if (sortOption === "price-high") result.sort((a, b) => b.price - a.price);
+  if (sortOption === "name-az")
+    result.sort((a, b) => a.name.localeCompare(b.name));
+  if (sortOption === "name-za")
+    result.sort((a, b) => b.name.localeCompare(a.name));
+
+  renderProducts(result);
+}
