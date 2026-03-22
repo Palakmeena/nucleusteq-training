@@ -131,6 +131,33 @@
       </div>
     </section>
 
+    <!-- PRODUCTS SECTION - Product Grid -->
+    <section class="products-section">
+      <div class="section-header">
+        <h2 class="section-title">Products</h2>
+        <span class="product-count-badge" id="productCountBadge">0 items</span>
+      </div>
+
+      <!-- Loading spinner shown on first load -->
+      <div id="loadingMsg" class="loading-box">
+        <div class="spinner"></div>
+        <p>Loading products…</p>
+      </div>
+
+      <!-- Product cards rendered here by JavaScript -->
+      <div id="productGrid" class="product-grid" style="display:none;"></div>
+
+      <!-- Empty state message -->
+      <div id="emptyMsg" class="empty-box" style="display:none;">
+        <p class="empty-icon">◉</p>
+        <p class="empty-text">No products found</p>
+        <p class="empty-sub">Try changing your search or filter settings</p>
+      </div>
+
+      <!-- Pagination buttons -->
+      <div id="paginationControls" class="pagination" style="display:none;"></div>
+    </section>
+
 </body>
 
 </html>
