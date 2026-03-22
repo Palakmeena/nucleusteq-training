@@ -308,3 +308,44 @@ function applyFiltersAndRender() {
 
   renderProducts(result);
 }
+
+// Check form inputs and show error messages
+function validateForm() {
+  let isValid = true;
+
+  const name = document.getElementById("productName").value.trim();
+  const price = parseFloat(document.getElementById("productPrice").value);
+  const stock = parseInt(document.getElementById("productStock").value);
+  const category = document.getElementById("productCategory").value;
+
+  document.getElementById("nameError").textContent = "";
+  document.getElementById("priceError").textContent = "";
+  document.getElementById("stockError").textContent = "";
+  document.getElementById("categoryError").textContent = "";
+
+  if (name === "") {
+    document.getElementById("nameError").textContent =
+      "Product name is required.";
+    isValid = false;
+  }
+
+  if (isNaN(price) || price <= 0) {
+    document.getElementById("priceError").textContent =
+      "Enter a price greater than 0.";
+    isValid = false;
+  }
+
+  if (isNaN(stock) || stock < 0) {
+    document.getElementById("stockError").textContent =
+      "Stock cannot be negative.";
+    isValid = false;
+  }
+
+  if (category === "") {
+    document.getElementById("categoryError").textContent =
+      "Please select a category.";
+    isValid = false;
+  }
+
+  return isValid;
+}
