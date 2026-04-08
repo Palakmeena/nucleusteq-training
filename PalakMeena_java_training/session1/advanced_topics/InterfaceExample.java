@@ -35,7 +35,7 @@ class UpiPayment implements PaymentMethod {
     }
 }
 
-public class PaymentSystem {
+public class InterfaceExample_PaymentSystem {
     public static void main(String[] args) {
         PaymentMethod payment;
 

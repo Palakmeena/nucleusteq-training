@@ -6,7 +6,7 @@ import java.io.IOException;
 
 //Example of File I/O in Java to read content from a file and display it on the console
 
-public class FileReadDemo {
+public class FileReadExample {
     public static void main(String[] args) {
       
         String fileName = "data.txt";
