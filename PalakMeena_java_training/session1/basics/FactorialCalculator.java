@@ -6,7 +6,6 @@ import java.util.Scanner;
  */
 public class FactorialCalculator {
 
-   
     public static long factorialIterative(int n) {
         long result = 1;
         for (int i = 2; i <= n; i++) {
@@ -15,7 +14,6 @@ public class FactorialCalculator {
         return result;
     }
 
-   
     public static long factorialRecursive(int n) {
         if (n == 0 || n == 1) {
             return 1;

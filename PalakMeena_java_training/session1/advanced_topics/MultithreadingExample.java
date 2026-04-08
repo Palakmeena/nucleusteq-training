@@ -24,7 +24,7 @@ class UIRenderer extends Thread {
     }
 }
 
-public class SocialMediaDemo {
+public class MultithreadingExample {
     public static void main(String[] args) {
         FeedLoader networkThread = new FeedLoader();
         UIRenderer uiThread = new UIRenderer();
