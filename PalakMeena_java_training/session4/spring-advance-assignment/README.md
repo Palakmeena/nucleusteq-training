@@ -15,6 +15,9 @@ A REST API-based TODO management application built with **Spring Boot** and **JP
 7. **Input Validation** - Validate title length and ensure data integrity
 8. **Centralized Exception Handling** - Consistent error responses across all endpoints
 9. **SQL Query Logging** - View all Hibernate-generated SQL queries in console
+10. **SLF4J Logging** - Request and operation tracking in Controller and Service layers
+11. **Unit Testing** - JUnit 5 + Mockito tests with 85%+ code coverage
+12. **Notification Simulation** - Simulated external notification service on todo create/delete
 
 ---
 
@@ -28,6 +31,9 @@ A REST API-based TODO management application built with **Spring Boot** and **JP
 | **H2 Database** | 2.4.240 | In-Memory SQL Database |
 | **Maven** | 3.x | Build Tool & Dependency Management |
 | **Jakarta Validation** | 3.0 | Input Validation Framework |
+| **SLF4J** | - | Logging Framework |
+| **JUnit 5** | - | Unit Testing Framework |
+| **Mockito** | - | Mocking Framework for Tests |
 
 ---
 
@@ -37,10 +43,12 @@ A REST API-based TODO management application built with **Spring Boot** and **JP
 spring-advance-assignment/
 ├── src/main/java/com/palak/springadvanceassignment/
 │   ├── SpringAdvanceAssignmentApplication.java      (Main entry point)
+│   ├── client/
+│   │   └── NotificationServiceClient.java           (Simulated external notification service)
 │   ├── controller/
-│   │   └── TodoController.java                      (REST endpoints)
+│   │   └── TodoController.java                      (REST endpoints + SLF4J logging)
 │   ├── service/
-│   │   └── TodoService.java                         (Business logic)
+│   │   └── TodoService.java                         (Business logic + SLF4J logging)
 │   ├── repository/
 │   │   └── TodoRepository.java                      (JPA interface for DB access)
 │   ├── entity/
@@ -56,6 +64,9 @@ spring-advance-assignment/
 │       └── GlobalExceptionHandler.java              (Centralized error handling)
 ├── src/main/resources/
 │   └── application.properties                       (Spring & Database config)
+├── src/test/java/com/palak/springadvanceassignment/
+│   └── service/
+│       └── TodoServiceTest.java                     (Unit tests - JUnit 5 + Mockito)
 └── pom.xml                                          (Maven dependencies)
 ```
 
@@ -99,7 +110,7 @@ CREATE TABLE todos (
 
 ##  REST API Endpoints
 
-### 1. **Create Todo** 
+### 1. **Create Todo**
 Create a new todo item in the database.
 
 **Endpoint:** `POST /todos`
@@ -159,16 +170,12 @@ Retrieve a list of all todo items from the database.
 }
 ```
 
-
 ---
 
 ### 3. **Get Todo by ID**
 Retrieve a specific todo item using its unique identifier.
 
 **Endpoint:** `GET /todos/{id}`
-
-**Path Parameter:**
-- `id` (Long): The todo item ID (e.g., 1, 2, 3...)
 
 **Request Example:**
 ```
@@ -206,9 +213,6 @@ Update an existing todo's title, description, or status.
 
 **Endpoint:** `PUT /todos/{id}`
 
-**Path Parameter:**
-- `id` (Long): The todo item ID to update
-
 **Request Body (partial update):**
 ```json
 {
@@ -233,13 +237,6 @@ Update an existing todo's title, description, or status.
 }
 ```
 
-**Validation Rules:**
-- **Status Transitions:** 
-  - `PENDING` → `COMPLETED`  (Allowed)
-  - `COMPLETED` → `PENDING`  (Allowed)
-  - `PENDING` → `PENDING`  (Invalid - no change)
-  - `COMPLETED` → `COMPLETED`  (Invalid - no change)
-
 **Error Response (400 Bad Request):**
 ```json
 {
@@ -258,16 +255,12 @@ Update an existing todo's title, description, or status.
 }
 ```
 
-
 ---
 
 ### 5. **Delete Todo**
 Remove a todo item from the database.
 
 **Endpoint:** `DELETE /todos/{id}`
-
-**Path Parameter:**
-- `id` (Long): The todo item ID to delete
 
 **Request Example:**
 ```
@@ -292,7 +285,6 @@ DELETE /todos/1
 }
 ```
 
-
 ---
 
 ##  Status Transition Rules
@@ -301,10 +293,10 @@ The application enforces strict rules for todo status transitions:
 
 | Current Status | New Status | Allowed? | Reason |
 |---|---|---|---|
-| PENDING | PENDING |  No | No status change |
-| PENDING | COMPLETED |  Yes | Mark task as done |
-| COMPLETED | COMPLETED |  No | No status change |
-| COMPLETED | PENDING |  Yes | Revert to pending |
+| PENDING | PENDING | No | No status change |
+| PENDING | COMPLETED | Yes | Mark task as done |
+| COMPLETED | COMPLETED | No | No status change |
+| COMPLETED | PENDING | Yes | Revert to pending |
 
 **Example Error:**
 ```json
@@ -314,6 +306,87 @@ The application enforces strict rules for todo status transitions:
   "data": null
 }
 ```
+
+---
+
+##  Session 5 Enhancements — Enterprise Flow and Testing
+
+### SLF4J Logging
+
+Added logging to both `TodoController` and `TodoService` to track every incoming request and operation. All logs are printed to the console when the application is running.
+
+Example console output:
+```
+INFO  TodoController            : POST /todos → creating todo with title: 'Buy groceries'
+INFO  TodoService               : Creating new todo with title: 'Buy groceries'
+INFO  TodoService               : Todo created successfully with id: 1
+INFO  NotificationServiceClient : Notification sent for new TODO → id: 1, title: 'Buy groceries'
+```
+
+---
+
+### NotificationServiceClient
+
+A simulated external notification service located at `client/NotificationServiceClient.java`.
+
+In a real enterprise application this class would make an HTTP call to an email provider, SMS gateway, or messaging queue. Here it logs a message to the console to simulate that behaviour.
+
+It is called automatically from `TodoService` when:
+- A new todo is **created**
+- A todo is **deleted**
+
+---
+
+### Unit Testing
+
+Written using **JUnit 5** and **Mockito** targeting 85%+ code coverage.
+
+**How to run tests:**
+```bash
+mvn test
+```
+
+**Tests written in `TodoServiceTest.java`:**
+
+| Test Name | What It Checks |
+|-----------|---------------|
+| `createTodo_shouldSaveTodoAndReturnDTO` | Todo is saved and DTO is returned correctly |
+| `createTodo_shouldDefaultStatusToPending` | Status defaults to PENDING when not provided |
+| `createTodo_shouldTrimTitle` | Whitespace is trimmed from title before saving |
+| `getAllTodos_shouldReturnAllTodosAsDTOs` | All todos are returned as DTOs |
+| `getAllTodos_shouldReturnEmptyList` | Empty list returned when no todos exist |
+| `getTodoById_shouldReturnTodoDTO` | Correct todo returned for a valid id |
+| `getTodoById_shouldThrowTodoNotFoundException` | Exception thrown when id does not exist |
+| `updateTodo_shouldUpdateTitle` | Title is updated correctly |
+| `updateTodo_shouldTransitionPendingToCompleted` | PENDING → COMPLETED transition works |
+| `updateTodo_shouldTransitionCompletedToPending` | COMPLETED → PENDING transition works |
+| `updateTodo_shouldNotThrow_whenSameStatus` | Same status is treated as no-op |
+| `deleteTodo_shouldDeleteTodo` | Todo deleted and notification sent |
+| `deleteTodo_shouldThrowTodoNotFoundException` | Exception thrown when id does not exist |
+
+---
+
+##  Postman Testing Screenshots
+
+> All APIs were manually tested using Postman.
+
+### Create Todo — POST /todos
+<!-- Add your screenshot here: drag and drop image into GitHub editor -->
+
+### Get All Todos — GET /todos
+<!-- Add your screenshot here -->
+
+### Get Todo by ID — GET /todos/1
+<!-- Add your screenshot here -->
+
+### Get Todo — 404 Not Found — GET /todos/999
+<!-- Add your screenshot here -->
+
+### Update Todo Status — PUT /todos/1
+<!-- Add your screenshot here -->
+
+### Delete Todo — DELETE /todos/1
+<!-- Add your screenshot here -->
 
 ---
 
@@ -339,7 +412,12 @@ Started SpringAdvanceAssignmentApplication in 5.079 seconds
 Server running on: http://localhost:8080
 ```
 
-### Step 4: Access H2 Console (Optional)
+### Step 4: Run Unit Tests
+```bash
+mvn test
+```
+
+### Step 5: Access H2 Console (Optional)
 View and query the database directly:
 ```
 URL: http://localhost:8080/h2-console
@@ -350,20 +428,22 @@ Database URL: jdbc:h2:mem:tododb
 
 ---
 
-
 ##  Key Learning Outcomes
 
 This assignment demonstrates:
 
- **JPA Entity Mapping** - Converting Java objects to database records  
- **Hibernate ORM** - Automatic SQL generation and execution  
- **Spring Data JPA** - Repository pattern for data access  
- **REST API Design** - CRUD operations with proper HTTP methods  
- **Input Validation** - Using Jakarta Validation annotations  
- **Exception Handling** - Custom exceptions and centralized error handling  
- **Layered Architecture** - Controller → Service → Repository pattern  
- **Dependency Injection** - Constructor-based dependency injection  
- **Database Schema** - Automatic table generation with Hibernate DDL  
+**JPA Entity Mapping** - Converting Java objects to database records
+**Hibernate ORM** - Automatic SQL generation and execution
+**Spring Data JPA** - Repository pattern for data access
+**REST API Design** - CRUD operations with proper HTTP methods
+**Input Validation** - Using Jakarta Validation annotations
+**Exception Handling** - Custom exceptions and centralized error handling
+**Layered Architecture** - Controller → Service → Repository pattern
+**Dependency Injection** - Constructor-based dependency injection
+**Database Schema** - Automatic table generation with Hibernate DDL
+**SLF4J Logging** - Request tracking across Controller and Service layers
+**Unit Testing** - JUnit 5 + Mockito with high code coverage
+**Notification Simulation** - Simulated external service integration
 
 ---
 
@@ -383,17 +463,17 @@ Each operation triggers the corresponding SQL query automatically!
 
 ---
 
-
 ##  Notes
 
 - **Data is temporary:** In-memory H2 database clears when the application stops
 - **For production:** Configure a persistent database (MySQL, PostgreSQL, etc.)
 - **SQL visibility:** All Hibernate-generated SQL is logged to console for learning purposes
 - **Validation:** Invalid requests return 400 Bad Request with error messages
+- **Logging:** SLF4J logs are printed to console for every request and operation
+- **Tests:** Run `mvn test` to execute all unit tests and check coverage
 
 ---
 
 ##  Created By
-**Palak Meena** - Spring Advance Assignment | Session 4  
+**Palak Meena** - Spring Advance Assignment | Session 4 & 5
 **Date:** April 2026
-
