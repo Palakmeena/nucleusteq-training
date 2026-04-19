@@ -1,3 +1,4 @@
+<img width="517" height="413" alt="ss8" src="https://github.com/user-attachments/assets/a05b4551-520b-4017-9262-1e340f5f1250" />
 # Spring Advance Assignment - TODO Application
 
 A REST API-based TODO management application built with **Spring Boot** and **JPA/Hibernate** to demonstrate advanced Java persistence skills and CRUD operations with a relational database.
@@ -372,21 +373,28 @@ mvn test
 
 ### Create Todo — POST /todos
 <!-- Add your screenshot here: drag and drop image into GitHub editor -->
+<img width="517" height="413" alt="ss8" src="https://github.com/user-attachments/assets/95b65220-57ab-49cd-a1c0-073cdc2042dd" />
+
 
 ### Get All Todos — GET /todos
 <!-- Add your screenshot here -->
+<img width="529" height="440" alt="ss9" src="https://github.com/user-attachments/assets/4b9e5904-a25a-414a-901d-56f5e7234377" />
 
-### Get Todo by ID — GET /todos/1
-<!-- Add your screenshot here -->
 
 ### Get Todo — 404 Not Found — GET /todos/999
 <!-- Add your screenshot here -->
+<img width="516" height="429" alt="ss7" src="https://github.com/user-attachments/assets/2fcacaaa-4462-4494-b50e-82b072fc5d57" />
+
 
 ### Update Todo Status — PUT /todos/1
 <!-- Add your screenshot here -->
+<img width="525" height="433" alt="ss10" src="https://github.com/user-attachments/assets/f83dc3f8-15a6-42b4-8c1b-c5d877fcba7c" />
+
 
 ### Delete Todo — DELETE /todos/1
 <!-- Add your screenshot here -->
+<img width="524" height="415" alt="ss11" src="https://github.com/user-attachments/assets/4cadffd3-1b5a-48ca-8a67-3b8f4fe9e8ed" />
+
 
 ---
 
