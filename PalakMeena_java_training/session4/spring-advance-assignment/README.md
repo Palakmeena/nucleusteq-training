@@ -1,4 +1,3 @@
-<img width="517" height="413" alt="ss8" src="https://github.com/user-attachments/assets/a05b4551-520b-4017-9262-1e340f5f1250" />
 # Spring Advance Assignment - TODO Application
 
 A REST API-based TODO management application built with **Spring Boot** and **JPA/Hibernate** to demonstrate advanced Java persistence skills and CRUD operations with a relational database.
