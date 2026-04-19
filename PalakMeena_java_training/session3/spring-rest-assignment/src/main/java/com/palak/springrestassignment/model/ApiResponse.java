@@ -1,5 +1,6 @@
 package com.palak.springrestassignment.model;
 
+// Generic wrapper for consistent success/error responses across all API endpoints
 public class ApiResponse<T> {
 
     private boolean success;
