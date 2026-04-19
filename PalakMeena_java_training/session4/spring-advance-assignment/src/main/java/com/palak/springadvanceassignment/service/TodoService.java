@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+// Business logic layer for todo operations: CRUD operations, status validation, and DTO mapping
 public class TodoService {
 
     private final TodoRepository todoRepository;
@@ -22,8 +23,7 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    // CREATE
-
+    // Creates a new todo with default PENDING status if not specified
     public TodoDTO createTodo(TodoDTO dto) {
         Todo todo = new Todo();
         todo.setTitle(dto.getTitle().trim());
@@ -39,8 +39,7 @@ public class TodoService {
         return mapToDTO(saved);
     }
 
-    // GET ALL
-
+    // Fetches all todos from the database
     public List<TodoDTO> getAllTodos() {
         return todoRepository.findAll()
                 .stream()
@@ -48,15 +47,13 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    // GET BY ID 
-
+    // Retrieves a specific todo by ID or throws exception if not found
     public TodoDTO getTodoById(Long id) {
         Todo todo = findByIdOrThrow(id);
         return mapToDTO(todo);
     }
 
-    //  UPDATE 
-
+    // Updates todo properties and validates status transitions
     public TodoDTO updateTodo(Long id, TodoDTO dto) {
         Todo existing = findByIdOrThrow(id);
 
@@ -78,8 +75,7 @@ public class TodoService {
         return mapToDTO(updated);
     }
 
-    //  DELETE 
-
+    // Removes a todo from the database
     public void deleteTodo(Long id) {
         if (!todoRepository.existsById(id)) {
             throw new TodoNotFoundException(id);
@@ -87,15 +83,14 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
-    // PRIVATE HELPERS 
-
-    
+    // Finds a todo by ID or throws TodoNotFoundException
     private Todo findByIdOrThrow(Long id) {
         return todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id));
     }
 
   
+    // Validates that status transitions are only PENDING<->COMPLETED
     private void validateStatusTransition(TodoStatus from, TodoStatus to) {
         if (from == to) {
             return; 

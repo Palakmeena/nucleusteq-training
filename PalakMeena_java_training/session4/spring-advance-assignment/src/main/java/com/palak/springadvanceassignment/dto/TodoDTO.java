@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public class TodoDTO {
 
+    // Data transfer object for todo API requests/responses with validation constraints
     private Long id;
 
     @NotBlank(message = "Title must not be blank.")

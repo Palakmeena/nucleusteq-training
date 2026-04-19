@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "todos")
+// JPA entity representing a todo item with automatic database persistence
 public class Todo {
 
     @Id
