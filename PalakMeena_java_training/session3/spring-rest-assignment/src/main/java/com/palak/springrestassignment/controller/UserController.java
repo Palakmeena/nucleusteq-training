@@ -10,22 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * UserController exposes all REST APIs for this assignment.
- *
- * Demonstrates:
- * - @RestController and @RequestMapping
- * - Constructor injection only
- * - Zero business logic in controller — pure delegation to service
- * - Proper use of @RequestParam, @RequestBody, @PathVariable
- * - Correct HTTP status codes (200, 201, 400, 404)
- *
- * APIs:
- * GET    /users/search              → Task 1: search/filter users
- * POST   /submit                    → Task 2: submit structured data
- * DELETE /users/{id}?confirm=true   → Task 3: delete with confirmation
- */
 @RestController
+// REST API endpoints for user management with search, submit, and delete operations
 public class UserController {
 
     private final UserService userService;
@@ -34,10 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // -------------------------------------------------------------------------
-    // Task 1 — GET /users/search
-    // All params optional. No params = return all. One or more = filter.
-    // -------------------------------------------------------------------------
+    // Searches users with optional filters by name, age, or role
     @GetMapping("/users/search")
     public ResponseEntity<ApiResponse<List<User>>> searchUsers(
             @RequestParam(required = false) String name,
@@ -50,10 +33,7 @@ public class UserController {
         );
     }
 
-    // -------------------------------------------------------------------------
-    // Task 2 — POST /submit
-    // Accepts JSON body. Returns 201 on success, 400 on invalid input.
-    // -------------------------------------------------------------------------
+    // Creates and saves a new user from submitted request data
     @PostMapping("/submit")
     public ResponseEntity<ApiResponse<User>> submitUser(@RequestBody SubmitRequest request) {
         User saved = userService.submitUser(request);
@@ -62,11 +42,7 @@ public class UserController {
                 .body(ApiResponse.ok("User submitted successfully.", saved));
     }
 
-    // -------------------------------------------------------------------------
-    // Task 3 — DELETE /users/{id}?confirm=true
-    // confirm=false or missing → do NOT delete, return message.
-    // confirm=true → delete user.
-    // -------------------------------------------------------------------------
+    // Deletes a user after confirmation to prevent accidental deletion
     @DeleteMapping("/users/{id}")
     public ResponseEntity<ApiResponse<String>> deleteUser(
             @PathVariable Long id,

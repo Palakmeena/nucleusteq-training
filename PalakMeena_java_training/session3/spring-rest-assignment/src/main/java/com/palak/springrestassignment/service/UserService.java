@@ -9,18 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * UserService contains ALL business logic for this application.
- *
- * Demonstrates:
- * - @Service annotation
- * - Constructor injection
- * - Filtering logic using Java Streams
- * - Manual input validation
- * - Delete with confirmation check
- * - All business rules strictly inside service — zero logic in controller
- */
 @Service
+// Business logic layer for user operations including search, submit, and delete with validation
 public class UserService {
 
     private final UserRepository userRepository;
@@ -29,12 +19,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Task 1 — Search/filter users.
-     * If all params are null → return all users.
-     * If one or more params provided → filter by those params (AND condition).
-     * Name and role: case-insensitive. Age: exact match.
-     */
+    // Filters users by name, age, or role - returns all if no filter provided
     public List<User> searchUsers(String name, Integer age, String role) {
         List<User> users = userRepository.findAll();
 
@@ -50,12 +35,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Task 2 — Accept and validate structured data submission.
-     * Validates: name, email, role must not be null/empty.
-     * Age must be positive.
-     * Returns saved user on success, throws IllegalArgumentException on failure.
-     */
+    // Validates and creates a new user with default role if not specified
     public User submitUser(SubmitRequest request) {
         validateSubmitRequest(request);
 
@@ -70,11 +50,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    /**
-     * Task 3 — Delete user only when confirm=true.
-     * If confirm is false or not passed → return confirmation message, do NOT delete.
-     * If confirm=true → verify user exists, then delete.
-     */
+    // Removes user from repository if confirmation flag is true
     public String deleteUser(Long id, boolean confirm) {
         if (!confirm) {
             return "Confirmation required. Please send confirm=true to proceed with deletion.";
@@ -88,10 +64,7 @@ public class UserService {
         return "User with id " + id + " has been deleted successfully.";
     }
 
-    // -------------------------------------------------------------------------
-    // Private validation helper — business logic stays in service
-    // -------------------------------------------------------------------------
-
+    // Validates submit request for required fields and proper email format
     private void validateSubmitRequest(SubmitRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body must not be null.");
