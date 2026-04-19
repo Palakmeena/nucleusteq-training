@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/todos")
+// REST API endpoints for todo management with input validation and error handling
 public class TodoController {
 
     private final TodoService todoService;
@@ -21,7 +22,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    // POST /todos
+    // Creates a new todo with @Valid annotation for input validation
     @PostMapping
     public ResponseEntity<ApiResponse<TodoDTO>> createTodo(
             @RequestBody @Valid TodoDTO dto) {
@@ -32,7 +33,7 @@ public class TodoController {
                 .body(ApiResponse.ok("Todo created successfully.", created));
     }
 
-    // GET /todos
+    // Fetches all todos from the database
     @GetMapping
     public ResponseEntity<ApiResponse<List<TodoDTO>>> getAllTodos() {
         List<TodoDTO> todos = todoService.getAllTodos();
@@ -41,7 +42,7 @@ public class TodoController {
         );
     }
 
-    // GET /todos/{id}
+    // Retrieves a single todo by its ID from path variable
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TodoDTO>> getTodoById(
             @PathVariable Long id) {
@@ -52,7 +53,7 @@ public class TodoController {
         );
     }
 
-    // PUT /todos/{id}
+    // Updates a todo's properties and performs status transition validation
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TodoDTO>> updateTodo(
             @PathVariable Long id,
@@ -65,7 +66,7 @@ public class TodoController {
         );
     }
 
-    // DELETE /todos/{id}
+    // Deletes a todo permanently from the database
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteTodo(
             @PathVariable Long id) {

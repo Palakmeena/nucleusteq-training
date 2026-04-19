@@ -13,6 +13,7 @@ import java.util.Map;
 
 
 @RestControllerAdvice
+// Centralized exception handler for all exceptions with consistent error response format
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

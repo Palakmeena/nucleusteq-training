@@ -3,6 +3,7 @@ package com.palak.springadvanceassignment.dto;
 
 public class ApiResponse<T> {
 
+    // Generic wrapper for consistent success/error responses across all API endpoints
     private boolean success;
     private String message;
     private T data;
