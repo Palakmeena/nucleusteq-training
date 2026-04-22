@@ -1,6 +1,9 @@
 package com.nucleusteq.interviewtracker.enums;
 
-// Defines the sequential stages a candidate goes through during the interview process.
+/**
+ * Defines the sequential stages a candidate goes through
+ * during the interview process.
+ */
 public enum InterviewStage {
     PROFILING,
     SCREENING,
