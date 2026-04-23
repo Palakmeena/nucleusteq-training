@@ -47,10 +47,6 @@ public class InterviewPanel {
 
     /**
      * Creates a new panel assignment linking a panel member to an interview.
-     * assignedAt is set automatically to the current time.
-     *
-     * @param interview    the interview to assign the panel member to
-     * @param panelMember  the panel member being assigned
      */
     public InterviewPanel(Interview interview, PanelMember panelMember) {
         this.interview = interview;
@@ -58,42 +54,34 @@ public class InterviewPanel {
         this.assignedAt = LocalDateTime.now();
     }
 
-    /** @return the assignment id. */
     public Long getId() {
         return id;
     }
 
-    /** @param id the id to set. */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** @return the interview this assignment belongs to. */
     public Interview getInterview() {
         return interview;
     }
 
-    /** @param interview the interview to set. */
     public void setInterview(Interview interview) {
         this.interview = interview;
     }
 
-    /** @return the panel member assigned to this interview. */
     public PanelMember getPanelMember() {
         return panelMember;
     }
 
-    /** @param panelMember the panel member to set. */
     public void setPanelMember(PanelMember panelMember) {
         this.panelMember = panelMember;
     }
 
-    /** @return the timestamp when this assignment was created. */
     public LocalDateTime getAssignedAt() {
         return assignedAt;
     }
 
-    /** @param assignedAt the assignment timestamp to set. */
     public void setAssignedAt(LocalDateTime assignedAt) {
         this.assignedAt = assignedAt;
     }

@@ -70,13 +70,6 @@ public class PanelMember {
     /**
      * Creates a new panel member with all required fields.
      * isActive is set to false and createdAt is set automatically.
-     * User account is null initially — linked after activation.
-     *
-     * @param fullName      full name of the panel member
-     * @param email         unique email address
-     * @param mobileNumber  unique mobile number
-     * @param organization  company the panel member works for
-     * @param designation   job title of the panel member
      */
     public PanelMember(String fullName, String email,
             String mobileNumber, String organization,
@@ -90,92 +83,74 @@ public class PanelMember {
         this.createdAt = LocalDateTime.now();
     }
 
-    /** @return the panel member id. */
     public Long getId() {
         return id;
     }
 
-    /** @param id the id to set. */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** @return the full name of the panel member. */
     public String getFullName() {
         return fullName;
     }
 
-    /** @param fullName the full name to set. */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
 
-    /** @return the email address of the panel member. */
     public String getEmail() {
         return email;
     }
 
-    /** @param email the email to set. */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /** @return the mobile number of the panel member. */
     public String getMobileNumber() {
         return mobileNumber;
     }
 
-    /** @param mobileNumber the mobile number to set. */
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
-    /** @return the organization the panel member works for. */
     public String getOrganization() {
         return organization;
     }
 
-    /** @param organization the organization to set. */
     public void setOrganization(String organization) {
         this.organization = organization;
     }
 
-    /** @return the designation of the panel member. */
     public String getDesignation() {
         return designation;
     }
 
-    /** @param designation the designation to set. */
     public void setDesignation(String designation) {
         this.designation = designation;
     }
 
-    /** @return true if the panel member account is active. */
     public boolean isActive() {
         return isActive;
     }
 
-    /** @param active true to activate the account, false otherwise. */
     public void setActive(boolean active) {
         isActive = active;
     }
 
-    /** @return the timestamp when this account was created. */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    /** @param createdAt the creation timestamp to set. */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    /** @return the linked user account — null until password is set. */
     public User getUser() {
         return user;
     }
 
-    /** @param user the user account to set. */
     public void setUser(User user) {
         this.user = user;
     }

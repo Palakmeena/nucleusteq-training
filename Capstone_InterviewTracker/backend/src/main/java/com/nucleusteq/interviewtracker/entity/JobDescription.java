@@ -85,16 +85,6 @@ public class JobDescription {
 
     /**
      * Creates a new job description with all required fields.
-     * isActive is set to true and createdAt is set automatically.
-     *
-     * @param jobTitle        title of the job
-     * @param jobDescription  detailed description of the role
-     * @param minExperience   minimum experience required in years
-     * @param maxExperience   maximum experience required in years
-     * @param minSalary       minimum salary offered in LPA
-     * @param maxSalary       maximum salary offered in LPA
-     * @param location        job location
-     * @param jobType         type of employment
      */
     public JobDescription(String jobTitle, String jobDescription,
             Integer minExperience, Integer maxExperience,
@@ -112,122 +102,98 @@ public class JobDescription {
         this.createdAt = LocalDateTime.now();
     }
 
-    /** @return the job description id. */
     public Long getId() {
         return id;
     }
 
-    /** @param id the id to set. */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** @return the job title. */
     public String getJobTitle() {
         return jobTitle;
     }
 
-    /** @param jobTitle the job title to set. */
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
     }
 
-    /** @return the detailed job description. */
     public String getJobDescription() {
         return jobDescription;
     }
 
-    /** @param jobDescription the job description to set. */
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
     }
 
-    /** @return the minimum experience required in years. */
     public Integer getMinExperience() {
         return minExperience;
     }
 
-    /** @param minExperience the minimum experience to set. */
     public void setMinExperience(Integer minExperience) {
         this.minExperience = minExperience;
     }
 
-    /** @return the maximum experience required in years. */
     public Integer getMaxExperience() {
         return maxExperience;
     }
 
-    /** @param maxExperience the maximum experience to set. */
     public void setMaxExperience(Integer maxExperience) {
         this.maxExperience = maxExperience;
     }
 
-    /** @return the minimum salary offered in LPA. */
     public Double getMinSalary() {
         return minSalary;
     }
 
-    /** @param minSalary the minimum salary to set. */
     public void setMinSalary(Double minSalary) {
         this.minSalary = minSalary;
     }
 
-    /** @return the maximum salary offered in LPA. */
     public Double getMaxSalary() {
         return maxSalary;
     }
 
-    /** @param maxSalary the maximum salary to set. */
     public void setMaxSalary(Double maxSalary) {
         this.maxSalary = maxSalary;
     }
 
-    /** @return the job location. */
     public String getLocation() {
         return location;
     }
 
-    /** @param location the location to set. */
     public void setLocation(String location) {
         this.location = location;
     }
 
-    /** @return the type of employment. */
     public JobType getJobType() {
         return jobType;
     }
 
-    /** @param jobType the job type to set. */
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
     }
 
-    /** @return true if this job posting is currently active. */
     public boolean isActive() {
         return isActive;
     }
 
-    /** @param active true to activate, false to deactivate the posting. */
     public void setActive(boolean active) {
         isActive = active;
     }
 
-    /** @return the timestamp when this JD was created. */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    /** @param createdAt the creation timestamp to set. */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    /** @return the list of skills required for this job. */
     public List<Skill> getSkills() {
         return skills;
     }
 
-    /** @param skills the skills list to set. */
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }

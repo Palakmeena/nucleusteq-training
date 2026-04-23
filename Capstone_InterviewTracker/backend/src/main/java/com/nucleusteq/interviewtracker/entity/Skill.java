@@ -41,41 +41,32 @@ public class Skill {
 
     /**
      * Creates a new skill linked to a job description.
-     *
-     * @param skillName       name of the skill
-     * @param jobDescription  the JD this skill belongs to
      */
     public Skill(String skillName, JobDescription jobDescription) {
         this.skillName = skillName;
         this.jobDescription = jobDescription;
     }
 
-    /** @return the skill id. */
     public Long getId() {
         return id;
     }
 
-    /** @param id the id to set. */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** @return the name of the skill. */
     public String getSkillName() {
         return skillName;
     }
 
-    /** @param skillName the skill name to set. */
     public void setSkillName(String skillName) {
         this.skillName = skillName;
     }
 
-    /** @return the job description this skill belongs to. */
     public JobDescription getJobDescription() {
         return jobDescription;
     }
 
-    /** @param jobDescription the job description to set. */
     public void setJobDescription(JobDescription jobDescription) {
         this.jobDescription = jobDescription;
     }
