@@ -69,12 +69,6 @@ public class User {
 
     /**
      * Creates a new user with all required fields.
-     * isActive is set to false and createdAt is set automatically.
-     *
-     * @param fullName  full name of the user
-     * @param email     unique email used for login
-     * @param password  encrypted password
-     * @param role      role of the user — HR, PANEL or CANDIDATE
      */
     public User(String fullName, String email, String password, UserRole role) {
         this.fullName = fullName;
@@ -85,92 +79,74 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    /** @return the user id. */
     public Long getId() {
         return id;
     }
 
-    /** @param id the id to set. */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** @return the full name of the user. */
     public String getFullName() {
         return fullName;
     }
 
-    /** @param fullName the full name to set. */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
 
-    /** @return the email address of the user. */
     public String getEmail() {
         return email;
     }
 
-    /** @param email the email to set. */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /** @return the encrypted password. */
     public String getPassword() {
         return password;
     }
 
-    /** @param password the password to set. */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /** @return the role of this user. */
     public UserRole getRole() {
         return role;
     }
 
-    /** @param role the role to set. */
     public void setRole(UserRole role) {
         this.role = role;
     }
 
-    /** @return true if this user account is active. */
     public boolean isActive() {
         return isActive;
     }
 
-    /** @param active true to activate the account, false otherwise. */
     public void setActive(boolean active) {
         isActive = active;
     }
 
-    /** @return the activation token for password setup. */
     public String getActivationToken() {
         return activationToken;
     }
 
-    /** @param activationToken the activation token to set. */
     public void setActivationToken(String activationToken) {
         this.activationToken = activationToken;
     }
 
-    /** @return the expiry time of the activation token. */
     public LocalDateTime getTokenExpiry() {
         return tokenExpiry;
     }
 
-    /** @param tokenExpiry the token expiry time to set. */
     public void setTokenExpiry(LocalDateTime tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
     }
 
-    /** @return the timestamp when this account was created. */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    /** @param createdAt the creation timestamp to set. */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }

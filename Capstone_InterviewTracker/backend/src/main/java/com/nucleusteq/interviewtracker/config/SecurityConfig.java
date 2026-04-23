@@ -20,16 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * Central security configuration for the application.
- *
- * This class wires everything together — it tells Spring Security:
- * - Which endpoints are public and which require authentication
- * - Which roles can access which endpoints
- * - To use JWT instead of sessions (stateless)
- * - To run our JwtFilter before the default login filter
- * - How to encode and verify passwords
- *
- * @EnableMethodSecurity allows us to use @PreAuthorize on individual
- *                       controller methods later for fine-grained role checks.
  */
 @Configuration
 @EnableWebSecurity
@@ -54,12 +44,6 @@ public class SecurityConfig {
 
     /**
      * Defines the password encoder used throughout the application.
-     * BCrypt is the industry standard — it automatically handles salting
-     * and is intentionally slow to make brute force attacks harder.
-     *
-     * We declare this as a @Bean so it can be injected anywhere
-     * (like AuthService) without creating a new instance each time.
-     *
      * @return BCryptPasswordEncoder instance
      */
     @Bean
@@ -70,11 +54,6 @@ public class SecurityConfig {
     /**
      * Sets up the authentication provider that Spring Security uses
      * to verify login credentials.
-     *
-     * DaoAuthenticationProvider is the standard provider for
-     * database-backed authentication. It uses our UserDetailsService
-     * to load the user and our PasswordEncoder to verify the password.
-     *
      * @return configured DaoAuthenticationProvider
      */
     @Bean
@@ -87,12 +66,6 @@ public class SecurityConfig {
 
     /**
      * Exposes the AuthenticationManager as a bean.
-     * AuthService needs this to actually trigger the authentication
-     * process (verify email + password) during login.
-     *
-     * @param config Spring's authentication configuration
-     * @return the AuthenticationManager
-     * @throws Exception if the manager cannot be built
      */
     @Bean
     public AuthenticationManager authenticationManager(
@@ -103,15 +76,6 @@ public class SecurityConfig {
     /**
      * The main security filter chain — this is where we define
      * all the HTTP security rules for the application.
-     *
-     * Key decisions made here:
-     * - CSRF disabled because we're a stateless REST API using JWT,
-     * not a browser-based app with sessions and cookies
-     * - Sessions set to STATELESS — we never create or use HTTP sessions,
-     * every request must carry its own JWT token
-     * - Public routes: login and panel activation link
-     * - Everything else requires authentication
-     *
      * @param http the HttpSecurity builder provided by Spring
      * @return the built SecurityFilterChain
      * @throws Exception if configuration fails
@@ -123,7 +87,6 @@ public class SecurityConfig {
         http
                 /*
                  * Disable CSRF — not needed for stateless REST APIs.
-                 * CSRF attacks target browser session cookies, which we don't use.
                  */
                 .csrf(csrf -> csrf.disable())
 
@@ -155,8 +118,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 /*
                  * Set session management to STATELESS.
-                 * This means Spring Security will never create an HttpSession.
-                 * Every request is independent and must carry a valid JWT.
                  */
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
