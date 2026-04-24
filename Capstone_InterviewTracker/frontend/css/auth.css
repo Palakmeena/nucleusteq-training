@@ -1,3 +1,6 @@
+/* Styles specific to authentication pages */
+/* Handles login and signup UI layout */
+
 .container {
     display: flex;
     height: 100vh;
