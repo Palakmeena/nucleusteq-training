@@ -1,3 +1,6 @@
+// Generic function to handle all API calls
+// Centralizes fetch logic and error handling
+
 const BASE_URL = "http://localhost:8080/api";
 
 export async function request(endpoint, method = "GET", body = null) {
