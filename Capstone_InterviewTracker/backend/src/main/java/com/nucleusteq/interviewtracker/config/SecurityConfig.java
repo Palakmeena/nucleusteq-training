@@ -36,14 +36,15 @@ public class SecurityConfig {
      * @param userDetailsService loads users from database for authentication
      */
     @Autowired
-    public SecurityConfig(JwtFilter jwtFilter,
-            UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(final JwtFilter jwtFilter,
+            final UserDetailsServiceImpl userDetailsService) {
         this.jwtFilter = jwtFilter;
         this.userDetailsService = userDetailsService;
     }
 
     /**
      * Defines the password encoder used throughout the application.
+     *
      * @return BCryptPasswordEncoder instance
      */
     @Bean
@@ -54,6 +55,7 @@ public class SecurityConfig {
     /**
      * Sets up the authentication provider that Spring Security uses
      * to verify login credentials.
+     *
      * @return configured DaoAuthenticationProvider
      */
     @Bean
@@ -66,71 +68,73 @@ public class SecurityConfig {
 
     /**
      * Exposes the AuthenticationManager as a bean.
+     *
+     * @param config Spring's authentication configuration
+     * @return the AuthenticationManager
+     * @throws Exception if the manager cannot be built
      */
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+            final AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     /**
-     * The main security filter chain — this is where we define
-     * all the HTTP security rules for the application.
+     * The main security filter chain — defines all HTTP security rules.
+     *
      * @param http the HttpSecurity builder provided by Spring
      * @return the built SecurityFilterChain
      * @throws Exception if configuration fails
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http)
             throws Exception {
 
         http
-                /*
-                 * Disable CSRF — not needed for stateless REST APIs.
-                 */
                 .csrf(csrf -> csrf.disable())
 
-                /*
-                 * Define which endpoints are open and which require a valid JWT.
-                 * Order matters — more specific rules should come before general ones.
-                 */
                 .authorizeHttpRequests(auth -> auth
 
-                        // login is public — obviously no token needed to log in
+                        // login is public — no token needed to log in
                         .requestMatchers("/auth/login").permitAll()
 
-                        // panel activation link is sent via email — must be public
+                        // panel activation link sent via email — must be public
                         .requestMatchers("/auth/activate").permitAll()
 
-                        // public JD listing — candidates browse jobs before logging in
+                        // public JD listing — candidates browse before logging in
                         .requestMatchers("/jd/**").permitAll()
 
-                        // HR-only endpoints — only users with ROLE_HR can access
+                        /*
+                         * Candidate self-registration is public —
+                         * they don't have an account yet when filling this form.
+                         */
+                        .requestMatchers("/candidate/register").permitAll()
+
+                        /*
+                         * Resume upload is public so candidate can upload
+                         * right after registering without needing to log in first.
+                         */
+                        .requestMatchers("/candidate/resume/**").permitAll()
+
+                        // HR-only endpoints
                         .requestMatchers("/hr/**").hasRole("HR")
 
-                        // panel endpoints — only users with ROLE_PANEL can access
+                        // panel endpoints
                         .requestMatchers("/panel/**").hasRole("PANEL")
 
-                        // candidate endpoints — only users with ROLE_CANDIDATE can access
+                        // candidate endpoints — requires CANDIDATE role
                         .requestMatchers("/candidate/**").hasRole("CANDIDATE")
 
-                        // everything else requires the user to be authenticated
-                        .anyRequest().authenticated())
-                /*
-                 * Set session management to STATELESS.
-                 */
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        // everything else requires authentication
+                        .anyRequest().authenticated()
+                )
 
-                // plug in our custom authentication provider
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .authenticationProvider(authenticationProvider())
 
-                /*
-                 * Add our JWT filter before Spring's default
-                 * UsernamePasswordAuthenticationFilter.
-                 * This ensures every request is checked for a valid token
-                 * before Spring tries to do its own authentication.
-                 */
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
