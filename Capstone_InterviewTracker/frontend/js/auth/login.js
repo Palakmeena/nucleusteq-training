@@ -1,3 +1,6 @@
+//  Handle login form submission
+//  Validates user input before sending API request
+
 import { loginUser } from "../services/authService.js";
 
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
