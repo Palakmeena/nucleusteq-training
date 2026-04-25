@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Available Positions</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+        HireTrack
+    </div>
+    
+    <div class="profile-section" id="sidebarProfile">
+        <div class="profile-title">Guest User</div>
+        <div class="profile-role">Please sign in</div>
+    </div>
+
+    <nav class="nav-menu">
+        <a href="#" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Dashboard
+        </a>
+        <a href="index.html" class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Job Descriptions
+        </a>
+        <a href="#" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Candidates
+        </a>
+        <a href="#" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Interviews
+        </a>
+    </nav>
+
+    <div class="post-job-btn-container" id="hrPostJobBtn" style="display: none;">
+        <button class="primary-btn" onclick="window.location.href='pages/hr/create-jd.html'">+ New Job Post</button>
+    </div>
+
+    <div class="sidebar-bottom">
+        <a href="#" class="bottom-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            Support
+        </a>
+        <a href="#" class="bottom-item logout" id="authBtn" onclick="handleAuth()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span id="authBtnText">Sign In</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN AREA -->
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">
+            <a href="#">Dashboard</a>
+            <span style="color:#cbd5e1">/</span>
+            <a href="index.html" class="active">Job Descriptions</a>
+        </div>
+        <div class="topbar-actions">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <div style="width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #475569;">U</div>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Active Listings</h1>
+                <p class="page-subtitle">View and apply to available positions.</p>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" placeholder="Search by job title or location...">
+        </div>
+
+        <div id="jdList" class="jd-grid">
+            <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px;">Loading positions...</div>
+        </div>
+    </div>
+</main>
+
+<!-- APPLY MODAL -->
+<div class="modal-overlay" id="applyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
+            <button class="close-btn" onclick="closeApplyModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="applyErrorMsg" style="color: #dc2626; font-size: 14px; margin-bottom: 16px; display: none;"></div>
+            <div id="applySuccessMsg" style="color: #16a34a; font-size: 14px; margin-bottom: 16px; display: none; background: #dcfce7; padding: 12px; border-radius: 6px;">Application submitted successfully!</div>
+
+            <form id="applyForm">
+                <input type="hidden" id="applyJdId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="applyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" id="applyEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="text" id="applyMobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth (Optional)</label>
+                        <input type="date" id="applyDob" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Organization</label>
+                        <input type="text" id="applyOrg" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="applyLocation" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Total Experience (Yrs)</label>
+                        <input type="number" id="applyTotalExp" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Relevant Experience (Yrs)</label>
+                        <input type="number" id="applyRelExp" min="0" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current CTC (LPA)</label>
+                        <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected CTC (LPA)</label>
+                        <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Notice Period (Days)</label>
+                        <input type="number" id="applyNotice" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Source</label>
+                        <select id="applySource" required>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Indeed">Indeed</option>
+                            <option value="Company Website">Company Website</option>
+                            <option value="Referral">Referral</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Resume (PDF only)</label>
+                    <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
+            <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit Application</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const userEmail = localStorage.getItem('userEmail');
+        
+        const authBtnText = document.getElementById('authBtnText');
+        const sidebarProfile = document.getElementById('sidebarProfile');
+
+        if (token) {
+            authBtnText.textContent = 'Sign Out';
+            sidebarProfile.innerHTML = `
+                <div class="profile-title">${userEmail || 'User'}</div>
+                <div class="profile-role">${role === 'HR' ? 'Hiring Manager' : 'Candidate'}</div>
+            `;
+            if (role === 'HR') {
+                document.getElementById('hrPostJobBtn').style.display = 'block';
+            }
+        }
+
+        const jdListEl = document.getElementById('jdList');
+        const searchInput = document.getElementById('searchInput');
+        let allJds = [];
+
+        fetch('http://localhost:8080/api/jd/all')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    allJds = data.data;
+                    renderJds(allJds);
+                } else {
+                    jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Failed to load jobs</div>`;
+                }
+            })
+            .catch(err => {
+                jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Error connecting to backend API.</div>`;
+            });
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allJds.filter(jd => 
+                jd.jobTitle.toLowerCase().includes(term) || 
+                jd.location.toLowerCase().includes(term)
+            );
+            renderJds(filtered);
+        });
+
+        function renderJds(jds) {
+            if (jds.length === 0) {
+                jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b;">No available positions found.</div>`;
+                return;
+            }
+
+            jdListEl.innerHTML = jds.map(jd => `
+                <div class="jd-card">
+                    <div class="jd-card-header">
+                        <div class="jd-card-title">${jd.jobTitle}</div>
+                        <div class="jd-badge">${jd.jobType.replace('_', ' ')}</div>
+                    </div>
+                    <div class="jd-card-location">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        ${jd.location}
+                    </div>
+                    <div class="jd-card-skills">
+                        ${jd.skills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        ${jd.skills.length > 3 ? `<span class="skill-tag">+${jd.skills.length - 3} more</span>` : ''}
+                    </div>
+                    <div class="jd-card-footer">
+                        <div class="jd-salary">${jd.minSalary}L - ${jd.maxSalary}L</div>
+                        <button class="primary-btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="openApplyModal(${jd.id}, '${jd.jobTitle.replace(/'/g, "\\'")}')">Apply Now</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    });
+
+    const modal = document.getElementById('applyModal');
+    
+    function openApplyModal(jdId, jobTitle) {
+        document.getElementById('modalJobTitle').innerText = jobTitle;
+        document.getElementById('applyJdId').value = jdId;
+        
+        // Clear form
+        document.getElementById('applyForm').reset();
+        document.getElementById('applyErrorMsg').style.display = 'none';
+        document.getElementById('applySuccessMsg').style.display = 'none';
+        
+        modal.classList.add('active');
+    }
+
+    function closeApplyModal() {
+        modal.classList.remove('active');
+    }
+
+    function submitApplication() {
+        const jdId = document.getElementById('applyJdId').value;
+        const errorMsg = document.getElementById('applyErrorMsg');
+        const successMsg = document.getElementById('applySuccessMsg');
+        
+        // Very basic validation check
+        const form = document.getElementById('applyForm');
+        if (!form.checkValidity()) {
+            errorMsg.innerText = "Please fill out all required fields.";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        // Simulating API call since candidate endpoint is not fully implemented yet
+        // In real scenario we will use FormData to upload the resume
+        errorMsg.style.display = 'none';
+        
+        // Mock successful submission
+        setTimeout(() => {
+            successMsg.style.display = 'block';
+            setTimeout(() => closeApplyModal(), 2000);
+        }, 800);
+    }
+
+    function handleAuth() {
+        if (localStorage.getItem('token')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userEmail');
+            window.location.reload();
+        } else {
+            window.location.href = 'pages/auth/login.html';
+        }
+    }
+</script>
+</body>
+</html>
