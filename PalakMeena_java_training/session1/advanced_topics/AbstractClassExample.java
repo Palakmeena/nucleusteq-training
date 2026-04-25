@@ -81,7 +81,7 @@ class Square extends Rectangle {
 }
 
 // Main Class
-public class ShapeHierarchy {
+public class AbstractClassExample {
     public static void main(String[] args) {
         // Demonstrate Polymorphism with an array
         Shape[] myShapes = {
