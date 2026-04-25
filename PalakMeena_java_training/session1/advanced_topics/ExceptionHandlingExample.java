@@ -2,7 +2,7 @@ package PalakMeena_java_training.session1.advanced_topics;
 
 //Example of Exception Handling in Java
 
-public class ExceptionHandler {
+public class ExceptionHandlingExample {
 
     public static void main(String[] args) {
         int[] numbers = { 10, 20, 30 };
