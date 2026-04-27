@@ -22,4 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Used during registration to prevent duplicate accounts.
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Finds a user by their secure activation token.
+     * Used during the panel member onboarding flow.
+     */
+    Optional<User> findByActivationToken(String activationToken);
 }
