@@ -1,5 +1,7 @@
 package com.nucleusteq.interviewtracker.service;
 
+import com.nucleusteq.interviewtracker.entity.CandidateProfile;
+import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
 import com.nucleusteq.interviewtracker.entity.Candidate;
@@ -30,6 +32,7 @@ public class CandidateService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CandidateMapper candidateMapper;
+    private final CandidateProfileRepository candidateProfileRepository;
 
     /**
      * Constructor injection for all required dependencies.
@@ -45,12 +48,14 @@ public class CandidateService {
                             final JobDescriptionRepository jobDescriptionRepository,
                             final UserRepository userRepository,
                             final PasswordEncoder passwordEncoder,
-                            final CandidateMapper candidateMapper) {
+                            final CandidateMapper candidateMapper,
+                            final CandidateProfileRepository candidateProfileRepository) {
         this.candidateRepository = candidateRepository;
         this.jobDescriptionRepository = jobDescriptionRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.candidateMapper = candidateMapper;
+        this.candidateProfileRepository = candidateProfileRepository;
     }
 
     /**
@@ -97,7 +102,31 @@ public class CandidateService {
 
         Candidate candidate = candidateMapper.mapToEntity(request, jd, user);
         Candidate saved = candidateRepository.save(candidate);
+
+        // SYNC TO LIVE PROFILE: So the candidate sees their updated info in dashboard
+        syncToLiveProfile(saved, user);
+
         return candidateMapper.mapToResponseDto(saved);
+    }
+
+    private void syncToLiveProfile(Candidate snapshot, User user) {
+        CandidateProfile profile = candidateProfileRepository.findByUser(user)
+                .orElse(new CandidateProfile(user));
+        
+        profile.setFullName(snapshot.getFullName());
+        profile.setMobileCode(snapshot.getMobileCode());
+        profile.setMobileNumber(snapshot.getMobileNumber());
+        profile.setDateOfBirth(snapshot.getDateOfBirth());
+        profile.setResumePath(snapshot.getResumePath());
+        profile.setCurrentOrganization(snapshot.getCurrentOrganization());
+        profile.setTotalExperience(snapshot.getTotalExperience());
+        profile.setRelevantExperience(snapshot.getRelevantExperience());
+        profile.setCurrentCtc(snapshot.getCurrentCtc());
+        profile.setExpectedCtc(snapshot.getExpectedCtc());
+        profile.setNoticePeriod(snapshot.getNoticePeriod());
+        profile.setPreferredLocation(snapshot.getPreferredLocation());
+        
+        candidateProfileRepository.save(profile);
     }
 
     /**
