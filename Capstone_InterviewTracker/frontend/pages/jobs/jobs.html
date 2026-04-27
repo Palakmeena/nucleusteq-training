@@ -372,19 +372,14 @@
             const searchInput = document.getElementById('searchInput');
             let allJds = [];
 
-            fetch('http://localhost:8080/api/jd/all')
-                .then(res => res.json())
+            api.getAllPublicJds()
                 .then(result => {
-                    if (result.success) {
-                        allJds = result.data;
-                        renderJds(allJds);
-                        checkAutoApply(allJds);
-                    } else {
-                        jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">Failed to load jobs</div>`;
-                    }
+                    allJds = result.data || [];
+                    renderJds(allJds);
+                    checkAutoApply(allJds);
                 })
-                .catch(() => {
-                    jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">Error loading job descriptions</div>`;
+                .catch(err => {
+                    jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">${err.message || 'Error loading job descriptions'}</div>`;
                 });
 
             searchInput.addEventListener('input', (e) => {
@@ -518,30 +513,13 @@
                 source: document.getElementById('applySource').value
             };
 
-            fetch('http://localhost:8080/api/candidate/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
+            api.registerCandidate(payload)
             .then(data => {
-                if (!data.success) throw new Error(data.message);
                 const candidateId = data.data.id;
                 const resumeFile = document.getElementById('applyResume').files[0];
-                const formData = new FormData();
-                formData.append('file', resumeFile);
-                return fetch(`http://localhost:8080/api/candidate/resume/${candidateId}`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                    body: formData
-                });
+                return api.uploadResume(candidateId, resumeFile);
             })
-            .then(res => res.json())
             .then(data => {
-                if (!data.success) throw new Error("Profile created, but resume upload failed: " + data.message);
                 successMsg.innerHTML = "<strong>Application successful!</strong><br>You will be redirected to your dashboard.";
                 successMsg.style.display = 'block';
                 setTimeout(() => {
