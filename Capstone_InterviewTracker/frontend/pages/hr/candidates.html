@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Candidates</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .panel-option { display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:8px; }
+        .panel-option:hover { border-color:#4f46e5;background:#f8faff; }
+        .panel-option.selected { border-color:#4f46e5;background:#eef2ff; }
+        .panel-option input[type="checkbox"] { accent-color:#4f46e5; width:16px;height:16px; }
+        .modal-view.active { display: flex !important; }
+    </style>
 </head>
 <body>
 
@@ -117,7 +124,7 @@
                 </td>
                 <td style="font-size:13px;color:#64748b;">${formatDate(c.createdAt)}</td>
                 <td>
-                    <a href="schedule-interview.html?candidateId=${c.id}" style="font-size:13px;color:#4f46e5;text-decoration:none;padding:4px 10px;border:1px solid #4f46e5;border-radius:6px;margin-right:6px;">Schedule</a>
+                    <button onclick="openScheduleModal(${c.id}, '${c.fullName.replace(/'/g, "\\'")}')" style="font-size:13px;color:#4f46e5;background:none;border:1px solid #4f46e5;border-radius:6px;padding:4px 10px;cursor:pointer;margin-right:6px;">Schedule</button>
                     <span style="font-size:13px;color:#64748b;cursor:pointer;" onclick="viewCandidate(${c.id})">View</span>
                 </td>
             </tr>
@@ -251,7 +258,117 @@
         });
     }
 
+
+    // ==========================================
+    // INTERVIEW SCHEDULING LOGIC (from Calendar)
+    // ==========================================
+    let allPanels = [];
+    let selectedPanels = [];
+    let currentSchedulingCandidateId = null;
+
+    async function loadPanels() {
+        try {
+            const pRes = await api.getAllPanelMembers();
+            allPanels = (pRes.data || []);
+        } catch(e) { console.error('Failed to load panels', e); }
+    }
+
+    function openScheduleModal(id, name) {
+        currentSchedulingCandidateId = id;
+        document.getElementById('schedCandidateName').textContent = name;
+        document.getElementById('scheduleModal').classList.add('active');
+        selectedPanels = [];
+        updateSelectedPanelsDisplay();
+        document.getElementById('panelSearchInput').value = '';
+        document.getElementById('panelOptions').innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+    }
+
+    function closeScheduleModal() {
+        document.getElementById('scheduleModal').classList.remove('active');
+        document.getElementById('scheduleForm').reset();
+        document.getElementById('schedError').style.display = 'none';
+    }
+
+    function filterPanels() {
+        const searchTerm = document.getElementById('panelSearchInput').value.toLowerCase().trim();
+        const container = document.getElementById('panelOptions');
+        if (!searchTerm) {
+            container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+            return;
+        }
+        const filtered = allPanels.filter(p => p.fullName.toLowerCase().startsWith(searchTerm));
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">No panel members found</div>';
+            return;
+        }
+        container.innerHTML = filtered.slice(0, 3).map(p => `
+            <div class="panel-option" onclick="togglePanel(${p.id})" ${selectedPanels.includes(p.id) ? 'style="border-color:#4f46e5;background:#eef2ff;"' : ''}>
+                <input type="checkbox" ${selectedPanels.includes(p.id) ? 'checked' : ''}>
+                <div>
+                    <div style="font-size:14px;font-weight:500;">${p.fullName}</div>
+                    <div style="font-size:12px;color:#64748b;">${p.designation} — ${p.organization}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function togglePanel(id) {
+        const idx = selectedPanels.indexOf(id);
+        if (idx > -1) selectedPanels.splice(idx, 1);
+        else {
+            if (selectedPanels.length >= 2) { showToast('Max 2 panels allowed', 'error'); return; }
+            selectedPanels.push(id);
+        }
+        updateSelectedPanelsDisplay();
+        filterPanels();
+    }
+
+    function updateSelectedPanelsDisplay() {
+        const display = document.getElementById('selectedPanelsDisplay');
+        const list = document.getElementById('selectedList');
+        if (selectedPanels.length === 0) { display.style.display = 'none'; return; }
+        display.style.display = 'block';
+        list.innerHTML = selectedPanels.map(pid => {
+            const p = allPanels.find(x => x.id === pid);
+            return `<div style="background:#fff;padding:6px 10px;border-radius:6px;display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;border:1px solid #e2e8f0;">
+                <span>${p.fullName}</span>
+                <button onclick="togglePanel(${pid})" style="background:none;border:none;color:#ef4444;cursor:pointer;">×</button>
+            </div>`;
+        }).join('');
+    }
+
+    async function scheduleInterview() {
+        const errDiv = document.getElementById('schedError');
+        errDiv.style.display = 'none';
+        const body = {
+            candidateId: currentSchedulingCandidateId,
+            interviewStage: document.getElementById('schedStage').value,
+            interviewDate: document.getElementById('schedDate').value,
+            interviewTime: document.getElementById('schedTime').value,
+            meetingLink: document.getElementById('schedLink').value,
+            focusAreas: document.getElementById('schedFocus').value,
+            panelMemberIds: selectedPanels
+        };
+
+        if (!body.interviewStage || !body.interviewDate || !body.interviewTime || !selectedPanels.length) {
+            errDiv.textContent = 'Please fill all required fields and select at least one panel member';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        try {
+            await api.scheduleInterview(body);
+            showToast('Interview scheduled successfully!', 'success');
+            closeScheduleModal();
+            loadCandidates();
+        } catch(e) {
+            errDiv.textContent = e.message;
+            errDiv.style.display = 'block';
+        }
+    }
+
     loadCandidates();
+    loadPanels();
 </script>
 
 <!-- ADD CANDIDATE MODAL -->
@@ -407,10 +524,50 @@
     </div>
 </div>
 
-<style>
-    .modal-view.active {
-        display: flex !important;
-    }
-</style>
+<!-- SCHEDULE INTERVIEW MODAL -->
+<div id="scheduleModal" class="modal-view" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:16px;width:95%;max-width:550px;max-height:90vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <h2 style="margin:0;font-size:18px;font-weight:700;">Schedule Interview</h2>
+            <button onclick="closeScheduleModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;">×</button>
+        </div>
+        <div style="background:#eef2ff;padding:12px 16px;border-radius:10px;margin-bottom:24px;border:1px solid #c7d2fe;">
+            <div style="font-size:11px;font-weight:700;color:#4f46e5;text-transform:uppercase;">Candidate</div>
+            <div id="schedCandidateName" style="font-size:16px;font-weight:700;color:#1e293b;"></div>
+        </div>
+        <div id="schedError" style="display:none;background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+        <form id="scheduleForm">
+            <div class="form-group">
+                <label>Interview Stage *</label>
+                <select id="schedStage" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                    <option value="">Select stage</option>
+                    <option value="L1_TECHNICAL">L1 Technical</option>
+                    <option value="L2_TECHNICAL">L2 Technical</option>
+                    <option value="HR_ROUND">HR Round</option>
+                </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+                <div class="form-group"><label>Date *</label><input type="date" id="schedDate" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
+                <div class="form-group"><label>Time *</label><input type="time" id="schedTime" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
+            </div>
+            <div class="form-group" style="margin-top:16px;"><label>Meeting Link</label><input type="url" id="schedLink" placeholder="https://meet.google.com/..." style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
+            <div class="form-group" style="margin-top:16px;"><label>Focus Areas</label><textarea id="schedFocus" rows="2" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;" placeholder="Specific topics for the panel..."></textarea></div>
+            
+            <div class="form-group" style="margin-top:16px;">
+                <label>Assign Panel Members * (Max 2)</label>
+                <div id="selectedPanelsDisplay" style="display:none;background:#f8faff;padding:10px;border-radius:8px;margin-bottom:12px;border:1px solid #e2e8f0;">
+                    <div id="selectedList"></div>
+                </div>
+                <input type="text" id="panelSearchInput" placeholder="Search panel by name..." style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;" oninput="filterPanels()">
+                <div id="panelOptions" style="margin-top:8px;max-height:150px;overflow-y:auto;"></div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px;">
+                <button type="button" class="secondary-btn" onclick="closeScheduleModal()">Cancel</button>
+                <button type="button" class="primary-btn" onclick="scheduleInterview()" id="saveBtn">Schedule Now</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
