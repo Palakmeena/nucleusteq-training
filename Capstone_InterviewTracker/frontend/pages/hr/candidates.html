@@ -93,7 +93,7 @@
                 <td>
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
-                            ${c.fullName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                            ${(c.fullName || 'CN').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}
                         </div>
                         <div>
                             <div style="font-weight:500;">${c.fullName}</div>
@@ -118,7 +118,7 @@
                 <td style="font-size:13px;color:#64748b;">${formatDate(c.createdAt)}</td>
                 <td>
                     <a href="schedule-interview.html?candidateId=${c.id}" style="font-size:13px;color:#4f46e5;text-decoration:none;padding:4px 10px;border:1px solid #4f46e5;border-radius:6px;margin-right:6px;">Schedule</a>
-                    <span style="font-size:13px;color:#64748b;cursor:pointer;" onclick="viewCandidate(${JSON.stringify(c).replace(/"/g,'&quot;')})">View</span>
+                    <span style="font-size:13px;color:#64748b;cursor:pointer;" onclick="viewCandidate(${c.id})">View</span>
                 </td>
             </tr>
         `).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No candidates found</td></tr>';
@@ -149,7 +149,10 @@
         renderCandidates(filtered);
     }
 
-    function viewCandidate(c) {
+    function viewCandidate(id) {
+        const c = allCandidates.find(item => item.id === id);
+        if (!c) return;
+
         document.getElementById('viewCandidateModal').classList.add('active');
         document.getElementById('candidateName').textContent = c.fullName;
         document.getElementById('candidateEmail').textContent = c.email;
@@ -166,6 +169,17 @@
         document.getElementById('candidateStage').innerHTML = stageBadge(c.currentStage);
         document.getElementById('candidateJobTitle').textContent = c.jobTitle || '—';
         document.getElementById('candidateAppliedOn').textContent = formatDate(c.createdAt) || '—';
+
+        const resumeLink = document.getElementById('candidateResumeLink');
+        const noResumeMsg = document.getElementById('noResumeMsg');
+        if (c.resumePath) {
+            resumeLink.href = c.resumePath;
+            resumeLink.style.display = 'inline-flex';
+            noResumeMsg.style.display = 'none';
+        } else {
+            resumeLink.style.display = 'none';
+            noResumeMsg.style.display = 'block';
+        }
     }
 
     function closeViewModal() {
@@ -173,11 +187,103 @@
     }
 
     function openAddModal() {
-        showToast('HR can also create candidate profiles from the backend API', 'default');
+        loadActiveJds();
+        document.getElementById('addCandidateModal').classList.add('active');
+    }
+
+    function closeAddModal() {
+        document.getElementById('addCandidateModal').classList.remove('active');
+        document.getElementById('addCandidateForm').reset();
+    }
+
+    async function loadActiveJds() {
+        try {
+            const res = await api.getAllJdsForHr();
+            const jds = (res.data || []).filter(j => j.active);
+            const select = document.getElementById('jdSelect');
+            select.innerHTML = '<option value="">Select Job Role</option>' + 
+                jds.map(j => `<option value="${j.id}">${j.jobTitle}</option>`).join('');
+        } catch (e) {
+            showToast('Failed to load jobs', 'error');
+        }
+    }
+
+    const addCandidateForm = document.getElementById('addCandidateForm');
+    if (addCandidateForm) {
+        addCandidateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+
+            const body = {
+                fullName: document.getElementById('addFullName').value,
+                email: document.getElementById('addEmail').value,
+                mobileCode: document.getElementById('addMobileCode').value,
+                mobileNumber: document.getElementById('addMobile').value,
+                jobDescriptionId: document.getElementById('jdSelect').value,
+                totalExperience: document.getElementById('addTotalExp').value,
+                relevantExperience: document.getElementById('addRelExp').value,
+                currentCtc: document.getElementById('addCurrentCtc').value,
+                expectedCtc: document.getElementById('addExpectedCtc').value,
+                noticePeriod: document.getElementById('addNotice').value,
+                currentOrganization: document.getElementById('addOrg').value,
+                preferredLocation: document.getElementById('addLocation').value,
+                source: 'Manual'
+            };
+
+            try {
+                const created = await api.createCandidateByHr(body);
+                const resumeFile = document.getElementById('addResume').files[0];
+                const candidateId = created?.data?.id;
+                if (resumeFile && candidateId) {
+                    await api.uploadResume(candidateId, resumeFile);
+                }
+                showToast('Candidate created successfully', 'success');
+                closeAddModal();
+                loadCandidates();
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create Candidate';
+            }
+        });
     }
 
     loadCandidates();
 </script>
+
+<!-- ADD CANDIDATE MODAL -->
+<div id="addCandidateModal" class="modal-view" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:16px;width:95%;max-width:800px;max-height:90vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <h2 style="margin:0;font-size:20px;font-weight:700;">Add New Candidate</h2>
+            <button onclick="closeAddModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;">×</button>
+        </div>
+        <form id="addCandidateForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-group"><label>Full Name</label><input type="text" id="addFullName" required></div>
+                <div class="form-group"><label>Email Address</label><input type="email" id="addEmail" required></div>
+                <div class="form-group"><label>Mobile Code</label><input type="text" id="addMobileCode" value="+91" required></div>
+                <div class="form-group"><label>Mobile Number</label><input type="text" id="addMobile" required></div>
+                <div class="form-group"><label>Job Role</label><select id="jdSelect" required></select></div>
+                <div class="form-group"><label>Total Experience (Yrs)</label><input type="number" step="0.1" id="addTotalExp" required></div>
+                <div class="form-group"><label>Relevant Experience (Yrs)</label><input type="number" step="0.1" id="addRelExp" required></div>
+                <div class="form-group"><label>Current CTC (LPA)</label><input type="number" step="0.1" id="addCurrentCtc" required></div>
+                <div class="form-group"><label>Expected CTC (LPA)</label><input type="number" step="0.1" id="addExpectedCtc" required></div>
+                <div class="form-group"><label>Notice Period (Days)</label><input type="number" id="addNotice" required></div>
+                <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required></div>
+                <div class="form-group" style="grid-column: span 2;"><label>Resume (PDF)</label><input type="file" id="addResume" accept=".pdf,application/pdf"></div>
+                <div class="form-group" style="grid-column: span 2;"><label>Preferred Location</label><input type="text" id="addLocation" required></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px;">
+                <button type="button" class="secondary-btn" onclick="closeAddModal()">Cancel</button>
+                <button type="submit" class="primary-btn">Create Candidate</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- CANDIDATE VIEW MODAL -->
 <div id="viewCandidateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;" class="modal-view">
@@ -281,6 +387,15 @@
                 <div>
                     <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current Stage</label>
                     <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateStage">—</div>
+                </div>
+                <div style="margin-top:20px; padding:16px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+                    <label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Attachments</label>
+                    <div id="resumeSection">
+                        <a id="candidateResumeLink" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#4f46e5;color:white;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:all 0.2s;">
+                            <span style="font-size:18px;">📄</span> View Resume
+                        </a>
+                        <p id="noResumeMsg" style="margin:0;font-size:14px;color:#94a3b8;display:none;">No resume uploaded yet.</p>
+                    </div>
                 </div>
             </div>
         </div>
