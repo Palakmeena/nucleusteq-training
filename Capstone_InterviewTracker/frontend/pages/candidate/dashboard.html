@@ -128,8 +128,11 @@
 
             document.getElementById('jobTitle').textContent = profile.jobTitle || 'N/A';
             document.getElementById('appliedDate').textContent = 'Applied: ' + formatDate(profile.createdAt);
-            document.getElementById('currentStageBadge').innerHTML = stageBadge(profile.currentStage);
-            document.getElementById('stageNote').textContent = stageNotes[profile.currentStage] || '';
+            
+            if (profile.currentStage) {
+                document.getElementById('currentStageBadge').innerHTML = stageBadge(profile.currentStage);
+                document.getElementById('stageNote').textContent = stageNotes[profile.currentStage] || '';
+            }
 
             // Build stepper
             const stepper = document.getElementById('stageStepper');
