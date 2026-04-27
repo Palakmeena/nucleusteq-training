@@ -64,6 +64,31 @@ public class InterviewResponseDto {
     private LocalDateTime createdAt;
 
     /**
+     * Optional meeting link for online interviews.
+     */
+    private String meetingLink;
+
+    /**
+     * URL to view the candidate's resume (Google Drive Link).
+     */
+    private String resumeUrl;
+
+    /**
+     * ID of the job description for this interview.
+     */
+    private Long jdId;
+
+    /**
+     * Title of the job for display.
+     */
+    private String jdTitle;
+
+    /**
+     * Full job details (Description, Skills, etc).
+     */
+    private String jdDetails;
+
+    /**
      * List of panel member names assigned to this interview.
      * Candidates can see names but not feedback per SRS.
      */
@@ -158,6 +183,46 @@ public class InterviewResponseDto {
 
     public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getMeetingLink() {
+        return meetingLink;
+    }
+
+    public void setMeetingLink(final String meetingLink) {
+        this.meetingLink = meetingLink;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(final String resumeUrl) {
+        this.resumeUrl = resumeUrl;
+    }
+
+    public Long getJdId() {
+        return jdId;
+    }
+
+    public void setJdId(final Long jdId) {
+        this.jdId = jdId;
+    }
+
+    public String getJdTitle() {
+        return jdTitle;
+    }
+
+    public void setJdTitle(final String jdTitle) {
+        this.jdTitle = jdTitle;
+    }
+
+    public String getJdDetails() {
+        return jdDetails;
+    }
+
+    public void setJdDetails(final String jdDetails) {
+        this.jdDetails = jdDetails;
     }
 
     public List<String> getPanelMemberNames() {

@@ -51,6 +51,11 @@ public class InterviewRequestDto {
     private String focusAreas;
 
     /**
+     * Optional meeting link for online interviews (Meet, Zoom, etc).
+     */
+    private String meetingLink;
+
+    /**
      * List of panel member IDs to assign to this interview.
      * Minimum 1 and maximum 2 panel members allowed per SRS.
      */
@@ -102,6 +107,14 @@ public class InterviewRequestDto {
 
     public void setFocusAreas(final String focusAreas) {
         this.focusAreas = focusAreas;
+    }
+
+    public String getMeetingLink() {
+        return meetingLink;
+    }
+
+    public void setMeetingLink(final String meetingLink) {
+        this.meetingLink = meetingLink;
     }
 
     public List<Long> getPanelMemberIds() {

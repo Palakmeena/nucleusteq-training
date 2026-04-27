@@ -51,6 +51,17 @@ public class PanelMemberResponseDto {
     private LocalDateTime createdAt;
 
     /**
+     * One-time activation link generated for this panel account.
+     * Returned to HR as a fallback when email delivery fails.
+     */
+    private String activationLink;
+
+    /**
+     * True when activation email was successfully sent.
+     */
+    private boolean activationEmailSent;
+
+    /**
      * Default constructor needed for JSON serialization.
      */
     public PanelMemberResponseDto() {
@@ -118,5 +129,21 @@ public class PanelMemberResponseDto {
 
     public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getActivationLink() {
+        return activationLink;
+    }
+
+    public void setActivationLink(final String activationLink) {
+        this.activationLink = activationLink;
+    }
+
+    public boolean isActivationEmailSent() {
+        return activationEmailSent;
+    }
+
+    public void setActivationEmailSent(final boolean activationEmailSent) {
+        this.activationEmailSent = activationEmailSent;
     }
 }
