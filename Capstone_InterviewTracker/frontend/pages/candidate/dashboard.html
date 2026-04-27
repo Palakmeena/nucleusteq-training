@@ -161,11 +161,14 @@
                         }
                         
                         // Add Join Meeting button if link exists
+                        const existingBtn = document.getElementById('joinBtnContainer');
+                        if (existingBtn) existingBtn.remove();
+
                         if (next.meetingLink) {
                             const btnHtml = `
-                                <div style="margin-top:24px;">
-                                    <a href="${next.meetingLink}" target="_blank" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; text-decoration:none; background:white; color:#4f46e5; border:none; font-weight:600; width:100%; justify-content:center;">
-                                        ${svgExternal} Join Online Interview
+                                <div id="joinBtnContainer" style="margin-top:24px;">
+                                    <a href="${next.meetingLink}" target="_blank" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; text-decoration:none; background:white; color:#4f46e5; border-radius:8px; font-weight:700; width:100%; justify-content:center; transition:transform 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                                        Join Online Interview
                                     </a>
                                 </div>
                             `;
