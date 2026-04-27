@@ -14,10 +14,14 @@ import com.nucleusteq.interviewtracker.repository.InterviewPanelRepository;
 import com.nucleusteq.interviewtracker.repository.InterviewRepository;
 import com.nucleusteq.interviewtracker.repository.PanelMemberRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
+import com.nucleusteq.interviewtracker.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.nucleusteq.interviewtracker.dto.FeedbackRequestDto;
+import com.nucleusteq.interviewtracker.entity.Feedback;
+import com.nucleusteq.interviewtracker.enums.FeedbackStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,30 +38,23 @@ public class InterviewService {
     private final InterviewPanelRepository interviewPanelRepository;
     private final UserRepository userRepository;
     private final InterviewMapper interviewMapper;
+    private final FeedbackRepository feedbackRepository;
 
-    /**
-     * Constructor injection for all required dependencies.
-     *
-     * @param interviewRepository      for interview DB operations
-     * @param candidateRepository      for fetching candidate entity
-     * @param panelMemberRepository    for fetching panel member entities
-     * @param interviewPanelRepository for panel assignment operations
-     * @param userRepository           for loading panel member by email
-     * @param interviewMapper          for entity to DTO conversions
-     */
     @Autowired
     public InterviewService(final InterviewRepository interviewRepository,
             final CandidateRepository candidateRepository,
             final PanelMemberRepository panelMemberRepository,
             final InterviewPanelRepository interviewPanelRepository,
             final UserRepository userRepository,
-            final InterviewMapper interviewMapper) {
+            final InterviewMapper interviewMapper,
+            final FeedbackRepository feedbackRepository) {
         this.interviewRepository = interviewRepository;
         this.candidateRepository = candidateRepository;
         this.panelMemberRepository = panelMemberRepository;
         this.interviewPanelRepository = interviewPanelRepository;
         this.userRepository = userRepository;
         this.interviewMapper = interviewMapper;
+        this.feedbackRepository = feedbackRepository;
     }
 
     /**
@@ -135,6 +132,7 @@ public class InterviewService {
      * @return list of all interviews for this candidate
      * @throws jakarta.persistence.EntityNotFoundException if candidate not found
      */
+    @Transactional(readOnly = true)
     public List<InterviewResponseDto> getInterviewsByCandidate(
             final Long candidateId) {
 
@@ -156,6 +154,7 @@ public class InterviewService {
      * @return list of interviews assigned to this panel member
      * @throws jakarta.persistence.EntityNotFoundException if not found
      */
+    @Transactional(readOnly = true)
     public List<InterviewResponseDto> getInterviewsForPanel(final String email) {
 
         User user = userRepository.findByEmail(email)
@@ -185,6 +184,7 @@ public class InterviewService {
      * @return the interview as a response DTO
      * @throws jakarta.persistence.EntityNotFoundException if not found
      */
+    @Transactional(readOnly = true)
     public InterviewResponseDto getInterviewById(final Long id) {
         Interview interview = interviewRepository.findById(id)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
@@ -238,6 +238,7 @@ public class InterviewService {
      * @return list of interviews for this candidate
      * @throws jakarta.persistence.EntityNotFoundException if not found
      */
+    @Transactional(readOnly = true)
     public List<InterviewResponseDto> getInterviewsForCandidate(final String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
@@ -274,6 +275,43 @@ public class InterviewService {
             if (!l2Completed) {
                 throw new IllegalArgumentException("Cannot schedule HR Round. L2 Technical interview must be completed first.");
             }
+        }
+    }
+
+    @Transactional
+    public void submitFeedback(Long interviewId, FeedbackRequestDto request, String panelEmail) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Interview not found"));
+
+        User user = userRepository.findByEmail(panelEmail)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
+
+        PanelMember panelMember = panelMemberRepository.findByUser(user)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Panel member not found"));
+
+        FeedbackStatus status = (request.getDecision() != null && request.getDecision().toUpperCase().contains("REJECT")) 
+                                ? FeedbackStatus.REJECTED : FeedbackStatus.SELECTED;
+
+        Feedback feedback = new Feedback(
+                request.getComments(),
+                request.getStrengths(),
+                request.getWeaknesses(),
+                "Overall Assessment", // areasCovered
+                request.getRating(),
+                status,
+                interview,
+                panelMember
+        );
+
+        feedbackRepository.save(feedback);
+
+        // Check if all panels have submitted feedback
+        List<Feedback> allFeedbacks = feedbackRepository.findByInterview(interview);
+        long assignedCount = interview.getInterviewPanels().size();
+
+        if (allFeedbacks.size() >= assignedCount) {
+            interview.setCompleted(true);
+            interviewRepository.save(interview);
         }
     }
 }
