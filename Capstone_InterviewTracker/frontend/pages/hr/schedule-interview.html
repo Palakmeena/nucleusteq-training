@@ -381,8 +381,8 @@
         document.getElementById('infoStage').textContent = i.interviewStage;
         document.getElementById('infoDateTime').textContent = formatDate(i.interviewDate) + ' at ' + (i.interviewTime || '—');
         
-        // Map panel names
-        const panelNames = i.panelMembers ? i.panelMembers.map(p => p.fullName).join(', ') : 'No panels assigned';
+        // Map panel names - Corrected field name to panelMemberNames
+        const panelNames = i.panelMemberNames ? i.panelMemberNames.join(', ') : 'No panels assigned';
         document.getElementById('infoPanels').textContent = panelNames;
         document.getElementById('infoLink').innerHTML = i.meetingLink 
             ? `<a href="${i.meetingLink}" target="_blank" style="color:#4f46e5;">Join Meeting</a>` 
