@@ -78,4 +78,25 @@ public class AuthService {
 
         return authMapper.mapToLoginResponse(user, token);
     }
+
+    /**
+     * Handles candidate registration.
+     */
+    public LoginResponseDto signup(com.nucleusteq.interviewtracker.dto.SignupRequestDto request, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists.");
+        }
+
+        User user = new User(
+                request.getFullName(),
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                com.nucleusteq.interviewtracker.enums.UserRole.CANDIDATE
+        );
+        user.setActive(true);
+        userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        return authMapper.mapToLoginResponse(user, token);
+    }
 }

@@ -8,7 +8,12 @@ import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.mapper.PanelMemberMapper;
 import com.nucleusteq.interviewtracker.repository.PanelMemberRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +30,19 @@ import java.util.stream.Collectors;
 @Service
 public class PanelMemberService {
 
+        private static final Logger logger = LoggerFactory.getLogger(PanelMemberService.class);
+
     private final PanelMemberRepository panelMemberRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final PanelMemberMapper panelMemberMapper;
+        private final JavaMailSender mailSender;
+
+        @Value("${spring.mail.username:}")
+        private String fromEmail;
+
+        @Value("${app.frontend.base-url:http://localhost:5500}")
+        private String frontendBaseUrl;
 
     /**
      * Constructor injection for all required dependencies.
@@ -42,11 +56,13 @@ public class PanelMemberService {
     public PanelMemberService(final PanelMemberRepository panelMemberRepository,
                                final UserRepository userRepository,
                                final PasswordEncoder passwordEncoder,
-                               final PanelMemberMapper panelMemberMapper) {
+                                                           final PanelMemberMapper panelMemberMapper,
+                                                           final JavaMailSender mailSender) {
         this.panelMemberRepository = panelMemberRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.panelMemberMapper = panelMemberMapper;
+                this.mailSender = mailSender;
     }
 
     /**
@@ -89,13 +105,47 @@ public class PanelMemberService {
         panelMember.setUser(savedUser);
         PanelMember saved = panelMemberRepository.save(panelMember);
 
-        /*
-         * In a real setup we would email the activation link here.
-         * For now the token is logged so you can test via Postman.
-         * Link format: POST /auth/activate?token=<activationToken>
-         */
-        return panelMemberMapper.mapToResponseDto(saved);
+                String activationLink = buildActivationLink(activationToken);
+                boolean emailSent = sendActivationEmail(request.getEmail(), request.getFullName(), activationLink);
+
+                PanelMemberResponseDto responseDto = panelMemberMapper.mapToResponseDto(saved);
+                responseDto.setActivationLink(activationLink);
+                responseDto.setActivationEmailSent(emailSent);
+                return responseDto;
     }
+
+        private String buildActivationLink(final String activationToken) {
+                String base = frontendBaseUrl == null ? "http://localhost:5500" : frontendBaseUrl.trim();
+                if (base.endsWith("/")) {
+                        base = base.substring(0, base.length() - 1);
+                }
+                return base + "/pages/auth/activate.html?token=" + activationToken;
+        }
+
+        private boolean sendActivationEmail(final String toEmail, final String fullName, final String activationLink) {
+                try {
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        if (fromEmail != null && !fromEmail.isBlank()) {
+                                message.setFrom(fromEmail);
+                        }
+                        message.setTo(toEmail);
+                        message.setSubject("Activate your Interview Tracker panel account");
+                        message.setText(
+                                        "Hi " + fullName + ",\n\n"
+                                        + "Your panel account has been created by HR.\n"
+                                        + "Set your password using this activation link:\n"
+                                        + activationLink + "\n\n"
+                                        + "This link expires in 24 hours.\n\n"
+                                        + "Thanks,\nInterview Tracker Team"
+                        );
+
+                        mailSender.send(message);
+                        return true;
+                } catch (Exception ex) {
+                        logger.warn("Failed to send panel activation email to {}: {}", toEmail, ex.getMessage());
+                        return false;
+                }
+        }
 
     /**
      * Returns all panel members for HR dashboard.
@@ -139,19 +189,16 @@ public class PanelMemberService {
     public void activatePanelMember(final String token, final String password) {
 
         /*
-         * Find the user by activation token.
-         * We search in UserRepository since the token is stored on User.
+         * Find the user by activation token efficiently using the repository.
          */
-        User user = userRepository.findAll()
-                .stream()
-                .filter(u -> token.equals(u.getActivationToken()))
-                .findFirst()
+        User user = userRepository.findByActivationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Invalid activation token"
                 ));
 
         if (user.getTokenExpiry() == null
                 || LocalDateTime.now().isAfter(user.getTokenExpiry())) {
+            logger.warn("Activation attempt with expired token for email: {}", user.getEmail());
             throw new IllegalArgumentException(
                     "Activation token has expired. Please ask HR to resend the link."
             );
@@ -199,6 +246,54 @@ public class PanelMemberService {
                 ));
 
         return panelMemberMapper.mapToResponseDto(panelMember);
+    }
+
+    /**
+     * Updates an existing panel member's details.
+     *
+     * @param id      the panel member ID
+     * @param request the updated details
+     * @return the updated panel member as a response DTO
+     */
+    @Transactional
+    public PanelMemberResponseDto updatePanelMember(final Long id, final PanelMemberRequestDto request) {
+        PanelMember panelMember = panelMemberRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Panel member not found with id: " + id
+                ));
+
+        // Update fields
+        panelMember.setFullName(request.getFullName());
+        panelMember.setMobileNumber(request.getMobileNumber());
+        panelMember.setOrganization(request.getOrganization());
+        panelMember.setDesignation(request.getDesignation());
+
+        // Update linked user name
+        User user = panelMember.getUser();
+        user.setFullName(request.getFullName());
+        userRepository.save(user);
+
+        PanelMember saved = panelMemberRepository.save(panelMember);
+        return panelMemberMapper.mapToResponseDto(saved);
+    }
+
+    /**
+     * Deletes a panel member and their linked user account.
+     *
+     * @param id the panel member ID
+     */
+    @Transactional
+    public void deletePanelMember(final Long id) {
+        PanelMember panelMember = panelMemberRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Panel member not found with id: " + id
+                ));
+
+        User user = panelMember.getUser();
+        panelMemberRepository.delete(panelMember);
+        if (user != null) {
+            userRepository.delete(user);
+        }
     }
 
     /**

@@ -81,6 +81,7 @@ public class InterviewService {
 
         validateInterviewStage(request.getInterviewStage());
         validateNoDuplicateInterview(candidate, request.getInterviewStage());
+        validateSequentialWorkflow(candidate, request.getInterviewStage());
 
         Interview interview = new Interview(
                 request.getInterviewStage(),
@@ -88,6 +89,8 @@ public class InterviewService {
                 request.getInterviewTime(),
                 request.getFocusAreas(),
                 candidate);
+        
+        interview.setMeetingLink(request.getMeetingLink());
 
         Interview savedInterview = interviewRepository.save(interview);
 
@@ -248,5 +251,29 @@ public class InterviewService {
                 .stream()
                 .map(interviewMapper::mapToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    private void validateSequentialWorkflow(final Candidate candidate, final InterviewStage requestedStage) {
+        if (requestedStage == InterviewStage.L1_TECHNICAL) {
+            if (candidate.getCurrentStage() == InterviewStage.PROFILING) {
+                throw new IllegalArgumentException("Cannot schedule L1 Technical interview. Candidate must be moved to SCREENING stage first.");
+            }
+        }
+        if (requestedStage == InterviewStage.L2_TECHNICAL) {
+            boolean l1Completed = interviewRepository.findByCandidateAndInterviewStage(candidate, InterviewStage.L1_TECHNICAL)
+                    .map(Interview::isCompleted)
+                    .orElse(false);
+            if (!l1Completed) {
+                throw new IllegalArgumentException("Cannot schedule L2 Technical interview. L1 Technical interview must be completed first.");
+            }
+        }
+        if (requestedStage == InterviewStage.HR_ROUND) {
+            boolean l2Completed = interviewRepository.findByCandidateAndInterviewStage(candidate, InterviewStage.L2_TECHNICAL)
+                    .map(Interview::isCompleted)
+                    .orElse(false);
+            if (!l2Completed) {
+                throw new IllegalArgumentException("Cannot schedule HR Round. L2 Technical interview must be completed first.");
+            }
+        }
     }
 }

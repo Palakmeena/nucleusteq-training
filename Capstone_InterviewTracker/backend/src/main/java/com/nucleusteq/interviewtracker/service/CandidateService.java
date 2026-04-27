@@ -63,21 +63,39 @@ public class CandidateService {
      */
     @Transactional
     public CandidateResponseDto createCandidateProfile(
-            final CandidateRequestDto request) {
+            final CandidateRequestDto request, String authenticatedEmail) {
 
-        validateNoDuplicates(request.getEmail(), request.getMobileNumber());
+        User user = userRepository.findByEmail(authenticatedEmail)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            throw new IllegalArgumentException("The email provided does not match your logged-in account email.");
+        }
+
+        // Check if the user already has an active candidate profile. 
+        // A user shouldn't apply to multiple jobs at once unless rejected.
+        java.util.Optional<Candidate> existingCandidateOpt = candidateRepository.findByUser(user);
+        
+        if (existingCandidateOpt.isPresent()) {
+            Candidate existingCandidate = existingCandidateOpt.get();
+            if (existingCandidate.getCurrentStage() != com.nucleusteq.interviewtracker.enums.InterviewStage.REJECTED) {
+                throw new IllegalArgumentException("You already have an active application. You cannot apply to multiple jobs.");
+            }
+            
+            // If they were rejected, allow applying again by updating their JD and resetting status
+            JobDescription newJd = findActiveJdOrThrow(request.getJobDescriptionId());
+            existingCandidate.setJobDescription(newJd);
+            existingCandidate.setCurrentStage(com.nucleusteq.interviewtracker.enums.InterviewStage.PROFILING);
+            // We could update other fields like experience, etc here from request
+            // But for simplicity, we'll let candidateMapper update the entity or we update manually.
+            
+            Candidate saved = candidateRepository.save(existingCandidate);
+            return candidateMapper.mapToResponseDto(saved);
+        }
+
         JobDescription jd = findActiveJdOrThrow(request.getJobDescriptionId());
 
-        User user = new User(
-                request.getFullName(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getMobileNumber()),
-                UserRole.CANDIDATE
-        );
-        user.setActive(true);
-        User savedUser = userRepository.save(user);
-
-        Candidate candidate = candidateMapper.mapToEntity(request, jd, savedUser);
+        Candidate candidate = candidateMapper.mapToEntity(request, jd, user);
         Candidate saved = candidateRepository.save(candidate);
         return candidateMapper.mapToResponseDto(saved);
     }
@@ -178,6 +196,25 @@ public class CandidateService {
                 ));
         candidate.setResumePath(resumePath);
         candidateRepository.save(candidate);
+    }
+
+    /**
+     * Updates the current stage of a candidate (HR only).
+     *
+     * @param id    the candidate ID
+     * @param stage the new interview stage
+     * @return the updated candidate as a response DTO
+     */
+    @Transactional
+    public CandidateResponseDto updateCandidateStage(final Long id, 
+            final com.nucleusteq.interviewtracker.enums.InterviewStage stage) {
+        Candidate candidate = candidateRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Candidate not found with id: " + id
+                ));
+        candidate.setCurrentStage(stage);
+        Candidate saved = candidateRepository.save(candidate);
+        return candidateMapper.mapToResponseDto(saved);
     }
 
     /**
