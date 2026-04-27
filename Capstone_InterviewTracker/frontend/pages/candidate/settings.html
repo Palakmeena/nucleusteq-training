@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Settings</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main-area">
+    <header class="topbar"><div class="topbar-nav">Settings</div></header>
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div><h1 class="page-title">Settings</h1><p class="page-subtitle">Manage your account settings.</p></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;max-width:480px;">
+            <h3 style="font-size:15px;font-weight:600;margin-bottom:20px;">Contact HR</h3>
+            <p style="font-size:14px;color:#64748b;margin-bottom:16px;">For any changes to your profile information, please reach out to HR directly.</p>
+            <div style="background:#f8fafc;border-radius:8px;padding:16px;">
+                <div style="font-size:13px;color:#64748b;">HR Email</div>
+                <div style="font-size:14px;font-weight:500;margin-top:4px;">hr@interviewtracker.com</div>
+            </div>
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid #e2e8f0;">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;">Account</h3>
+                <button onclick="auth.logout()" style="background:#fee2e2;color:#dc2626;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;">Sign Out</button>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('CANDIDATE');
+    document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'settings');
+</script>
+</body>
+</html>

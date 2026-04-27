@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Panel Members</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .panel-card { background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px; }
+        .panel-info h3 { font-size:15px;font-weight:600;margin-bottom:4px; }
+        .panel-info p { font-size:13px;color:#64748b; }
+        .modal-overlay { display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center; }
+        .modal-overlay.active { display:flex; }
+        .modal-box { background:#fff;border-radius:16px;width:95%;max-width:520px;padding:32px; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:6px; }
+        .form-group input { width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px; }
+        .form-group input:focus { outline:none;border-color:#4f46e5; }
+        .form-row { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">Panel Members</div>
+        <div class="topbar-actions">
+            <button class="primary-btn" style="padding:8px 16px;" onclick="document.getElementById('addPanelModal').classList.add('active')">+ Add Panel Member</button>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Panel Members</h1>
+                <p class="page-subtitle">Onboard interviewers and manage your panel directory.</p>
+            </div>
+        </div>
+
+        <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:14px;color:#3730a3;">
+            ℹ️ After creating a panel member, an activation link will be sent to their email. They must set a password before logging in.
+        </div>
+
+        <div id="panelList"><div style="text-align:center;padding:40px;color:#94a3b8;">Loading...</div></div>
+    </div>
+</main>
+
+<!-- ADD PANEL MODAL -->
+<div class="modal-overlay" id="addPanelModal">
+    <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:18px;">Add Panel Member</h3>
+            <button onclick="document.getElementById('addPanelModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">✕</button>
+        </div>
+        <div id="panelFormError" style="display:none;background:#FEE2E2;color:#991B1B;padding:10px;border-radius:8px;margin-bottom:12px;font-size:14px;"></div>
+        <div class="form-row">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="pFullName" placeholder="John Rao"></div>
+            <div class="form-group"><label>Email *</label><input type="email" id="pEmail" placeholder="john@company.com"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Mobile Number *</label><input type="text" id="pMobile" placeholder="9876543210"></div>
+            <div class="form-group"><label>Organization *</label><input type="text" id="pOrg" placeholder="TechCorp"></div>
+        </div>
+        <div class="form-group"><label>Designation *</label><input type="text" id="pDesignation" placeholder="Senior Developer"></div>
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+            <button class="secondary-btn" onclick="document.getElementById('addPanelModal').classList.remove('active')">Cancel</button>
+            <button class="primary-btn" style="width:auto;" onclick="createPanel()">Create & Send Activation Link</button>
+        </div>
+    </div>
+</div>
+<!-- EDIT PANEL MODAL -->
+<div class="modal-overlay" id="editPanelModal">
+    <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:18px;">Edit Panel Member</h3>
+            <button onclick="document.getElementById('editPanelModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">✕</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="eFullName"></div>
+            <div class="form-group"><label>Mobile Number *</label><input type="text" id="eMobile"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Organization *</label><input type="text" id="eOrg"></div>
+            <div class="form-group"><label>Designation *</label><input type="text" id="eDesignation"></div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+            <button class="secondary-btn" onclick="document.getElementById('editPanelModal').classList.remove('active')">Cancel</button>
+            <button class="primary-btn" style="width:auto;" onclick="updatePanel()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('HR');
+    document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'panels');
+
+    async function loadPanels() {
+        try {
+            const res = await api.getAllPanelMembers();
+            const panels = res.data || [];
+            const container = document.getElementById('panelList');
+            container.innerHTML = panels.length ? panels.map(p => `
+                <div class="panel-card">
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="width:44px;height:44px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;">
+                            ${p.fullName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                        </div>
+                        <div class="panel-info">
+                            <h3>${p.fullName}</h3>
+                            <p>${p.email} &nbsp;|&nbsp; ${p.organization} &nbsp;|&nbsp; ${p.designation}</p>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span class="jd-badge" style="${p.active ? 'background:#dcfce7;color:#16a34a;' : 'background:#fef3c7;color:#d97706;'}">${p.active ? '✓ Active' : '⏳ Pending'}</span>
+                        <div style="display:flex;gap:8px;">
+                            <button onclick="openEditModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:none;border:none;cursor:pointer;color:#4f46e5;font-size:16px;" title="Edit">✏️</button>
+                            <button onclick="deletePanel(${p.id})" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:16px;" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('') : '<p style="text-align:center;padding:40px;color:#94a3b8;">No panel members yet. Add your first interviewer!</p>';
+        } catch (e) { showToast('Failed to load panel members: ' + e.message, 'error'); }
+    }
+
+    let currentEditingId = null;
+
+    function openEditModal(p) {
+        currentEditingId = p.id;
+        document.getElementById('editPanelModal').classList.add('active');
+        document.getElementById('eFullName').value = p.fullName;
+        document.getElementById('eMobile').value = p.mobileNumber;
+        document.getElementById('eOrg').value = p.organization;
+        document.getElementById('eDesignation').value = p.designation;
+    }
+
+    async function updatePanel() {
+        const body = {
+            fullName: document.getElementById('eFullName').value,
+            mobileNumber: document.getElementById('eMobile').value,
+            organization: document.getElementById('eOrg').value,
+            designation: document.getElementById('eDesignation').value
+        };
+        try {
+            await api.updatePanelMember(currentEditingId, body);
+            showToast('Panel member updated successfully', 'success');
+            document.getElementById('editPanelModal').classList.remove('active');
+            loadPanels();
+        } catch (e) {
+            showToast('Update failed: ' + e.message, 'error');
+        }
+    }
+
+    async function deletePanel(id) {
+        if (!confirm('Are you sure you want to remove this panel member? This action cannot be undone.')) return;
+        try {
+            await api.deletePanelMember(id);
+            showToast('Panel member removed', 'success');
+            loadPanels();
+        } catch (e) {
+            showToast('Delete failed: ' + e.message, 'error');
+        }
+    }
+
+    async function createPanel() {
+        const body = {
+            fullName: document.getElementById('pFullName').value,
+            email: document.getElementById('pEmail').value,
+            mobileNumber: document.getElementById('pMobile').value,
+            organization: document.getElementById('pOrg').value,
+            designation: document.getElementById('pDesignation').value
+        };
+        if (!body.fullName || !body.email || !body.mobileNumber || !body.organization || !body.designation) {
+            document.getElementById('panelFormError').textContent = 'Please fill all fields';
+            document.getElementById('panelFormError').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('panelFormError').style.display = 'none';
+        try {
+            const res = await api.createPanelMember(body);
+            const panel = res.data || {};
+            let shouldCloseModal = true;
+
+            if (panel.activationEmailSent) {
+                showToast('Panel member created! Activation link sent.', 'success');
+            } else if (panel.activationLink) {
+                document.getElementById('panelFormError').innerHTML =
+                    'Email delivery failed. Share this activation link manually:<br><a href="'
+                    + panel.activationLink
+                    + '" target="_blank" style="color:#1d4ed8;word-break:break-all;">'
+                    + panel.activationLink
+                    + '</a>';
+                document.getElementById('panelFormError').style.display = 'block';
+                showToast('Activation email failed. Manual link generated.', 'error');
+                shouldCloseModal = false;
+            } else {
+                showToast('Panel member created. Activation may require manual link sharing.', 'default');
+            }
+
+            if (shouldCloseModal) {
+                document.getElementById('addPanelModal').classList.remove('active');
+            }
+            loadPanels();
+        } catch (e) {
+            document.getElementById('panelFormError').textContent = e.message;
+            document.getElementById('panelFormError').style.display = 'block';
+        }
+    }
+
+    loadPanels();
+</script>
+</body>
+</html>

@@ -78,6 +78,7 @@
                     <label for="remember" style="margin:0; font-weight:400; cursor:pointer;">Remember this device</label>
                 </div>
 
+                <div id="loginError" style="display:none;background:#FEE2E2;color:#991B1B;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;"></div>
                 <button type="submit" class="primary-btn">
                     Access Account
                 </button>
@@ -94,8 +95,8 @@
                     Continue with Google
                 </button>
 
-                <p class="signup-text">
-                    New to HireTrack? <a href="signup.html">Create an account</a>
+                <p class="signup-text" style="margin-top: 15px;">
+                    Don't have an account? <a href="#" id="signupLink">Sign Up</a>
                 </p>
             </form>
         </div>
@@ -106,6 +107,21 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectJobId = urlParams.get('redirectJobId');
+        const signupLink = document.getElementById("signupLink");
+        
+        if (redirectJobId) {
+            signupLink.href = `signup.html?redirectJobId=${redirectJobId}`;
+        } else {
+            signupLink.href = "signup.html";
+        }
+    });
+</script>
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
 <script src="../../js/auth/login.js"></script>
 </body>
 </html>

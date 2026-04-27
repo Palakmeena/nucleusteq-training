@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Candidates</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">Candidates</div>
+        <div class="topbar-actions">
+            <button class="primary-btn" style="padding:8px 16px;" onclick="openAddModal()">+ Add Candidate</button>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Candidates</h1>
+                <p class="page-subtitle">Master list of all applicants across all job roles.</p>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+            <div class="search-container" style="flex:1;max-width:320px;margin-bottom:0;">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="filterCandidates()">
+            </div>
+            <select id="stageFilter" class="filter-btn" onchange="filterCandidates()" style="padding:10px 14px;">
+                <option value="">All Stages</option>
+                <option value="PROFILING">Profiling</option>
+                <option value="SCREENING">Screening</option>
+                <option value="L1_TECHNICAL">L1 Technical</option>
+                <option value="L2_TECHNICAL">L2 Technical</option>
+                <option value="HR_ROUND">HR Round</option>
+                <option value="SELECTED">Selected</option>
+                <option value="REJECTED">Rejected</option>
+            </select>
+            <span id="countLabel" style="line-height:42px;font-size:13px;color:#64748b;"></span>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>JD Applied</th>
+                        <th>Experience</th>
+                        <th>Current Stage</th>
+                        <th>Applied On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="candidateTableBody">
+                    <tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('HR');
+    document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'candidates');
+
+    let allCandidates = [];
+
+    async function loadCandidates() {
+        try {
+            const res = await api.getAllCandidates();
+            allCandidates = res.data || [];
+            renderCandidates(allCandidates);
+        } catch (e) {
+            showToast('Failed to load candidates: ' + e.message, 'error');
+        }
+    }
+
+    function renderCandidates(list) {
+        document.getElementById('countLabel').textContent = `${list.length} candidate${list.length !== 1 ? 's' : ''}`;
+        const tbody = document.getElementById('candidateTableBody');
+        tbody.innerHTML = list.length ? list.map(c => `
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
+                            ${c.fullName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                        </div>
+                        <div>
+                            <div style="font-weight:500;">${c.fullName}</div>
+                            <div style="font-size:12px;color:#64748b;">${c.email}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-size:13px;">${c.jobTitle || '—'}</td>
+                <td style="font-size:13px;">${c.totalExperience} yrs</td>
+                <td>
+                    <select class="filter-btn" style="padding:6px 10px; font-size:12px; border-radius:6px; min-width:120px;" 
+                            onchange="updateStage(${c.id}, this.value)">
+                        <option value="PROFILING" ${c.currentStage === 'PROFILING' ? 'selected' : ''}>Profiling</option>
+                        <option value="SCREENING" ${c.currentStage === 'SCREENING' ? 'selected' : ''}>Screening</option>
+                        <option value="L1_TECHNICAL" ${c.currentStage === 'L1_TECHNICAL' ? 'selected' : ''}>L1 Technical</option>
+                        <option value="L2_TECHNICAL" ${c.currentStage === 'L2_TECHNICAL' ? 'selected' : ''}>L2 Technical</option>
+                        <option value="HR_ROUND" ${c.currentStage === 'HR_ROUND' ? 'selected' : ''}>HR Round</option>
+                        <option value="SELECTED" ${c.currentStage === 'SELECTED' ? 'selected' : ''}>Selected</option>
+                        <option value="REJECTED" ${c.currentStage === 'REJECTED' ? 'selected' : ''}>Rejected</option>
+                    </select>
+                </td>
+                <td style="font-size:13px;color:#64748b;">${formatDate(c.createdAt)}</td>
+                <td>
+                    <a href="schedule-interview.html?candidateId=${c.id}" style="font-size:13px;color:#4f46e5;text-decoration:none;padding:4px 10px;border:1px solid #4f46e5;border-radius:6px;margin-right:6px;">Schedule</a>
+                    <span style="font-size:13px;color:#64748b;cursor:pointer;" onclick="viewCandidate(${JSON.stringify(c).replace(/"/g,'&quot;')})">View</span>
+                </td>
+            </tr>
+        `).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No candidates found</td></tr>';
+    }
+
+    async function updateStage(id, newStage) {
+        try {
+            await api.updateCandidateStage(id, newStage);
+            showToast('Candidate stage updated successfully', 'success');
+            // Refresh local data
+            const cand = allCandidates.find(c => c.id === id);
+            if (cand) cand.currentStage = newStage;
+        } catch (e) {
+            showToast('Failed to update stage: ' + e.message, 'error');
+            loadCandidates(); // Revert UI
+        }
+    }
+
+    function filterCandidates() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const stage = document.getElementById('stageFilter').value;
+        let filtered = allCandidates;
+        if (stage) filtered = filtered.filter(c => c.currentStage === stage);
+        if (search) filtered = filtered.filter(c =>
+            c.fullName.toLowerCase().includes(search) ||
+            c.email.toLowerCase().includes(search)
+        );
+        renderCandidates(filtered);
+    }
+
+    function viewCandidate(c) {
+        document.getElementById('viewCandidateModal').classList.add('active');
+        document.getElementById('candidateName').textContent = c.fullName;
+        document.getElementById('candidateEmail').textContent = c.email;
+        document.getElementById('candidateMobile').textContent = (c.mobileCode || '') + ' ' + (c.mobileNumber || '—');
+        document.getElementById('candidateDob').textContent = c.dateOfBirth ? formatDate(c.dateOfBirth) : '—';
+        document.getElementById('candidateOrg').textContent = c.currentOrganization || '—';
+        document.getElementById('candidateLocation').textContent = c.preferredLocation || '—';
+        document.getElementById('candidateTotalExp').textContent = (c.totalExperience || 0) + ' years';
+        document.getElementById('candidateRelExp').textContent = (c.relevantExperience || 0) + ' years';
+        document.getElementById('candidateCurrentCtc').textContent = (c.currentCtc || '—') + ' LPA';
+        document.getElementById('candidateExpectedCtc').textContent = (c.expectedCtc || '—') + ' LPA';
+        document.getElementById('candidateNotice').textContent = (c.noticePeriod || '—') + ' days';
+        document.getElementById('candidateSource').textContent = c.source || '—';
+        document.getElementById('candidateStage').innerHTML = stageBadge(c.currentStage);
+        document.getElementById('candidateJobTitle').textContent = c.jobTitle || '—';
+        document.getElementById('candidateAppliedOn').textContent = formatDate(c.createdAt) || '—';
+    }
+
+    function closeViewModal() {
+        document.getElementById('viewCandidateModal').classList.remove('active');
+    }
+
+    function openAddModal() {
+        showToast('HR can also create candidate profiles from the backend API', 'default');
+    }
+
+    loadCandidates();
+</script>
+
+<!-- CANDIDATE VIEW MODAL -->
+<div id="viewCandidateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;" class="modal-view">
+    <div style="background:white;border-radius:16px;width:90%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+        <!-- Modal Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #e2e8f0;">
+            <h2 style="margin:0;font-size:18px;font-weight:600;">Candidate Profile</h2>
+            <button onclick="closeViewModal()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:20px;padding:0;">×</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div style="padding:24px;">
+            <!-- Personal Information -->
+            <div style="margin-bottom:30px;">
+                <h3 style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">Personal Information</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Full Name</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateName">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Email</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateEmail">—</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Mobile</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateMobile">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Date of Birth</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateDob">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Information -->
+            <div style="margin-bottom:30px;">
+                <h3 style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">Professional Information</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current Organization</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateOrg">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Preferred Location</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateLocation">—</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Total Experience</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateTotalExp">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Relevant Experience</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateRelExp">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compensation & Notice -->
+            <div style="margin-bottom:30px;">
+                <h3 style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">Compensation & Availability</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current CTC</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateCurrentCtc">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Expected CTC</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateExpectedCtc">—</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Notice Period</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateNotice">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Source</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateSource">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Information -->
+            <div style="margin-bottom:20px;">
+                <h3 style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">Application Information</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Job Title Applied</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateJobTitle">—</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Applied On</label>
+                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateAppliedOn">—</div>
+                    </div>
+                </div>
+                <div>
+                    <label style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current Stage</label>
+                    <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateStage">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div style="display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid #e2e8f0;">
+            <button onclick="closeViewModal()" style="background:white;border:1px solid #e2e8f0;color:#475569;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;font-size:14px;">Close</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-view.active {
+        display: flex !important;
+    }
+</style>
+</body>
+</html>

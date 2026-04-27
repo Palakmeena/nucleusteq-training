@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Schedule Interview</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .form-section { background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;margin-bottom:20px; }
+        .form-section h3 { font-size:15px;font-weight:600;margin-bottom:20px; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px; }
+        .form-group input, .form-group select, .form-group textarea { width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none;border-color:#4f46e5; }
+        .form-row { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+        .panel-option { display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:8px; }
+        .panel-option:hover { border-color:#4f46e5;background:#f8faff; }
+        .panel-option.selected { border-color:#4f46e5;background:#eef2ff; }
+        .panel-option input[type="checkbox"] { accent-color:#4f46e5; width:16px;height:16px; }
+
+        .interview-list-card { background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px; }
+        .interview-item { padding:16px 0;border-bottom:1px solid #f1f5f9; }
+        .interview-item:last-child { border-bottom:none; }
+        .modal-overlay.active { display:flex !important; }
+    </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">Interview Calendar</div>
+    </header>
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div><h1 class="page-title">Interview Calendar</h1><p class="page-subtitle">Schedule L1/L2 interviews and avoid overlaps.</p></div>
+        </div>
+
+        <div class="two-col" style="grid-template-columns:1fr 1fr;gap:24px;">
+            <!-- SCHEDULE FORM -->
+            <div>
+                <div class="form-section">
+                    <h3>📅 Schedule New Interview</h3>
+                    <div id="scheduleError" style="display:none;background:#FEE2E2;color:#991B1B;padding:10px;border-radius:8px;margin-bottom:12px;font-size:14px;"></div>
+
+                    <div class="form-group">
+                        <label>Select Candidate *</label>
+                        <select id="candidateSelect">
+                            <option value="">Loading candidates...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Interview Stage *</label>
+                        <select id="stageSelect">
+                            <option value="">Select stage</option>
+                            <option value="L1_TECHNICAL">L1 Technical</option>
+                            <option value="L2_TECHNICAL">L2 Technical</option>
+                            <option value="HR_ROUND">HR Round</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Interview Date *</label>
+                            <input type="date" id="interviewDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Interview Time *</label>
+                            <input type="time" id="interviewTime">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Meeting Link (Optional)</label>
+                        <input type="url" id="meetingLink" placeholder="https://meet.google.com/xyz-abc-123">
+                    </div>
+                    <div class="form-group">
+                        <label>Focus Areas</label>
+                        <textarea id="focusAreas" rows="3" placeholder="What should the panel focus on during evaluation?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Assign Panel Members * (max 2)</label>
+                        
+                        <!-- SELECTED MEMBERS DISPLAY -->
+                        <div id="selectedPanelsDisplay" style="display:none;background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:12px;margin-bottom:12px;">
+                            <div style="font-size:12px;font-weight:600;color:#4f46e5;margin-bottom:8px;">Selected Panel Members:</div>
+                            <div id="selectedList" style="display:flex;flex-direction:column;gap:6px;"></div>
+                        </div>
+                        
+                        <!-- SEARCH BOX -->
+                        <div style="display:flex;gap:8px;margin-bottom:12px;">
+                            <input type="text" id="panelSearchInput" placeholder="Search panel by name..." style="flex:1;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;" oninput="filterPanels()">
+                        </div>
+                        
+                        <!-- SEARCH RESULTS -->
+                        <div id="panelOptions" style="max-height:300px;overflow-y:auto;"><div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div></div>
+                    </div>
+
+                    <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+                        <button class="primary-btn" style="width:auto;" onclick="scheduleInterview()">Schedule Interview</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPCOMING LIST -->
+            <div class="interview-list-card">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:20px;">Upcoming Interviews</h3>
+                <div id="upcomingList"><div style="text-align:center;color:#94a3b8;padding:40px;">Loading...</div></div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- FEEDBACK VIEW MODAL -->
+<div class="modal-overlay" id="feedbackModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;width:95%;max-width:520px;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:18px;">Panel Feedback</h3>
+            <button onclick="document.getElementById('feedbackModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">✕</button>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Candidate</label>
+            <div id="fCandidate" style="font-size:16px;font-weight:500;"></div>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Interview Stage</label>
+            <div id="fStage" style="font-size:14px;color:#1e293b;"></div>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Overall Rating</label>
+            <div id="fRating" style="font-size:18px;font-weight:700;color:#4f46e5;"></div>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Panel Comments</label>
+            <div id="fComments" style="font-size:14px;color:#1e293b;line-height:1.6;background:#f8faff;padding:12px;border-radius:8px;border:1px solid #e2e8f0;"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+            <button class="secondary-btn" onclick="document.getElementById('feedbackModal').classList.remove('active')">Close</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('HR');
+    document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'interviews');
+
+    let allPanels = [];
+    let selectedPanels = [];
+
+    // Pre-select candidate from URL param (when coming from candidates page)
+    const params = new URLSearchParams(window.location.search);
+    const preselectedId = params.get('candidateId');
+
+    async function loadForm() {
+        try {
+            // Load candidates
+            const cRes = await api.getAllCandidates();
+            const candidates = (cRes.data || []).filter(c => !['SELECTED','REJECTED'].includes(c.currentStage));
+            const select = document.getElementById('candidateSelect');
+            select.innerHTML = '<option value="">Select a candidate</option>' +
+                candidates.map(c => `<option value="${c.id}" ${c.id == preselectedId ? 'selected' : ''}>${c.fullName} — ${c.currentStage}</option>`).join('');
+
+            // Load panels - show all panels (both active and pending)
+            const pRes = await api.getAllPanelMembers();
+            allPanels = (pRes.data || []);
+            const container = document.getElementById('panelOptions');
+            container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+
+        } catch(e) { showToast('Failed to load form: ' + e.message, 'error'); }
+    }
+
+    function togglePanel(id) {
+        const idx = selectedPanels.indexOf(id);
+        if (idx > -1) {
+            selectedPanels.splice(idx, 1);
+        } else {
+            if (selectedPanels.length >= 2) { showToast('Maximum 2 panel members allowed', 'error'); return; }
+            selectedPanels.push(id);
+        }
+        
+        // Update display
+        updateSelectedPanelsDisplay();
+        
+        // Re-run search to keep results visible with updated checkboxes
+        filterPanels();
+    }
+    
+    function updateSelectedPanelsDisplay() {
+        const display = document.getElementById('selectedPanelsDisplay');
+        const selectedList = document.getElementById('selectedList');
+        
+        if (selectedPanels.length === 0) {
+            display.style.display = 'none';
+            return;
+        }
+        
+        display.style.display = 'block';
+        
+        const selectedItems = selectedPanels.map(panelId => {
+            const panel = allPanels.find(p => p.id === panelId);
+            return `
+                <div style="background:#fff;padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-size:13px;font-weight:500;color:#1e293b;">${panel.fullName}</div>
+                        <div style="font-size:11px;color:#64748b;">${panel.designation}</div>
+                    </div>
+                    <button style="background:none;border:none;color:#dc2626;font-size:18px;cursor:pointer;padding:0;width:20px;height:20px;" onclick="togglePanel(${panelId})">×</button>
+                </div>
+            `;
+        }).join('');
+        
+        selectedList.innerHTML = selectedItems;
+    }
+
+    function filterPanels() {
+        const searchTerm = document.getElementById('panelSearchInput').value.toLowerCase().trim();
+        const container = document.getElementById('panelOptions');
+        
+        // If search box is empty, show nothing
+        if (!searchTerm) {
+            container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+            return;
+        }
+        
+        // Filter: Match only from the START of the name (like real search)
+        const filtered = allPanels.filter(p => 
+            p.fullName.toLowerCase().startsWith(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">No panel members found</div>';
+            return;
+        }
+        
+        // Show only top 2 results
+        const topTwo = filtered.slice(0, 2);
+        
+        container.innerHTML = topTwo.map(p => `
+            <div class="panel-option" id="po-${p.id}" onclick="togglePanel(${p.id})" ${selectedPanels.includes(p.id) ? 'style="border-color:#4f46e5;background:#eef2ff;"' : ''}>
+                <input type="checkbox" id="pc-${p.id}" ${selectedPanels.includes(p.id) ? 'checked' : ''}>
+                <div>
+                    <div style="font-size:14px;font-weight:500;">${p.fullName}</div>
+                    <div style="font-size:12px;color:#64748b;">${p.designation} — ${p.organization} ${p.active ? '' : '(Pending Activation)'}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function scheduleInterview() {
+        const errDiv = document.getElementById('scheduleError');
+        errDiv.style.display = 'none';
+
+        const candidateId = parseInt(document.getElementById('candidateSelect').value);
+        const interviewStage = document.getElementById('stageSelect').value;
+        const interviewDate = document.getElementById('interviewDate').value;
+        const interviewTime = document.getElementById('interviewTime').value;
+        const focusAreas = document.getElementById('focusAreas').value;
+        const meetingLink = document.getElementById('meetingLink').value;
+
+        if (!candidateId || !interviewStage || !interviewDate || !interviewTime || !selectedPanels.length) {
+            errDiv.textContent = 'Please fill all required fields and select at least one panel member';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        try {
+            const body = { 
+                candidateId, 
+                interviewStage, 
+                interviewDate, 
+                interviewTime, 
+                focusAreas, 
+                meetingLink,
+                panelMemberIds: selectedPanels 
+            };
+            await api.scheduleInterview(body);
+            showToast('Interview scheduled successfully!', 'success');
+            
+            // Reset form
+            document.getElementById('meetingLink').value = '';
+            document.getElementById('focusAreas').value = '';
+            selectedPanels = [];
+            updateSelectedPanelsDisplay();
+            
+            loadUpcoming();
+        } catch(e) {
+            // Show the backend validation error (e.g., "Cannot schedule L2 before L1")
+            errDiv.textContent = e.message || 'Failed to schedule interview. Please check the sequence.';
+            errDiv.style.display = 'block';
+            showToast(e.message, 'error');
+        }
+    }
+
+    async function loadUpcoming() {
+        try {
+            const cRes = await api.getAllCandidates();
+            const candidates = cRes.data || [];
+            const container = document.getElementById('upcomingList');
+            const stageLabels = { L1_TECHNICAL:'L1 Technical', L2_TECHNICAL:'L2 Technical', HR_ROUND:'HR Round' };
+
+            const allInterviews = [];
+            for (const c of candidates) {
+                try {
+                    const iRes = await api.getInterviewsForCandidate(c.id);
+                    (iRes.data || []).forEach(i => allInterviews.push({...i, candidateName: c.fullName}));
+                } catch(e) {}
+            }
+
+            // Sort by date descending to show recent ones
+            allInterviews.sort((a,b) => new Date(b.interviewDate) - new Date(a.interviewDate));
+
+            container.innerHTML = allInterviews.length ? allInterviews.map(i => {
+                const isToday = new Date().toDateString() === new Date(i.interviewDate).toDateString();
+                const isPast = new Date() > new Date(i.interviewDate) && !isToday;
+                
+                let statusBadge = '<span class="jd-badge" style="background:#eef2ff;color:#4f46e5;font-size:10px;">Upcoming</span>';
+                if (i.completed) statusBadge = '<span class="jd-badge" style="background:#dcfce7;color:#16a34a;font-size:10px;">Completed</span>';
+                else if (isToday) statusBadge = '<span class="jd-badge" style="background:#fef3c7;color:#d97706;font-size:10px;">Today</span>';
+                else if (isPast) statusBadge = '<span class="jd-badge" style="background:#fee2e2;color:#991b1b;font-size:10px;">Overdue</span>';
+
+                return `
+                <div class="interview-item">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div>
+                            <div style="font-weight:500;font-size:14px;">${i.candidateName}</div>
+                            <div style="font-size:12px;color:#64748b;margin-top:2px;">${stageLabels[i.interviewStage]||i.interviewStage}</div>
+                            <div style="margin-top:4px;">${statusBadge}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:13px;font-weight:500;">${formatDate(i.interviewDate)}</div>
+                            <div style="font-size:12px;color:#64748b;">${i.interviewTime||'—'}</div>
+                            ${i.completed ? `<button onclick="viewFeedback(${JSON.stringify(i).replace(/"/g,'&quot;')})" style="margin-top:8px;background:#4f46e5;color:white;border:none;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;">View Feedback</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `}).join('') : '<div style="text-align:center;padding:40px;color:#94a3b8;">No interviews scheduled</div>';
+        } catch(e) { console.error(e); }
+    }
+
+    function viewFeedback(i) {
+        document.getElementById('feedbackModal').classList.add('active');
+        document.getElementById('fCandidate').textContent = i.candidateName;
+        document.getElementById('fStage').textContent = i.interviewStage;
+        document.getElementById('fComments').textContent = i.feedback || 'No comments provided yet.';
+        document.getElementById('fRating').textContent = (i.rating || '0') + ' / 5';
+    }
+
+    loadForm();
+    loadUpcoming();
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | My Progress</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .stage-stepper { display:flex; align-items:center; gap:0; margin:24px 0 8px; }
+        .stage-step { display:flex; flex-direction:column; align-items:center; flex:1; position:relative; }
+        .stage-step::after { content:''; position:absolute; top:18px; left:50%; width:100%; height:2px; background:#e2e8f0; z-index:0; }
+        .stage-step:last-child::after { display:none; }
+        .stage-dot { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; z-index:1; position:relative; border:2px solid #e2e8f0; background:#fff; color:#94a3b8; }
+        .stage-dot.done { background:#10b981; border-color:#10b981; color:white; }
+        .stage-dot.active { background:#4f46e5; border-color:#4f46e5; color:white; box-shadow:0 0 0 4px rgba(79,70,229,0.15); }
+        .stage-label { font-size:11px; font-weight:500; color:#64748b; margin-top:8px; text-align:center; }
+        .stage-label.active { color:#4f46e5; font-weight:600; }
+
+        .interview-card { background:linear-gradient(135deg,#4f46e5,#3730a3); color:white; border-radius:12px; padding:24px; }
+        .interview-card h3 { font-size:16px; margin-bottom:16px; }
+        .interview-meta { display:flex; flex-direction:column; gap:10px; }
+        .interview-meta-row { display:flex; align-items:center; gap:10px; font-size:14px; }
+
+        @media (max-width: 980px) {
+            .single-col { grid-template-columns:1fr !important; }
+        }
+    </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">My Progress</div>
+    </header>
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" id="welcomeText">Welcome back!</h1>
+                <p class="page-subtitle">Here's where your application stands today.</p>
+            </div>
+        </div>
+
+        <!-- APPLICATION STATUS CARD -->
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;margin-bottom:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+                <div>
+                    <div style="font-size:12px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:6px;">Applied For</div>
+                    <div style="font-size:20px;font-weight:700;color:#0f172a;" id="jobTitle">Loading...</div>
+                    <div style="font-size:13px;color:#64748b;margin-top:4px;" id="appliedDate">—</div>
+                </div>
+                <div id="currentStageBadge"></div>
+            </div>
+
+            <!-- STEPPER -->
+            <div class="stage-stepper" id="stageStepper">
+                <!-- built by JS -->
+            </div>
+            <div id="stageLabelsRow" style="display:flex;justify-content:space-between;">
+                <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">Profiling</span>
+                <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">Screening</span>
+                <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">L1 Interview</span>
+                <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">L2 Interview</span>
+                <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">HR Round</span>
+            </div>
+            <div id="stageNote" style="margin-top:16px;font-size:13px;color:#64748b;text-align:center;"></div>
+        </div>
+
+        <!-- INTERVIEW SECTION -->
+        <div class="single-col" style="display:grid;grid-template-columns:1fr;">
+            <div>
+                <div id="interviewSection" style="display:none;" class="interview-card">
+                    <h3>📅 Upcoming Interview</h3>
+                    <div class="interview-meta">
+                        <div class="interview-meta-row">📅 <span id="iDate">—</span></div>
+                        <div class="interview-meta-row">⏰ <span id="iTime">—</span></div>
+                        <div class="interview-meta-row">🎯 <span id="iStage">—</span></div>
+                        <div class="interview-meta-row">👥 Panel: <span id="iPanels">—</span></div>
+                    </div>
+                    <div id="iFocusAreas" style="margin-top:16px;background:rgba(255,255,255,0.15);border-radius:8px;padding:12px;font-size:13px;display:none;">
+                        <div style="font-weight:600;margin-bottom:4px;">📌 Focus Areas</div>
+                        <div id="iFocusText"></div>
+                    </div>
+                </div>
+                <div id="noInterviewSection" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;text-align:center;color:#94a3b8;">
+                    <div style="font-size:36px;margin-bottom:12px;">📭</div>
+                    <div style="font-size:15px;font-weight:500;color:#64748b;">No interview scheduled yet</div>
+                    <div style="font-size:13px;margin-top:6px;">HR will schedule your next interview soon</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('CANDIDATE');
+    document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'dashboard');
+    document.getElementById('welcomeText').textContent = 'Welcome back, ' + auth.getFullName() + '!';
+
+    const stageOrder = ['PROFILING', 'SCREENING', 'L1_TECHNICAL', 'L2_TECHNICAL', 'HR_ROUND'];
+    const stageLabels = { PROFILING:'Profiling', SCREENING:'Screening', L1_TECHNICAL:'L1 Technical', L2_TECHNICAL:'L2 Technical', HR_ROUND:'HR Round', SELECTED:'Selected', REJECTED:'Rejected' };
+    const stageNotes = {
+        PROFILING:    'Your profile has been submitted. HR will review it shortly.',
+        SCREENING:    'Your profile is being reviewed by HR.',
+        L1_TECHNICAL: 'You have cleared screening! Prepare for your L1 Technical interview.',
+        L2_TECHNICAL: 'Great job! You have cleared L1. Your L2 interview is next.',
+        HR_ROUND:     'Excellent! You are in the final HR round.',
+        SELECTED:     '🎉 Congratulations! You have been selected!',
+        REJECTED:     'Thank you for your time. We wish you the best in your future endeavors.'
+    };
+
+    function setNoApplicationState() {
+        document.getElementById('jobTitle').textContent = "You haven't applied to any job yet";
+        document.getElementById('appliedDate').textContent = 'Go to Jobs tab from sidebar to apply.';
+        document.getElementById('currentStageBadge').innerHTML = '<span class="jd-badge badge-gray" style="text-transform:none;">Not Applied</span>';
+        document.getElementById('stageNote').textContent = 'Your progress will appear here once you submit an application.';
+        document.getElementById('stageStepper').innerHTML = '';
+        document.getElementById('stageLabelsRow').style.display = 'none';
+    }
+
+    async function loadDashboard() {
+        try {
+            const profileRes = await api.getMyProfile();
+            const profile = profileRes.data;
+
+            document.getElementById('jobTitle').textContent = profile.jobTitle || 'N/A';
+            document.getElementById('appliedDate').textContent = 'Applied: ' + formatDate(profile.createdAt);
+            document.getElementById('currentStageBadge').innerHTML = stageBadge(profile.currentStage);
+            document.getElementById('stageNote').textContent = stageNotes[profile.currentStage] || '';
+
+            // Build stepper
+            const stepper = document.getElementById('stageStepper');
+            const currentIdx = stageOrder.indexOf(profile.currentStage);
+            stepper.innerHTML = stageOrder.map((stage, i) => {
+                let cls = '';
+                if (i < currentIdx) cls = 'done';
+                else if (i === currentIdx) cls = 'active';
+                const icon = i < currentIdx ? '✓' : (i + 1).toString();
+                return `<div class="stage-step"><div class="stage-dot ${cls}">${icon}</div></div>`;
+            }).join('');
+            document.getElementById('stageLabelsRow').style.display = 'flex';
+
+            // Load interviews
+            try {
+                const iRes = await api.getMyInterviews();
+                const interviews = (iRes.data || []).filter(i => !i.completed);
+                    if (interviews.length) {
+                        const next = interviews[0];
+                        document.getElementById('interviewSection').style.display = 'block';
+                        document.getElementById('noInterviewSection').style.display = 'none';
+                        document.getElementById('iDate').textContent = formatDate(next.interviewDate);
+                        document.getElementById('iTime').textContent = next.interviewTime || '—';
+                        document.getElementById('iStage').textContent = stageLabels[next.interviewStage] || next.interviewStage;
+                        document.getElementById('iPanels').textContent = (next.panelMemberNames || []).join(', ') || '—';
+                        if (next.focusAreas) {
+                            document.getElementById('iFocusAreas').style.display = 'block';
+                            document.getElementById('iFocusText').textContent = next.focusAreas;
+                        }
+                        
+                        // Add Join Meeting button if link exists
+                        if (next.meetingLink) {
+                            const btnHtml = `
+                                <div style="margin-top:24px;">
+                                    <a href="${next.meetingLink}" target="_blank" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; text-decoration:none; background:white; color:#4f46e5; border:none; font-weight:600; width:100%; justify-content:center;">
+                                        ${svgExternal} Join Online Interview
+                                    </a>
+                                </div>
+                            `;
+                            document.getElementById('interviewSection').insertAdjacentHTML('beforeend', btnHtml);
+                        }
+                    }
+            } catch(e) { /* interviews not yet scheduled */ }
+
+        } catch (e) {
+            setNoApplicationState();
+        }
+
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>

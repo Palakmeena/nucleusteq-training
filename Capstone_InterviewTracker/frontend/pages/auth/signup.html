@@ -61,25 +61,32 @@
             <form id="signupForm">
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label>Full Name</label>
-                    <input type="text" placeholder="John Doe" required style="padding: 10px 14px; margin-bottom: 0;">
+                    <input type="text" id="fullName" placeholder="John Doe" required style="padding: 10px 14px; margin-bottom: 0;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label>Email Address</label>
-                    <input type="email" placeholder="name@company.com" required style="padding: 10px 14px; margin-bottom: 0;">
+                    <input type="email" id="email" placeholder="name@company.com" required style="padding: 10px 14px; margin-bottom: 0;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label>Password</label>
-                    <input type="password" placeholder="••••••••" required style="padding: 10px 14px; margin-bottom: 0;">
+                    <input type="password" id="password" placeholder="••••••••" required style="padding: 10px 14px; margin-bottom: 0;">
                 </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="••••••••" required style="padding: 10px 14px; margin-bottom: 0;">
+                </div>
+
+                <div id="signupError" style="color: #ef4444; font-size: 14px; margin-bottom: 10px; display: none;"></div>
 
                 <button type="submit" class="primary-btn" style="margin-top: 10px;">
                     Create Account
                 </button>
 
                 <p class="signup-text" style="margin-top: 15px;">
-                    Already have an account? <a href="login.html">Sign In</a>
+                    Already have an account? <a href="#" id="loginLink">Sign In</a>
                 </p>
             </form>
         </div>
@@ -90,6 +97,22 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectJobId = urlParams.get('redirectJobId');
+        const loginLink = document.getElementById("loginLink");
+        
+        if (redirectJobId) {
+            loginLink.href = `login.html?redirectJobId=${redirectJobId}`;
+        } else {
+            loginLink.href = "login.html";
+        }
+    });
+</script>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
 <script src="../../js/auth/signup.js"></script>
 </body>
 </html>

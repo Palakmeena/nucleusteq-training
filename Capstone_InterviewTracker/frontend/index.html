@@ -1,314 +1,889 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Available Positions</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fcfcfd;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Modal & Form Styles extracted from dashboard.css */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748b;
+            padding: 4px;
+        }
+
+        .close-btn:hover {
+            color: #1e293b;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1e293b;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .secondary-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .primary-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .primary-btn:hover {
+            background: #4338ca;
+        }
+
+        .landing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: transparent;
+            position: relative;
+            z-index: 10;
+        }
+
+        .landing-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-nav a.active {
+            color: #4f46e5;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 4px;
+        }
+
+        .landing-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .landing-actions a,
+        .landing-actions button {
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .login-btn {
+            color: #475569;
+            background: transparent;
+            border: none;
+        }
+
+        .signup-btn {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        .hero-container {
+            position: relative;
+            text-align: center;
+            padding: 80px 20px 60px 20px;
+            z-index: 10;
+        }
+
+        .blob-bg {
+            position: absolute;
+            top: -200px;
+            right: -100px;
+            width: 800px;
+            height: 800px;
+            background: #f3e8ff;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 15px;
+        }
+
+        .hero-title span {
+            color: #4f46e5;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: #64748b;
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+            line-height: 1.6;
+        }
+
+        .search-wrapper {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 6px;
+        }
+
+        .search-input-group {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            padding: 0 15px;
+            gap: 10px;
+            color: #64748b;
+        }
+
+        .search-input-group input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .search-divider {
+            width: 1px;
+            background: #e2e8f0;
+            margin: 10px 0;
+        }
+
+        .search-btn {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .vacancies-section {
+            background-color: #f8fafc;
+            padding: 60px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .vacancies-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
+        }
+
+        .vacancies-header h2 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #0f172a;
+            margin: 0 0 5px 0;
+        }
+
+        .vacancies-header p {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .vacancies-header a {
+            color: #4f46e5;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .jd-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ref-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ref-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .company-initial {
+            width: 32px;
+            height: 32px;
+            background: #0f172a;
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .badge-fulltime {
+            background: #ecfdf5;
+            color: #10b981;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .badge-remote {
+            background: #eff6ff;
+            color: #3b82f6;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .ref-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .ref-card-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .ref-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .ref-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .btn-apply-light {
+            background: #e0e7ff;
+            color: #4f46e5;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .cta-section {
+            max-width: 1200px;
+            margin: 60px auto;
+            background: #4f46e5;
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .cta-text h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0 0 10px 0;
+        }
+
+        .cta-text p {
+            font-size: 14px;
+            color: #e0e7ff;
+            margin: 0;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .cta-form {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .cta-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cta-input-group input {
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid #818cf8;
+            background: #6366f1;
+            color: white;
+            width: 250px;
+            outline: none;
+        }
+
+        .cta-input-group input::placeholder {
+            color: #a5b4fc;
+        }
+
+        .cta-input-group button {
+            padding: 12px 20px;
+            background: white;
+            color: #4f46e5;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cta-disclaimer {
+            font-size: 11px;
+            color: #a5b4fc;
+        }
+
+        footer {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 60px 40px 20px 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand p {
+            font-size: 13px;
+            color: #64748b;
+            max-width: 250px;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .link-column h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .link-column a {
+            display: block;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-    <div class="brand">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
-        HireTrack
-    </div>
-    
-    <div class="profile-section" id="sidebarProfile">
-        <div class="profile-title">Guest User</div>
-        <div class="profile-role">Please sign in</div>
-    </div>
+    <div class="blob-bg"></div>
 
-    <nav class="nav-menu">
-        <a href="#" class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Dashboard
-        </a>
-        <a href="index.html" class="nav-item active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            Job Descriptions
-        </a>
-        <a href="#" class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            Candidates
-        </a>
-        <a href="#" class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            Interviews
-        </a>
-    </nav>
-
-    <div class="post-job-btn-container" id="hrPostJobBtn" style="display: none;">
-        <button class="primary-btn" onclick="window.location.href='pages/hr/create-jd.html'">+ New Job Post</button>
-    </div>
-
-    <div class="sidebar-bottom">
-        <a href="#" class="bottom-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            Support
-        </a>
-        <a href="#" class="bottom-item logout" id="authBtn" onclick="handleAuth()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            <span id="authBtnText">Sign In</span>
-        </a>
-    </div>
-</aside>
-
-<!-- MAIN AREA -->
-<main class="main-area">
-    <header class="topbar">
-        <div class="topbar-nav">
-            <a href="#">Dashboard</a>
-            <span style="color:#cbd5e1">/</span>
-            <a href="index.html" class="active">Job Descriptions</a>
+    <header class="landing-header">
+        <div class="landing-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z">
+                </path>
+                <path
+                    d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z">
+                </path>
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+            </svg>
+            HireTrack
         </div>
-        <div class="topbar-actions">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <div style="width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #475569;">U</div>
+
+        <div class="header-nav">
+            <a href="index.html" class="active">Home</a>
+            <a href="pages/jobs/jobs.html">Jobs</a>
+        </div>
+
+        <div class="landing-actions" id="authSection">
+            <a href="pages/auth/login.html" class="login-btn">Login</a>
+            <a href="pages/auth/signup.html" class="signup-btn">Sign Up</a>
         </div>
     </header>
 
-    <div class="content-wrapper">
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Active Listings</h1>
-                <p class="page-subtitle">View and apply to available positions.</p>
+    <div class="hero-container">
+        <h1 class="hero-title">Our <span>Recruitment Portal</span></h1>
+        <p class="hero-subtitle">The official platform for tracking applications and managing interviews at HireTrack.
+            Join our mission and build your career with us.</p>
+    </div>
+
+    <div class="cta-section">
+        <div class="cta-text">
+            <h3>Stay updated on new roles</h3>
+            <p>Get notified when new positions that match your profile become available in our team.</p>
+        </div>
+        <div class="cta-form">
+            <div class="cta-input-group">
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+            <div class="cta-disclaimer">We value your privacy. No spam, ever.</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="landing-brand">HireTrack</div>
+                <p>Our official internal recruitment system. Helping you find your place in the HireTrack family.</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-column">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Careers</a>
+                </div>
+                <div class="link-column">
+                    <h4>Resources</h4>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Cookies</a>
+                </div>
+                <div class="link-column">
+                    <h4>Services</h4>
+                    <a href="#">Post a Job</a>
+                    <a href="#">HireTalent</a>
+                    <a href="#">API</a>
+                </div>
             </div>
         </div>
-
-        <div class="search-container">
-            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="searchInput" placeholder="Search by job title or location...">
+        <div class="footer-bottom">
+            &copy; 2024 HireTrack. Productive recruitment for a modern world.
         </div>
+    </footer>
 
-        <div id="jdList" class="jd-grid">
-            <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px;">Loading positions...</div>
+    <div class="modal-overlay" id="applyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
+                <button class="close-btn" onclick="closeApplyModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="applyErrorMsg" style="color: #dc2626; font-size: 14px; margin-bottom: 16px; display: none;">
+                </div>
+                <div id="applySuccessMsg"
+                    style="color: #16a34a; font-size: 14px; margin-bottom: 16px; display: none; background: #dcfce7; padding: 12px; border-radius: 6px;">
+                    Application submitted successfully!</div>
+
+                <form id="applyForm">
+                    <input type="hidden" id="applyJdId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="applyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" id="applyEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="display:flex; gap:8px;">
+                            <div style="flex:0 0 80px;">
+                                <label>Code</label>
+                                <input type="text" id="applyMobileCode" value="+91" required>
+                            </div>
+                            <div style="flex:1;">
+                                <label>Mobile Number</label>
+                                <input type="text" id="applyMobile" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth (Optional)</label>
+                            <input type="date" id="applyDob"
+                                style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Current Organization</label>
+                            <input type="text" id="applyOrg" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Location</label>
+                            <input type="text" id="applyLocation" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Experience (Yrs)</label>
+                            <input type="number" id="applyTotalExp" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Relevant Experience (Yrs)</label>
+                            <input type="number" id="applyRelExp" min="0" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Current CTC (LPA)</label>
+                            <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Expected CTC (LPA)</label>
+                            <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Notice Period (Days)</label>
+                            <input type="number" id="applyNotice" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Source</label>
+                            <select id="applySource" required>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Indeed">Indeed</option>
+                                <option value="Company Website">Company Website</option>
+                                <option value="Referral">Referral</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Resume (PDF only, Max 5MB)</label>
+                        <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
+                <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit
+                    Application</button>
+            </div>
         </div>
     </div>
-</main>
 
-<!-- APPLY MODAL -->
-<div class="modal-overlay" id="applyModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
-            <button class="close-btn" onclick="closeApplyModal()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div id="applyErrorMsg" style="color: #dc2626; font-size: 14px; margin-bottom: 16px; display: none;"></div>
-            <div id="applySuccessMsg" style="color: #16a34a; font-size: 14px; margin-bottom: 16px; display: none; background: #dcfce7; padding: 12px; border-radius: 6px;">Application submitted successfully!</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            const userEmail = localStorage.getItem('userEmail');
 
-            <form id="applyForm">
-                <input type="hidden" id="applyJdId">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="applyName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="text" id="applyEmail" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Mobile Number</label>
-                        <input type="text" id="applyMobile" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Date of Birth (Optional)</label>
-                        <input type="date" id="applyDob" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Current Organization</label>
-                        <input type="text" id="applyOrg" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" id="applyLocation" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Total Experience (Yrs)</label>
-                        <input type="number" id="applyTotalExp" min="0" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Relevant Experience (Yrs)</label>
-                        <input type="number" id="applyRelExp" min="0" step="0.1" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Current CTC (LPA)</label>
-                        <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Expected CTC (LPA)</label>
-                        <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Notice Period (Days)</label>
-                        <input type="number" id="applyNotice" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Source</label>
-                        <select id="applySource" required>
-                            <option value="LinkedIn">LinkedIn</option>
-                            <option value="Indeed">Indeed</option>
-                            <option value="Company Website">Company Website</option>
-                            <option value="Referral">Referral</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Resume (PDF only)</label>
-                    <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;">
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
-            <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit Application</button>
-        </div>
-    </div>
-</div>
+            const authSection = document.getElementById('authSection');
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        const userEmail = localStorage.getItem('userEmail');
-        
-        const authBtnText = document.getElementById('authBtnText');
-        const sidebarProfile = document.getElementById('sidebarProfile');
+            if (token) {
+                let dashboardLink = "pages/candidate/dashboard.html";
+                if (role === 'HR') dashboardLink = "pag../hr/overview.html";
+                else if (role === 'PANEL') dashboardLink = "pag../panel/overview.html";
 
-        if (token) {
-            authBtnText.textContent = 'Sign Out';
-            sidebarProfile.innerHTML = `
-                <div class="profile-title">${userEmail || 'User'}</div>
-                <div class="profile-role">${role === 'HR' ? 'Hiring Manager' : 'Candidate'}</div>
+                authSection.innerHTML = `
+                <a href="${dashboardLink}" class="login-btn" style="text-decoration: none;">Dashboard</a>
+                <button class="signup-btn" onclick="handleAuth()">Sign Out</button>
             `;
-            if (role === 'HR') {
-                document.getElementById('hrPostJobBtn').style.display = 'block';
             }
-        }
 
-        const jdListEl = document.getElementById('jdList');
-        const searchInput = document.getElementById('searchInput');
-        let allJds = [];
-
-        fetch('http://localhost:8080/api/jd/all')
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    allJds = data.data;
-                    renderJds(allJds);
-                } else {
-                    jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Failed to load jobs</div>`;
-                }
-            })
-            .catch(err => {
-                jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center;">Error connecting to backend API.</div>`;
-            });
-
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allJds.filter(jd => 
-                jd.jobTitle.toLowerCase().includes(term) || 
-                jd.location.toLowerCase().includes(term)
-            );
-            renderJds(filtered);
+            const urlParams = new URLSearchParams(window.location.search);
+            const openApplyId = urlParams.get('openApply');
+            if (openApplyId) {
+                window.location.href = `pages/jobs/jobs.html?openApply=${openApplyId}`;
+            }
         });
 
-        function renderJds(jds) {
-            if (jds.length === 0) {
-                jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b;">No available positions found.</div>`;
+        const modal = document.getElementById('applyModal');
+
+        function openApplyModal(jdId, jobTitle) {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+
+            if (!token) {
+                window.location.href = `pages/auth/login.html?redirectJobId=${jdId}`;
                 return;
             }
 
-            jdListEl.innerHTML = jds.map(jd => `
-                <div class="jd-card">
-                    <div class="jd-card-header">
-                        <div class="jd-card-title">${jd.jobTitle}</div>
-                        <div class="jd-badge">${jd.jobType.replace('_', ' ')}</div>
-                    </div>
-                    <div class="jd-card-location">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        ${jd.location}
-                    </div>
-                    <div class="jd-card-skills">
-                        ${jd.skills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                        ${jd.skills.length > 3 ? `<span class="skill-tag">+${jd.skills.length - 3} more</span>` : ''}
-                    </div>
-                    <div class="jd-card-footer">
-                        <div class="jd-salary">${jd.minSalary}L - ${jd.maxSalary}L</div>
-                        <button class="primary-btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="openApplyModal(${jd.id}, '${jd.jobTitle.replace(/'/g, "\\'")}')">Apply Now</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-    });
+            if (role === 'HR' || role === 'PANEL') {
+                alert("Only candidates can apply for jobs.");
+                return;
+            }
 
-    const modal = document.getElementById('applyModal');
-    
-    function openApplyModal(jdId, jobTitle) {
-        document.getElementById('modalJobTitle').innerText = jobTitle;
-        document.getElementById('applyJdId').value = jdId;
-        
-        // Clear form
-        document.getElementById('applyForm').reset();
-        document.getElementById('applyErrorMsg').style.display = 'none';
-        document.getElementById('applySuccessMsg').style.display = 'none';
-        
-        modal.classList.add('active');
-    }
+            document.getElementById('modalJobTitle').innerText = jobTitle;
+            document.getElementById('applyJdId').value = jdId;
 
-    function closeApplyModal() {
-        modal.classList.remove('active');
-    }
+            // Clear form
+            document.getElementById('applyForm').reset();
+            document.getElementById('applyErrorMsg').style.display = 'none';
+            document.getElementById('applySuccessMsg').style.display = 'none';
 
-    function submitApplication() {
-        const jdId = document.getElementById('applyJdId').value;
-        const errorMsg = document.getElementById('applyErrorMsg');
-        const successMsg = document.getElementById('applySuccessMsg');
-        
-        // Very basic validation check
-        const form = document.getElementById('applyForm');
-        if (!form.checkValidity()) {
-            errorMsg.innerText = "Please fill out all required fields.";
-            errorMsg.style.display = "block";
-            return;
+            modal.classList.add('active');
         }
 
-        // Simulating API call since candidate endpoint is not fully implemented yet
-        // In real scenario we will use FormData to upload the resume
-        errorMsg.style.display = 'none';
-        
-        // Mock successful submission
-        setTimeout(() => {
-            successMsg.style.display = 'block';
-            setTimeout(() => closeApplyModal(), 2000);
-        }, 800);
-    }
-
-    function handleAuth() {
-        if (localStorage.getItem('token')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            localStorage.removeItem('userEmail');
-            window.location.reload();
-        } else {
-            window.location.href = 'pages/auth/login.html';
+        function closeApplyModal() {
+            modal.classList.remove('active');
         }
-    }
-</script>
+
+        function submitApplication() {
+            const jdId = document.getElementById('applyJdId').value;
+            const errorMsg = document.getElementById('applyErrorMsg');
+            const successMsg = document.getElementById('applySuccessMsg');
+            const form = document.getElementById('applyForm');
+
+            if (!form.checkValidity()) {
+                errorMsg.innerText = "Please fill out all required fields.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            errorMsg.style.display = 'none';
+            const submitBtn = document.querySelector('.modal-footer .primary-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const payload = {
+                jobDescriptionId: parseInt(jdId),
+                fullName: document.getElementById('applyName').value,
+                email: document.getElementById('applyEmail').value,
+                mobileCode: document.getElementById('applyMobileCode').value,
+                mobileNumber: document.getElementById('applyMobile').value,
+                dateOfBirth: document.getElementById('applyDob').value || null,
+                currentOrganization: document.getElementById('applyOrg').value,
+                preferredLocation: document.getElementById('applyLocation').value,
+                totalExperience: parseFloat(document.getElementById('applyTotalExp').value),
+                relevantExperience: parseFloat(document.getElementById('applyRelExp').value),
+                currentCtc: parseFloat(document.getElementById('applyCurrentCtc').value),
+                expectedCtc: parseFloat(document.getElementById('applyExpectedCtc').value),
+                noticePeriod: parseInt(document.getElementById('applyNotice').value),
+                source: document.getElementById('applySource').value
+            };
+
+            fetch('http://localhost:8080/api/candidate/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.message);
+                    const candidateId = data.data.id;
+
+                    const resumeFile = document.getElementById('applyResume').files[0];
+                    const formData = new FormData();
+                    formData.append('file', resumeFile);
+
+                    return fetch(`http://localhost:8080/api/candidate/resume/${candidateId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: formData
+                    });
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) throw new Error("Profile created, but resume upload failed: " + data.message);
+                    successMsg.innerHTML = "<strong>Application successful!</strong><br>You will be redirected to your dashboard.";
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        closeApplyModal();
+                        window.location.href = "pages/candidate/dashboard.html";
+                    }, 2000);
+                })
+                .catch(err => {
+                    errorMsg.innerText = err.message || "An error occurred.";
+                    errorMsg.style.display = "block";
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Application';
+                });
+        }
+
+        function handleAuth() {
+            if (localStorage.getItem('token')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                localStorage.removeItem('userEmail');
+                window.location.reload();
+            } else {
+                window.location.href = 'pages/auth/login.html';
+            }
+        }
+    </script>
+<script src="js/services/api.js"></script>
+<script src="js/services/authService.js"></script>
 </body>
+
 </html>

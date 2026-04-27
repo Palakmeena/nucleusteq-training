@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | HR Overview</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">Overview</div>
+        <div class="topbar-actions"></div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Interview Pipeline</h1>
+                <p class="page-subtitle">Track and manage your hiring funnel from a single interface.</p>
+            </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon blue">👥</div>
+                <div><div class="metric-value" id="totalCandidates">—</div><div class="metric-label">Total Candidates</div></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon amber">💼</div>
+                <div><div class="metric-value" id="activeJds">—</div><div class="metric-label">Active Job Roles</div></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon green">👔</div>
+                <div><div class="metric-value" id="totalPanels">—</div><div class="metric-label">Panel Members</div></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon red">⏳</div>
+                <div><div class="metric-value" id="inProgress">—</div><div class="metric-label">In Progress</div></div>
+            </div>
+        </div>
+
+        <!-- FUNNEL -->
+        <div class="funnel-card">
+            <div class="funnel-title">Hiring Funnel Status</div>
+            <div class="funnel-stages">
+                <div class="funnel-stage">
+                    <div class="funnel-stage-icon s1">👤</div>
+                    <div class="funnel-stage-name">Profiling</div>
+                    <div class="funnel-stage-count" id="cnt-PROFILING">—</div>
+                </div>
+                <div class="funnel-stage">
+                    <div class="funnel-stage-icon s2">🔍</div>
+                    <div class="funnel-stage-name">Screening</div>
+                    <div class="funnel-stage-count" id="cnt-SCREENING">—</div>
+                </div>
+                <div class="funnel-stage">
+                    <div class="funnel-stage-icon s3">1️⃣</div>
+                    <div class="funnel-stage-name">L1 Interview</div>
+                    <div class="funnel-stage-count" id="cnt-L1_TECHNICAL">—</div>
+                </div>
+                <div class="funnel-stage">
+                    <div class="funnel-stage-icon s4">2️⃣</div>
+                    <div class="funnel-stage-name">L2 Interview</div>
+                    <div class="funnel-stage-count" id="cnt-L2_TECHNICAL">—</div>
+                </div>
+                <div class="funnel-stage">
+                    <div class="funnel-stage-icon s5">🤝</div>
+                    <div class="funnel-stage-name">HR Round</div>
+                    <div class="funnel-stage-count" id="cnt-HR_ROUND">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT CANDIDATES TABLE -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3 style="font-size:15px;font-weight:600;">Recent Candidates</h3>
+                <a href="candidates.html" style="font-size:13px;color:#4f46e5;text-decoration:none;">View All →</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role Applied</th>
+                        <th>Experience</th>
+                        <th>Current Stage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recentCandidates">
+                    <tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('HR');
+    document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'overview');
+
+    async function loadOverview() {
+        try {
+            const [cRes, jRes, pRes] = await Promise.all([
+                api.getAllCandidates(),
+                api.getAllJdsForHr(),
+                api.getAllPanelMembers()
+            ]);
+
+            const candidates = cRes.data || [];
+            const jds = jRes.data || [];
+            const panels = pRes.data || [];
+
+            document.getElementById('totalCandidates').textContent = candidates.length;
+            document.getElementById('activeJds').textContent = jds.filter(j => j.active).length;
+            document.getElementById('totalPanels').textContent = panels.length;
+            document.getElementById('inProgress').textContent = candidates.filter(c => !['SELECTED','REJECTED'].includes(c.currentStage)).length;
+
+            // Funnel counts
+            ['PROFILING','SCREENING','L1_TECHNICAL','L2_TECHNICAL','HR_ROUND'].forEach(stage => {
+                const el = document.getElementById('cnt-' + stage);
+                if (el) el.textContent = candidates.filter(c => c.currentStage === stage).length + ' candidates';
+            });
+
+            // Recent 6 candidates
+            const tbody = document.getElementById('recentCandidates');
+            const recent = candidates.slice(0, 6);
+            tbody.innerHTML = recent.length ? recent.map(c => `
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
+                                ${c.fullName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                            </div>
+                            <div>
+                                <div style="font-weight:500;font-size:14px;">${c.fullName}</div>
+                                <div style="font-size:12px;color:#64748b;">${c.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-size:14px;">${c.jobTitle || '—'}</td>
+                    <td style="font-size:14px;">${c.totalExperience} yrs</td>
+                    <td>${stageBadge(c.currentStage)}</td>
+                    <td><a href="candidates.html" style="font-size:13px;color:#4f46e5;text-decoration:none;padding:4px 10px;border:1px solid #4f46e5;border-radius:6px;">View</a></td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">No candidates yet</td></tr>';
+
+        } catch (e) {
+            showToast('Failed to load dashboard: ' + e.message, 'error');
+        }
+    }
+
+    loadOverview();
+</script>
+</body>
+</html>

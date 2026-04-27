@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | My Profile</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .profile-shell {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .profile-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+        }
+
+        .hero-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-name { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+        .hero-email { font-size: 13px; color: #64748b; }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .section {
+            padding: 22px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 16px 0;
+            letter-spacing: 0.01em;
+        }
+
+        .info-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px 22px; }
+        .info-item-label { font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:700;margin-bottom:4px;letter-spacing:0.04em; }
+        .info-item-value { font-size:14px;color:#1e293b;font-weight:600; }
+
+        .resume-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 10px;
+            border-radius: 999px;
+        }
+
+        .resume-pill.ok {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .resume-pill.miss {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        @media (max-width: 900px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-hero {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main-area">
+    <header class="topbar">
+        <div class="topbar-nav">My Profile</div>
+    </header>
+    <div class="content-wrapper">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">My Profile</h1>
+                <p class="page-subtitle">Read-only view of your submitted application data.</p>
+            </div>
+        </div>
+
+        <div id="profileContent"><div style="text-align:center;padding:60px;color:#94a3b8;">Loading your profile...</div></div>
+    </div>
+</main>
+
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    auth.requireRole('CANDIDATE');
+    document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'profile');
+
+    async function loadProfile() {
+        try {
+            const res = await api.getMyProfile();
+            const p = res.data;
+            const initials = (p.fullName || 'User').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+            document.getElementById('profileContent').innerHTML = `
+                <div class="profile-shell">
+                    <div class="profile-hero">
+                        <div class="hero-left">
+                            <div class="avatar">${initials}</div>
+                            <div>
+                                <div class="hero-name">${p.fullName}</div>
+                                <div class="hero-email">${p.email}</div>
+                            </div>
+                        </div>
+                        <div class="status-chip">
+                            Current Stage
+                            ${stageBadge(p.currentStage)}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">Personal Information</h3>
+                        <div class="info-grid">
+                            <div><div class="info-item-label">Full Name</div><div class="info-item-value">${p.fullName}</div></div>
+                            <div><div class="info-item-label">Email</div><div class="info-item-value">${p.email}</div></div>
+                            <div><div class="info-item-label">Mobile</div><div class="info-item-value">${p.mobileCode} ${p.mobileNumber}</div></div>
+                            <div><div class="info-item-label">Date of Birth</div><div class="info-item-value">${p.dateOfBirth ? formatDate(p.dateOfBirth) : '—'}</div></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">Professional Details</h3>
+                        <div class="info-grid">
+                            <div><div class="info-item-label">Current Organization</div><div class="info-item-value">${p.currentOrganization}</div></div>
+                            <div><div class="info-item-label">Total Experience</div><div class="info-item-value">${p.totalExperience} years</div></div>
+                            <div><div class="info-item-label">Relevant Experience</div><div class="info-item-value">${p.relevantExperience} years</div></div>
+                            <div><div class="info-item-label">Current CTC</div><div class="info-item-value">${p.currentCtc} LPA</div></div>
+                            <div><div class="info-item-label">Expected CTC</div><div class="info-item-value">${p.expectedCtc} LPA</div></div>
+                            <div><div class="info-item-label">Notice Period</div><div class="info-item-value">${p.noticePeriod} days</div></div>
+                            <div><div class="info-item-label">Preferred Location</div><div class="info-item-value">${p.preferredLocation}</div></div>
+                            <div><div class="info-item-label">Source</div><div class="info-item-value">${p.source}</div></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">Application & Resume</h3>
+                        <div class="info-grid">
+                            <div><div class="info-item-label">Applied For</div><div class="info-item-value">${p.jobTitle}</div></div>
+                            <div><div class="info-item-label">Applied On</div><div class="info-item-value">${formatDate(p.createdAt)}</div></div>
+                            <div><div class="info-item-label">Resume</div><div class="info-item-value">${p.resumePath ? '<span class="resume-pill ok">📄 Uploaded</span>' : '<span class="resume-pill miss">Resume Missing</span>'}</div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            showToast('Failed to load profile: ' + e.message, 'error');
+        }
+    }
+
+    loadProfile();
+</script>
+</body>
+</html>

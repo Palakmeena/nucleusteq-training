@@ -1,61 +1,60 @@
-//  Handle login form submission
-//  Validates user input before sending API request
+// ============================================================
+// login.js — handles login form submission
+// ============================================================
 
+document.addEventListener('DOMContentLoaded', () => {
 
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const errorMsg = document.getElementById("errorMsg");
-
-    try {
-        if(errorMsg) errorMsg.style.display = "none";
-        
-        // 1. Send REAL request to Spring Boot Backend
-        const response = await fetch("http://localhost:8080/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email: email, password: password })
-        });
-
-        if (!response.ok) {
-            throw new Error("Invalid credentials");
-        }
-
-        const data = await response.json();
-        console.log("Login Success:", data);
-
-        // 2. Save the real JWT token
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userEmail", email);
-        
-        // 3. Decode JWT payload to get role
-        const payloadBase64 = data.token.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payloadBase64));
-        
-        let redirectUrl = "../../index.html"; 
-        
-        if (email.includes("hr")) {
-            localStorage.setItem("role", "HR");
-            redirectUrl = "../hr/pipeline.html";
-        } else if (email.includes("panel")) {
-            localStorage.setItem("role", "PANEL");
-            redirectUrl = "../panel/interview-dashboard.html";
-        } else {
-            localStorage.setItem("role", "CANDIDATE");
-        }
-
-        window.location.href = redirectUrl;
-
-    } catch (error) {
-        if(errorMsg) {
-            errorMsg.innerText = "Login failed: " + error.message;
-            errorMsg.style.display = "block";
-        } else {
-            alert("Login failed: " + error.message);
-        }
+    // If already logged in — redirect directly
+    if (localStorage.getItem('token')) {
+        const role = localStorage.getItem('role');
+        const base = getBasePath();
+        if (role === 'HR')        window.location.href = base + 'pages/hr/overview.html';
+        else if (role === 'PANEL')     window.location.href = base + 'pages/panel/overview.html';
+        else if (role === 'CANDIDATE') window.location.href = base + 'pages/candidate/dashboard.html';
     }
+
+    const form = document.getElementById('loginForm');
+    const errorDiv = document.getElementById('loginError');
+    const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing in...'; }
+
+        try {
+            const result = await api.login(email, password);
+
+            if (!result.success) throw new Error(result.message || 'Login failed');
+
+            // Save user data
+            auth.save(result.data);
+
+            // Check if there's a pending job application redirect
+            const params = new URLSearchParams(window.location.search);
+            const redirectJobId = params.get('redirectJobId');
+
+            if (redirectJobId && result.data.role === 'CANDIDATE') {
+                window.location.href = getBasePath() + `index.html?openApply=${redirectJobId}`;
+            } else {
+                auth.redirectByRole();
+            }
+
+        } catch (err) {
+            if (errorDiv) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+            } else {
+                alert('Login failed: ' + err.message);
+            }
+        } finally {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Access Account'; }
+        }
+    });
 });

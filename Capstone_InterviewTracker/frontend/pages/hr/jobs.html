@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Manage Job Descriptions</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <style>
+        .job-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .job-row-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .job-title {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .job-meta {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .job-desc {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .job-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            background: #f1f5f9;
+            border-radius: 999px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .job-row-card {
+                flex-direction: column;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .skill-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin: 4px;
+            font-size: 13px;
+        }
+
+        .skill-chip button {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            margin-left: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main-area">
+        <header class="topbar">
+            <div class="topbar-nav">Job Descriptions</div>
+            <div class="topbar-actions">
+                <button class="primary-btn" style="padding:8px 16px;" onclick="openModal()">+ Create JD</button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">Active Job Descriptions</h1>
+            </div>
+            <div class="job-list-container" id="hrJobsList">
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="jdModal">
+        <div class="modal-box">
+            <h2 id="modalTitle">Create Job Description</h2>
+            <form id="createJdForm" style="margin-top: 20px;">
+                <div class="form-grid">
+                    <div class="form-group"><label>Job Title</label><input type="text" id="jobTitle" required></div>
+                    <div class="form-group"><label>Location</label><input type="text" id="location"
+                            placeholder="e.g., Remote, Indore" required></div>
+
+                    <div class="form-group">
+                        <label>Job Type</label>
+                        <select id="jobType" required>
+                            <option value="FULL_TIME">Full-Time</option>
+                            <option value="CONTRACT">Contract</option>
+                            <option value="REMOTE">Remote</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Experience Range (Years)</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="number" id="minExp" placeholder="Min" required>
+                            <input type="number" id="maxExp" placeholder="Max" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Salary Range (LPA)</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="number" id="minSalary" placeholder="Min" required>
+                            <input type="number" id="maxSalary" placeholder="Max" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Skills (Press Enter to add)</label>
+                        <input type="text" id="skillInput" placeholder="Java, Spring Boot...">
+                        <div id="skillsList" style="margin-top: 8px;"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Detailed Description</label>
+                        <textarea id="description" rows="4" required></textarea>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+                    <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="primary-btn">Publish Position</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let skills = [];
+        let isEditMode = false;
+        let editingJobId = null;
+        const modal = document.getElementById('jdModal');
+
+        function openModal() {
+            isEditMode = false;
+            editingJobId = null;
+            document.getElementById('modalTitle').textContent = 'Create Job Description';
+            document.querySelector('#createJdForm button[type="submit"]').textContent = 'Publish Position';
+            document.getElementById('createJdForm').reset();
+            skills = [];
+            renderSkills();
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.getElementById('createJdForm').reset();
+            isEditMode = false;
+            editingJobId = null;
+            skills = [];
+            renderSkills();
+        }
+
+        // Skill Tag Logic
+        document.getElementById('skillInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val = e.target.value.trim();
+                if (val && !skills.includes(val)) {
+                    skills.push(val);
+                    renderSkills();
+                }
+                e.target.value = '';
+            }
+        });
+
+        function renderSkills() {
+            document.getElementById('skillsList').innerHTML = skills.map((s, i) =>
+                `<span class="skill-chip">${s}<button type="button" onclick="removeSkill(${i})">×</button></span>`
+            ).join('');
+        }
+        function removeSkill(i) { skills.splice(i, 1); renderSkills(); }
+
+        // API: Create or Update Job
+        document.getElementById('createJdForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                jobTitle: document.getElementById('jobTitle').value,
+                location: document.getElementById('location').value,
+                jobType: document.getElementById('jobType').value,
+                minExperience: document.getElementById('minExp').value,
+                maxExperience: document.getElementById('maxExp').value,
+                minSalary: document.getElementById('minSalary').value,
+                maxSalary: document.getElementById('maxSalary').value,
+                jobDescription: document.getElementById('description').value,
+                skills: skills
+            };
+
+            try {
+                if (isEditMode) {
+                    const res = await api.updateJd(editingJobId, body);
+                    if (!res.success) throw new Error(res.message);
+                    showToast('Job updated successfully!', 'success');
+                } else {
+                    const res = await api.createJd(body);
+                    if (!res.success) throw new Error(res.message);
+                    showToast('Job posted successfully!', 'success');
+                }
+                closeModal();
+                loadJobs();
+            } catch(e) { showToast(e.message, 'error'); }
+        });
+
+        async function loadJobs() {
+            try {
+                const res = await api.getAllJdsForHr();
+                const jds = res.data || [];
+                const container = document.getElementById('hrJobsList');
+                if (!jds.length) {
+                    container.innerHTML = '<p style="color:#64748b;text-align:center;padding:40px;">No job descriptions yet. Create your first one!</p>';
+                    return;
+                }
+                const typeLabel = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
+                container.innerHTML = jds.map(jd => `
+                    <div class="job-row-card">
+                        <div style="flex:1;min-width:0;">
+                            <h3 class="job-title">${jd.jobTitle}</h3>
+                            <div class="job-meta">📍 ${jd.location} &nbsp;|&nbsp; 💼 ${typeLabel[jd.jobType] || jd.jobType} &nbsp;|&nbsp; 🎯 ${jd.minExperience}-${jd.maxExperience} yrs &nbsp;|&nbsp; 💰 ${jd.minSalary}-${jd.maxSalary} LPA</div>
+                            <div class="job-desc">${jd.jobDescription || 'No description available.'}</div>
+                            <div class="job-tags">
+                                ${(jd.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:210px;">
+                            <span class="jd-badge" style="${jd.active ? 'background:#dcfce7;color:#16a34a;' : 'background:#f1f5f9;color:#64748b;'}">${jd.active ? 'Active' : 'Inactive'}</span>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                                <button class="secondary-btn" style="padding:6px 12px;font-size:13px;" onclick="editJd(${jd.id})">Edit</button>
+                                ${jd.active ? `<button class="secondary-btn" style="padding:6px 12px;font-size:13px;color:#dc2626;" onclick="deactivateJd(${jd.id})">Deactivate</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) { showToast('Failed to load jobs: ' + e.message, 'error'); }
+        }
+        
+        async function editJd(id) {
+            try {
+                const res = await api.getJdById(id);
+                const jd = res.data;
+                
+                isEditMode = true;
+                editingJobId = id;
+                
+                document.getElementById('modalTitle').textContent = 'Edit Job Description';
+                document.querySelector('#createJdForm button[type="submit"]').textContent = 'Update Position';
+                
+                document.getElementById('jobTitle').value = jd.jobTitle;
+                document.getElementById('location').value = jd.location;
+                document.getElementById('jobType').value = jd.jobType;
+                document.getElementById('minExp').value = jd.minExperience;
+                document.getElementById('maxExp').value = jd.maxExperience;
+                document.getElementById('minSalary').value = jd.minSalary;
+                document.getElementById('maxSalary').value = jd.maxSalary;
+                document.getElementById('description').value = jd.jobDescription;
+                
+                skills = jd.skills ? [...jd.skills] : [];
+                renderSkills();
+                
+                modal.classList.add('active');
+            } catch(e) {
+                showToast('Failed to load job details: ' + e.message, 'error');
+            }
+        }
+        
+        async function deactivateJd(id) {
+            if (!confirm('Deactivate this job?')) return;
+            try { await api.deactivateJd(id); showToast('Job deactivated', 'success'); loadJobs(); }
+            catch(e) { showToast(e.message, 'error'); }
+        }
+
+        window.onload = loadJobs;
+    </script>
+<script src="../../js/services/api.js"></script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+auth.requireRole("HR");
+document.getElementById("sidebar").innerHTML = buildSidebar("HR", "jobs");
+</script>
+</body>
+
+</html>
