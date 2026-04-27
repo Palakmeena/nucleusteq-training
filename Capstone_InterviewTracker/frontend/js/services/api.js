@@ -53,14 +53,27 @@ const api = {
 
     // CANDIDATES - candidate
     getMyProfile: () => request('GET', '/candidate/profile'),
+    updateMyProfile: (body) => request('PUT', '/candidate/profile', body),
     getMyInterviews: () => request('GET', '/candidate/interviews'),
 
     // RESUME UPLOAD
     uploadResume: async (candidateId, file) => {
         const formData = new FormData();
         formData.append('file', file);
-        const token = getToken();
         const res = await fetch(`${BASE_URL}/candidate/resume/${candidateId}`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Upload failed');
+        return data;
+    },
+
+    uploadProfileResume: async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const token = getToken();
+        const res = await fetch(`${BASE_URL}/candidate/profile/resume`, {
             method: 'POST',
             headers: token ? { 'Authorization': 'Bearer ' + token } : {},
             body: formData
@@ -81,10 +94,11 @@ const api = {
     getMyPanelProfile: () => request('GET', '/panel/profile'),
     getMyAssignedInterviews: () => request('GET', '/panel/interviews'),
 
-    // INTERVIEWS - HR
+    // INTERVIEWS - Panel/HR
     scheduleInterview: (body) => request('POST', '/hr/interview', body),
     getInterviewById: (id) => request('GET', `/hr/interview/${id}`),
     getInterviewsForCandidate: (candidateId) => request('GET', `/hr/interview/candidate/${candidateId}`),
+    updateInterviewFeedback: (id, body) => request('PUT', `/panel/interview/${id}/feedback`, body),
 };
 
 window.api = api;
