@@ -36,8 +36,8 @@
         <!-- FILTERS -->
         <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
             <div class="search-container" style="flex:1;max-width:320px;margin-bottom:0;">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="filterCandidates()">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="filterCandidates()" style="padding-left:40px;">
             </div>
             <select id="stageFilter" class="filter-btn" onchange="filterCandidates()" style="padding:10px 14px;">
                 <option value="">All Stages</option>
@@ -509,7 +509,7 @@
                     <label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Attachments</label>
                     <div id="resumeSection">
                         <a id="candidateResumeLink" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#4f46e5;color:white;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:all 0.2s;">
-                            <span style="font-size:18px;">📄</span> View Resume
+                            <span style="font-size:18px;"></span> View Resume
                         </a>
                         <p id="noResumeMsg" style="margin:0;font-size:14px;color:#94a3b8;display:none;">No resume uploaded yet.</p>
                     </div>

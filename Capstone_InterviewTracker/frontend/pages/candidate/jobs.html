@@ -133,7 +133,7 @@
                 <div class="job-row-card">
                     <div style="flex:1;min-width:0;">
                         <div class="job-title">${j.jobTitle || 'Untitled Role'}</div>
-                        <div class="job-meta">📍 ${j.location || 'N/A'} &nbsp;|&nbsp; 💼 ${j.jobType || 'N/A'} &nbsp;|&nbsp; 🎯 ${j.minExperience ?? 0}-${j.maxExperience ?? 0} yrs &nbsp;|&nbsp; 💰 ${j.minSalary ?? 0}-${j.maxSalary ?? 0} LPA</div>
+                        <div class="job-meta"> ${j.location || 'N/A'} &nbsp;|&nbsp;  ${j.jobType || 'N/A'} &nbsp;|&nbsp;  ${j.minExperience ?? 0}-${j.maxExperience ?? 0} yrs &nbsp;|&nbsp;  ${j.minSalary ?? 0}-${j.maxSalary ?? 0} LPA</div>
                         <div class="job-desc">${shortText(j.jobDescription)}</div>
                         <div class="tag-wrap">${(j.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
                     </div>

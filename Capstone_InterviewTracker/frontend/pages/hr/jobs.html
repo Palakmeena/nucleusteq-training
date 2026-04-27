@@ -317,7 +317,7 @@
                     <div class="job-row-card">
                         <div style="flex:1;min-width:0;">
                             <h3 class="job-title">${jd.jobTitle}</h3>
-                            <div class="job-meta">📍 ${jd.location} &nbsp;|&nbsp; 💼 ${typeLabel[jd.jobType] || jd.jobType} &nbsp;|&nbsp; 🎯 ${jd.minExperience}-${jd.maxExperience} yrs &nbsp;|&nbsp; 💰 ${jd.minSalary}-${jd.maxSalary} LPA</div>
+                            <div class="job-meta"> ${jd.location} &nbsp;|&nbsp;  ${typeLabel[jd.jobType] || jd.jobType} &nbsp;|&nbsp;  ${jd.minExperience}-${jd.maxExperience} yrs &nbsp;|&nbsp;  ${jd.minSalary}-${jd.maxSalary} LPA</div>
                             <div class="job-desc">${shortText(jd.jobDescription)}</div>
                             <div class="job-tags">
                                 ${(jd.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}

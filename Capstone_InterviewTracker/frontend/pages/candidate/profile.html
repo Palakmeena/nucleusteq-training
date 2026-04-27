@@ -47,7 +47,7 @@
     <header class="topbar">
         <div class="topbar-nav">My Profile</div>
         <div class="topbar-actions">
-            <button class="primary-btn" onclick="openEditModal()">✏️ Edit Profile</button>
+            <button class="primary-btn" onclick="openEditModal()"> Edit Profile</button>
         </div>
     </header>
 
@@ -185,7 +185,7 @@
         document.getElementById('vCurrentCtc').textContent = (p.currentCtc || 0) + ' LPA';
         document.getElementById('vExpectedCtc').textContent = (p.expectedCtc || 0) + ' LPA';
         document.getElementById('vJobTitle').textContent = p.jobTitle || 'N/A';
-        document.getElementById('vResume').innerHTML = p.resumePath ? `<a href="${p.resumePath}" target="_blank" style="color:#4f46e5; font-weight:600; text-decoration:none;">📄 View Resume</a>` : '<span style="color:#94a3b8;">Not uploaded</span>';
+        document.getElementById('vResume').innerHTML = p.resumePath ? `<a href="${p.resumePath}" target="_blank" style="color:#4f46e5; font-weight:600; text-decoration:none;"> View Resume</a>` : '<span style="color:#94a3b8;">Not uploaded</span>';
     }
 
     function openEditModal() {
@@ -252,10 +252,10 @@
             status.textContent = 'Uploading to Drive...';
             await api.uploadProfileResume(file);
             showToast('Resume uploaded successfully', 'success');
-            status.textContent = '✅ Uploaded: ' + file.name;
+            status.textContent = ' Uploaded: ' + file.name;
         } catch (e) {
             showToast(e.message, 'error');
-            status.textContent = '❌ Upload failed';
+            status.textContent = ' Upload failed';
         } finally {
             btn.disabled = false;
         }

@@ -43,15 +43,15 @@
                             <div style="font-size:13px;color:#64748b;margin-top:2px;">${stageBadge(i.interviewStage)}</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <span style="font-size:12px;padding:4px 10px;border-radius:100px;${i.completed ? 'background:#dcfce7;color:#16a34a;' : 'background:#eef2ff;color:#4f46e5;'}">${i.completed ? '✓ Completed' : 'Upcoming'}</span>
+                            <span style="font-size:12px;padding:4px 10px;border-radius:100px;${i.completed ? 'background:#dcfce7;color:#16a34a;' : 'background:#eef2ff;color:#4f46e5;'}">${i.completed ? ' Completed' : 'Upcoming'}</span>
                         </div>
                     </div>
                     <div class="interview-card-meta">
-                        <span>📅 ${formatDate(i.interviewDate)}</span>
-                        <span>⏰ ${i.interviewTime || '—'}</span>
-                        <span>👥 ${(i.panelMemberNames||[]).join(', ') || '—'}</span>
+                        <span> ${formatDate(i.interviewDate)}</span>
+                        <span> ${i.interviewTime || '—'}</span>
+                        <span> ${(i.panelMemberNames||[]).join(', ') || '—'}</span>
                     </div>
-                    ${i.focusAreas ? `<div style="margin-top:12px;background:#f8fafc;border-radius:8px;padding:12px;font-size:13px;color:#475569;"><strong>📌 Focus Areas:</strong> ${i.focusAreas}</div>` : ''}
+                    ${i.focusAreas ? `<div style="margin-top:12px;background:#f8fafc;border-radius:8px;padding:12px;font-size:13px;color:#475569;"><strong> Focus Areas:</strong> ${i.focusAreas}</div>` : ''}
                     
                     <div style="margin-top:20px; padding-top:16px; border-top:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
                         <div style="display:flex; gap:8px;">
@@ -69,7 +69,7 @@
                         ` : ''}
                     </div>
                 </div>
-            `).join('') : '<div style="text-align:center;padding:60px;color:#94a3b8;"><div style="font-size:48px;margin-bottom:16px;">📭</div><div>No interviews assigned yet</div></div>';
+            `).join('') : '<div style="text-align:center;padding:60px;color:#94a3b8;"><div style="font-size:48px;margin-bottom:16px;"></div><div>No interviews assigned yet</div></div>';
         } catch(e) { showToast('Failed to load: ' + e.message, 'error'); }
     }
     load();
