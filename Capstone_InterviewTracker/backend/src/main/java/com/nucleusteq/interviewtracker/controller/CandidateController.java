@@ -30,6 +30,7 @@ public class CandidateController {
 
     private final CandidateService candidateService;
     private final GoogleDriveService googleDriveService;
+    private final com.nucleusteq.interviewtracker.service.CandidateProfileService profileService;
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -38,9 +39,12 @@ public class CandidateController {
      * @param googleDriveService handles cloud storage uploads
      */
     @Autowired
-    public CandidateController(final CandidateService candidateService, final GoogleDriveService googleDriveService) {
+    public CandidateController(final CandidateService candidateService, 
+                               final GoogleDriveService googleDriveService,
+                               final com.nucleusteq.interviewtracker.service.CandidateProfileService profileService) {
         this.candidateService = candidateService;
         this.googleDriveService = googleDriveService;
+        this.profileService = profileService;
     }
 
     /**
@@ -179,89 +183,69 @@ public class CandidateController {
     @GetMapping("/candidate/profile")
     public ResponseEntity<ApiResponse<CandidateResponseDto>> getCandidateProfile(
             final Authentication authentication) {
-
         try {
-            /*
-             * We get the email from the Authentication object which Spring
-             * Security populates from the JWT token in JwtFilter.
-             * This way the candidate can only ever see their own profile.
-             */
             String email = authentication.getName();
-            CandidateResponseDto response =
-                    candidateService.getCandidateProfile(email);
-            return ResponseEntity.ok(
-                    ApiResponse.success("Profile fetched successfully", response)
-            );
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            return ResponseEntity.ok(ApiResponse.success("Profile fetched", candidateService.getCandidateProfile(email)));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/candidate/profile")
+    public ResponseEntity<ApiResponse<com.nucleusteq.interviewtracker.entity.CandidateProfile>> updateCandidateProfile(
+            @RequestBody final com.nucleusteq.interviewtracker.entity.CandidateProfile profile,
+            final Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            return ResponseEntity.ok(ApiResponse.success("Profile updated", profileService.updateProfile(email, profile)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }
     }
 
     /**
-     * Candidate uploads their resume — PDF only, max 5MB.
-     * File is saved locally and path is stored in candidate profile.
-     * POST /candidate/resume/{candidateId}
-     *
-     * @param candidateId the ID of the candidate uploading the resume
-     * @param file        the uploaded PDF file
-     * @return 200 OK with success message, or 400 if file is invalid
+     * Candidate uploads their resume to their LIVE PROFILE.
+     * This does NOT affect existing job applications (snapshots).
+     */
+    @PostMapping("/candidate/profile/resume")
+    public ResponseEntity<ApiResponse<String>> uploadProfileResume(
+            @RequestParam("file") final MultipartFile file,
+            final Authentication authentication) {
+
+        try {
+            if (file.isEmpty() || !"application/pdf".equals(file.getContentType())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Invalid PDF file"));
+            }
+
+            String driveUrl = googleDriveService.uploadFile(file);
+            profileService.updateResume(authentication.getName(), driveUrl);
+
+            return ResponseEntity.ok(ApiResponse.success("Profile resume updated", driveUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
+     * Uploads resume for a candidate application snapshot by candidate ID.
+     * Used by application forms that create profile first and upload resume second.
      */
     @PostMapping("/candidate/resume/{candidateId}")
-    public ResponseEntity<ApiResponse<Void>> uploadResume(
+    public ResponseEntity<ApiResponse<String>> uploadResumeByCandidateId(
             @PathVariable final Long candidateId,
             @RequestParam("file") final MultipartFile file) {
 
         try {
-            /*
-             * Validate file is not empty and is a PDF.
-             * We check content type rather than extension — more reliable.
-             */
-            if (file.isEmpty()) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Please select a file to upload"));
+            if (file.isEmpty() || !"application/pdf".equals(file.getContentType())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Invalid PDF file"));
             }
 
-            if (!"application/pdf".equals(file.getContentType())) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Only PDF files are allowed"));
-            }
-
-            // max 5MB size check — 5 * 1024 * 1024 bytes
-            final long maxFileSize = 5 * 1024 * 1024;
-            if (file.getSize() > maxFileSize) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("File size cannot exceed 5MB"));
-            }
-
-            /*
-             * Upload the file to Google Drive (Mocked).
-             * The service returns the webViewLink which we store as resumePath.
-             */
             String driveUrl = googleDriveService.uploadFile(file);
-
             candidateService.updateResumePath(candidateId, driveUrl);
 
-            return ResponseEntity.ok(
-                    ApiResponse.success("Resume uploaded successfully", null)
-            );
-
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            return ResponseEntity.ok(ApiResponse.success("Resume uploaded successfully", driveUrl));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }
     }
 
