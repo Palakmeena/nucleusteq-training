@@ -63,6 +63,23 @@ public class InterviewMapper {
             dto.setJdDetails(interview.getCandidate().getJobDescription().getJobDescription());
         }
 
+        /*
+         * Map panel feedbacks so HR can view evaluations.
+         */
+        if (interview.getFeedbacks() != null) {
+            dto.setFeedbacks(interview.getFeedbacks().stream().map(f -> {
+                com.nucleusteq.interviewtracker.dto.FeedbackResponseDto fr = new com.nucleusteq.interviewtracker.dto.FeedbackResponseDto();
+                fr.setPanelMemberName(f.getPanelMember().getFullName());
+                fr.setRating(f.getRating());
+                fr.setComments(f.getComments());
+                fr.setStrengths(f.getStrengths());
+                fr.setWeaknesses(f.getWeaknesses());
+                fr.setDecision(f.getFeedbackStatus().name());
+                fr.setSubmittedAt(f.getSubmittedAt());
+                return fr;
+            }).collect(Collectors.toList()));
+        }
+
         return dto;
     }
 }
