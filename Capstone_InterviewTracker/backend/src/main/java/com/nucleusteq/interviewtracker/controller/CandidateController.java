@@ -3,6 +3,7 @@ package com.nucleusteq.interviewtracker.controller;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
 import com.nucleusteq.interviewtracker.service.CandidateService;
+import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,21 +29,18 @@ import java.util.UUID;
 public class CandidateController {
 
     private final CandidateService candidateService;
-
-    /**
-     * Upload directory for resumes on the local server.
-     * In production this would point to a cloud storage path.
-     */
-    private static final String RESUME_UPLOAD_DIR = "uploads/resumes/";
+    private final GoogleDriveService googleDriveService;
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
      *
      * @param candidateService handles all candidate business logic
+     * @param googleDriveService handles cloud storage uploads
      */
     @Autowired
-    public CandidateController(final CandidateService candidateService) {
+    public CandidateController(final CandidateService candidateService, final GoogleDriveService googleDriveService) {
         this.candidateService = candidateService;
+        this.googleDriveService = googleDriveService;
     }
 
     /**
@@ -57,11 +53,17 @@ public class CandidateController {
      */
     @PostMapping("/candidate/register")
     public ResponseEntity<ApiResponse<CandidateResponseDto>> registerCandidate(
-            @Valid @RequestBody final CandidateRequestDto request) {
+            @Valid @RequestBody final CandidateRequestDto request,
+            Authentication authentication) {
+
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You must be logged in to apply for a job."));
+        }
 
         try {
             CandidateResponseDto response =
-                    candidateService.createCandidateProfile(request);
+                    candidateService.createCandidateProfile(request, authentication.getName());
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(ApiResponse.success("Profile created successfully", response));
@@ -241,33 +243,46 @@ public class CandidateController {
             }
 
             /*
-             * Generate a unique filename using UUID to avoid collisions
-             * if two candidates upload files with the same name.
-             * Format: candidateId_uuid_originalname.pdf
+             * Upload the file to Google Drive (Mocked).
+             * The service returns the webViewLink which we store as resumePath.
              */
-            String uniqueFileName = candidateId + "_"
-                    + UUID.randomUUID()
-                    + "_"
-                    + file.getOriginalFilename();
+            String driveUrl = googleDriveService.uploadFile(file);
 
-            File uploadDir = new File(RESUME_UPLOAD_DIR);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String filePath = RESUME_UPLOAD_DIR + uniqueFileName;
-            file.transferTo(new File(filePath));
-
-            candidateService.updateResumePath(candidateId, filePath);
+            candidateService.updateResumePath(candidateId, driveUrl);
 
             return ResponseEntity.ok(
                     ApiResponse.success("Resume uploaded successfully", null)
             );
 
-        } catch (IOException e) {
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Failed to upload resume. Please try again."));
+                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+        }
+    }
+
+    /**
+     * HR updates the current stage of a candidate.
+     * PUT /hr/candidate/{id}/stage
+     *
+     * @param id    the candidate ID
+     * @param stage the new interview stage
+     * @return 200 OK with the updated candidate
+     */
+    @org.springframework.web.bind.annotation.PutMapping("/hr/candidate/{id}/stage")
+    public ResponseEntity<ApiResponse<CandidateResponseDto>> updateCandidateStage(
+            @PathVariable final Long id,
+            @RequestParam final com.nucleusteq.interviewtracker.enums.InterviewStage stage) {
+
+        try {
+            CandidateResponseDto response = candidateService.updateCandidateStage(id, stage);
+            return ResponseEntity.ok(
+                    ApiResponse.success("Candidate stage updated successfully", response)
+            );
         } catch (jakarta.persistence.EntityNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

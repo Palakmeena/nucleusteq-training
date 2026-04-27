@@ -69,4 +69,23 @@ public class AuthController {
                     ));
         }
     }
+
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> signup(
+            @Valid @RequestBody com.nucleusteq.interviewtracker.dto.SignupRequestDto request) {
+        try {
+            LoginResponseDto response = authService.signup(request, passwordEncoder);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Account created successfully", response));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Something went wrong."));
+        }
+    }
 }

@@ -54,11 +54,15 @@ public class PanelMemberController {
         try {
             PanelMemberResponseDto response =
                     panelMemberService.createPanelMember(request);
+
+            String message = response.isActivationEmailSent()
+                    ? "Panel member created successfully. Activation link has been sent to their email."
+                    : "Panel member created, but activation email could not be sent. Share the activation link manually.";
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(ApiResponse.success(
-                            "Panel member created successfully. "
-                            + "Activation link has been sent to their email.",
+                            message,
                             response
                     ));
         } catch (IllegalArgumentException e) {
@@ -175,6 +179,62 @@ public class PanelMemberController {
                     panelMemberService.getPanelMemberProfile(email);
             return ResponseEntity.ok(
                     ApiResponse.success("Profile fetched successfully", response)
+            );
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+        }
+    }
+
+    /**
+     * HR updates an existing panel member's details.
+     * PUT /hr/panel/{id}
+     *
+     * @param id      the panel member ID
+     * @param request the updated details
+     * @return 200 OK with the updated panel member
+     */
+    @org.springframework.web.bind.annotation.PutMapping("/hr/panel/{id}")
+    public ResponseEntity<ApiResponse<PanelMemberResponseDto>> updatePanelMember(
+            @PathVariable final Long id,
+            @Valid @RequestBody final PanelMemberRequestDto request) {
+
+        try {
+            PanelMemberResponseDto response = panelMemberService.updatePanelMember(id, request);
+            return ResponseEntity.ok(
+                    ApiResponse.success("Panel member updated successfully", response)
+            );
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+        }
+    }
+
+    /**
+     * HR removes a panel member from the system.
+     * DELETE /hr/panel/{id}
+     *
+     * @param id the panel member ID
+     * @return 200 OK with success message
+     */
+    @org.springframework.web.bind.annotation.DeleteMapping("/hr/panel/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePanelMember(
+            @PathVariable final Long id) {
+
+        try {
+            panelMemberService.deletePanelMember(id);
+            return ResponseEntity.ok(
+                    ApiResponse.success("Panel member removed successfully", null)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
             return ResponseEntity
