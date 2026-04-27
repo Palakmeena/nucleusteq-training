@@ -83,6 +83,19 @@
     document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'jobs');
 
     let myProfile = null;
+    let allOpenJobs = [];
+
+    function shortText(text, max = 180) {
+        const value = (text || '').trim();
+        if (!value) return 'No description available.';
+        return value.length > max ? value.slice(0, max) + '...' : value;
+    }
+
+    function openJobDetails(id) {
+        const jd = allOpenJobs.find(item => item.id === id);
+        if (!jd) return;
+        showJdModal({ title: jd.jobTitle || 'Untitled Role', details: jd.jobDescription || 'No details provided.' });
+    }
 
     function canApplyNow() {
         return !myProfile || myProfile.currentStage === 'REJECTED';
@@ -109,6 +122,7 @@
         try {
             const res = await api.getAllPublicJds();
             const jobs = res.data || [];
+            allOpenJobs = jobs;
 
             if (!jobs.length) {
                 jobsEl.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:28px;">No open roles from HR right now.</div>';
@@ -120,10 +134,11 @@
                     <div style="flex:1;min-width:0;">
                         <div class="job-title">${j.jobTitle || 'Untitled Role'}</div>
                         <div class="job-meta">📍 ${j.location || 'N/A'} &nbsp;|&nbsp; 💼 ${j.jobType || 'N/A'} &nbsp;|&nbsp; 🎯 ${j.minExperience ?? 0}-${j.maxExperience ?? 0} yrs &nbsp;|&nbsp; 💰 ${j.minSalary ?? 0}-${j.maxSalary ?? 0} LPA</div>
-                        <div class="job-desc">${j.jobDescription || 'No description available.'}</div>
+                        <div class="job-desc">${shortText(j.jobDescription)}</div>
                         <div class="tag-wrap">${(j.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
                     </div>
-                    <div style="display:flex;align-items:center;justify-content:flex-end;">
+                    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+                        <button class="secondary-btn" style="padding:8px 14px;font-size:13px;" onclick="openJobDetails(${j.id})">View Job</button>
                         <button class="apply-btn" onclick="openApplyFlow(${j.id})" ${locked ? 'disabled' : ''}>${locked ? 'Application Locked' : 'Apply Now'}</button>
                     </div>
                 </div>
