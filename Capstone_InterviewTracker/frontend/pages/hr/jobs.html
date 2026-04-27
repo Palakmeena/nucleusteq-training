@@ -67,7 +67,7 @@
         }
 
         /* Modal Styles */
-        .modal-overlay {
+        .jd-modal-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -80,7 +80,7 @@
             justify-content: center;
         }
 
-        .modal-overlay.active {
+        .jd-modal-overlay.active {
             display: flex;
         }
 
@@ -146,7 +146,7 @@
         </div>
     </main>
 
-    <div class="modal-overlay" id="jdModal">
+    <div class="jd-modal-overlay" id="jdModal">
         <div class="modal-box">
             <h2 id="modalTitle">Create Job Description</h2>
             <form id="createJdForm" style="margin-top: 20px;">
@@ -204,7 +204,20 @@
         let skills = [];
         let isEditMode = false;
         let editingJobId = null;
+        let allHrJobs = [];
         const modal = document.getElementById('jdModal');
+
+        function shortText(text, max = 180) {
+            const value = (text || '').trim();
+            if (!value) return 'No description available.';
+            return value.length > max ? value.slice(0, max) + '...' : value;
+        }
+
+        function openJobDetails(id) {
+            const jd = allHrJobs.find(item => item.id === id);
+            if (!jd) return;
+            showJdModal({ title: jd.jobTitle, details: jd.jobDescription || 'No details provided.' });
+        }
 
         function openModal() {
             isEditMode = false;
@@ -249,6 +262,18 @@
         // API: Create or Update Job
         document.getElementById('createJdForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            // Auto-add if user typed something but didn't press enter
+            const skillInput = document.getElementById('skillInput');
+            const remainingSkill = skillInput.value.trim();
+            if (remainingSkill && !skills.includes(remainingSkill)) {
+                skills.push(remainingSkill);
+            }
+
+            if (skills.length === 0) {
+                showToast('Please add at least one skill (press Enter)', 'error');
+                return;
+            }
+
             const body = {
                 jobTitle: document.getElementById('jobTitle').value,
                 location: document.getElementById('location').value,
@@ -279,10 +304,12 @@
         async function loadJobs() {
             try {
                 const res = await api.getAllJdsForHr();
-                const jds = res.data || [];
+                const allJds = res.data || [];
+                allHrJobs = allJds;
+                const jds = allJds.filter(jd => jd.active);
                 const container = document.getElementById('hrJobsList');
                 if (!jds.length) {
-                    container.innerHTML = '<p style="color:#64748b;text-align:center;padding:40px;">No job descriptions yet. Create your first one!</p>';
+                    container.innerHTML = '<p style="color:#64748b;text-align:center;padding:40px;">No active job descriptions right now.</p>';
                     return;
                 }
                 const typeLabel = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
@@ -291,7 +318,7 @@
                         <div style="flex:1;min-width:0;">
                             <h3 class="job-title">${jd.jobTitle}</h3>
                             <div class="job-meta">📍 ${jd.location} &nbsp;|&nbsp; 💼 ${typeLabel[jd.jobType] || jd.jobType} &nbsp;|&nbsp; 🎯 ${jd.minExperience}-${jd.maxExperience} yrs &nbsp;|&nbsp; 💰 ${jd.minSalary}-${jd.maxSalary} LPA</div>
-                            <div class="job-desc">${jd.jobDescription || 'No description available.'}</div>
+                            <div class="job-desc">${shortText(jd.jobDescription)}</div>
                             <div class="job-tags">
                                 ${(jd.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}
                             </div>
@@ -299,6 +326,7 @@
                         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:210px;">
                             <span class="jd-badge" style="${jd.active ? 'background:#dcfce7;color:#16a34a;' : 'background:#f1f5f9;color:#64748b;'}">${jd.active ? 'Active' : 'Inactive'}</span>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                                <button class="secondary-btn" style="padding:6px 12px;font-size:13px;" onclick="openJobDetails(${jd.id})">View Job</button>
                                 <button class="secondary-btn" style="padding:6px 12px;font-size:13px;" onclick="editJd(${jd.id})">Edit</button>
                                 ${jd.active ? `<button class="secondary-btn" style="padding:6px 12px;font-size:13px;color:#dc2626;" onclick="deactivateJd(${jd.id})">Deactivate</button>` : ''}
                             </div>
