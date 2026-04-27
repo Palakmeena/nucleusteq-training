@@ -33,8 +33,7 @@ function buildSidebar(role, activePage) {
         CANDIDATE: [
             { key: 'dashboard',  icon: svgDashboard, label: 'My Progress',       href: base + 'pages/candidate/dashboard.html' },
             { key: 'jobs',       icon: svgBriefcase, label: 'Jobs',              href: base + 'pages/candidate/jobs.html' },
-            { key: 'profile',    icon: svgUser,      label: 'My Profile',        href: base + 'pages/candidate/progress.html' },
-            { key: 'settings',   icon: svgSettings,  label: 'Settings',          href: base + 'pages/candidate/settings.html' },
+            { key: 'profile',    icon: svgUser,      label: 'My Profile',        href: base + 'pages/candidate/profile.html' },
         ],
         PANEL: [
             { key: 'overview',   icon: svgDashboard, label: 'Overview',          href: base + 'pages/panel/overview.html' },
