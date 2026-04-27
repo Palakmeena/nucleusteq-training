@@ -52,6 +52,17 @@ public class InterviewMapper {
 
         dto.setPanelMemberNames(panelNames);
         dto.setPanelMemberIds(panelIds);
+
+        // Map new fields for Panel/Candidate dashboards
+        dto.setMeetingLink(interview.getMeetingLink());
+        dto.setResumeUrl(interview.getCandidate().getResumePath());
+        
+        if (interview.getCandidate().getJobDescription() != null) {
+            dto.setJdId(interview.getCandidate().getJobDescription().getId());
+            dto.setJdTitle(interview.getCandidate().getJobDescription().getJobTitle());
+            dto.setJdDetails(interview.getCandidate().getJobDescription().getJobDescription());
+        }
+
         return dto;
     }
 }
