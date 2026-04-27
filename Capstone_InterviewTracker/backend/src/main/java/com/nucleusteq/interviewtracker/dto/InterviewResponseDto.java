@@ -100,9 +100,22 @@ public class InterviewResponseDto {
     private List<Long> panelMemberIds;
 
     /**
+     * List of feedbacks submitted by panel members for this interview.
+     */
+    private List<FeedbackResponseDto> feedbacks;
+
+    /**
      * Default constructor needed for JSON serialization.
      */
     public InterviewResponseDto() {
+    }
+
+    public List<FeedbackResponseDto> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<FeedbackResponseDto> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     public Long getId() {
