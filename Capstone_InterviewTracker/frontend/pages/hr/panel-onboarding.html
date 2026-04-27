@@ -79,12 +79,13 @@
         </div>
         <div class="form-row">
             <div class="form-group"><label>Full Name *</label><input type="text" id="eFullName"></div>
-            <div class="form-group"><label>Mobile Number *</label><input type="text" id="eMobile"></div>
+            <div class="form-group"><label>Email (Account ID)</label><input type="text" id="eEmail" disabled style="background:#f8fafc;cursor:not-allowed;"></div>
         </div>
         <div class="form-row">
+            <div class="form-group"><label>Mobile Number *</label><input type="text" id="eMobile"></div>
             <div class="form-group"><label>Organization *</label><input type="text" id="eOrg"></div>
-            <div class="form-group"><label>Designation *</label><input type="text" id="eDesignation"></div>
         </div>
+        <div class="form-group"><label>Designation *</label><input type="text" id="eDesignation"></div>
         <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
             <button class="secondary-btn" onclick="document.getElementById('editPanelModal').classList.remove('active')">Cancel</button>
             <button class="primary-btn" style="width:auto;" onclick="updatePanel()">Save Changes</button>
@@ -133,6 +134,7 @@
         currentEditingId = p.id;
         document.getElementById('editPanelModal').classList.add('active');
         document.getElementById('eFullName').value = p.fullName;
+        document.getElementById('eEmail').value = p.email;
         document.getElementById('eMobile').value = p.mobileNumber;
         document.getElementById('eOrg').value = p.organization;
         document.getElementById('eDesignation').value = p.designation;
