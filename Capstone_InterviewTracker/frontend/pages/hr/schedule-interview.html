@@ -145,28 +145,30 @@
 
 <!-- FEEDBACK VIEW MODAL -->
 <div class="modal-overlay" id="feedbackModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:16px;width:95%;max-width:520px;padding:32px;">
+    <div style="background:#fff;border-radius:16px;width:95%;max-width:600px;padding:32px;max-height:90vh;overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-            <h3 style="font-size:18px;">Panel Feedback</h3>
+            <h3 style="font-size:18px;">Panel Evaluations</h3>
             <button onclick="document.getElementById('feedbackModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">✕</button>
         </div>
-        <div style="margin-bottom:20px;">
-            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Candidate</label>
-            <div id="fCandidate" style="font-size:16px;font-weight:500;"></div>
+        
+        <div style="background:#f8faff;padding:16px;border-radius:12px;margin-bottom:24px;border:1px solid #e2e8f0;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                    <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;">Candidate</label>
+                    <div id="fCandidate" style="font-size:15px;font-weight:600;color:#1e293b;"></div>
+                </div>
+                <div>
+                    <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;">Interview Stage</label>
+                    <div id="fStage" style="font-size:14px;color:#475569;"></div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:20px;">
-            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Interview Stage</label>
-            <div id="fStage" style="font-size:14px;color:#1e293b;"></div>
+
+        <div id="feedbackList">
+            <!-- Individual panel feedback will be injected here -->
         </div>
-        <div style="margin-bottom:20px;">
-            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Overall Rating</label>
-            <div id="fRating" style="font-size:18px;font-weight:700;color:#4f46e5;"></div>
-        </div>
-        <div style="margin-bottom:20px;">
-            <label style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Panel Comments</label>
-            <div id="fComments" style="font-size:14px;color:#1e293b;line-height:1.6;background:#f8faff;padding:12px;border-radius:8px;border:1px solid #e2e8f0;"></div>
-        </div>
-        <div style="display:flex;justify-content:flex-end;">
+
+        <div style="display:flex;justify-content:flex-end;margin-top:20px;">
             <button class="secondary-btn" onclick="document.getElementById('feedbackModal').classList.remove('active')">Close</button>
         </div>
     </div>
@@ -393,8 +395,43 @@
         document.getElementById('feedbackModal').classList.add('active');
         document.getElementById('fCandidate').textContent = i.candidateName;
         document.getElementById('fStage').textContent = i.interviewStage;
-        document.getElementById('fComments').textContent = i.feedback || 'No comments provided yet.';
-        document.getElementById('fRating').textContent = (i.rating || '0') + ' / 5';
+        
+        const container = document.getElementById('feedbackList');
+        if (!i.feedbacks || i.feedbacks.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No detailed evaluations submitted yet.</div>';
+            return;
+        }
+
+        container.innerHTML = i.feedbacks.map(f => `
+            <div style="border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #f1f5f9;padding-bottom:12px;">
+                    <div>
+                        <div style="font-size:14px;font-weight:600;color:#1e293b;">${f.panelMemberName}</div>
+                        <div style="font-size:12px;color:#64748b;">${new Date(f.submittedAt).toLocaleString()}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:20px;font-weight:700;color:#4f46e5;">${f.rating}/5</div>
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:${f.decision === 'SELECTED' ? '#16a34a' : '#ef4444'}">${f.decision}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom:12px;">
+                    <label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Main Comments</label>
+                    <div style="font-size:14px;color:#1e293b;">${f.comments}</div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div>
+                        <label style="display:block;font-size:11px;font-weight:600;color:#16a34a;text-transform:uppercase;margin-bottom:4px;">💪 Strengths</label>
+                        <div style="font-size:13px;color:#1e293b;">${f.strengths || '—'}</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:11px;font-weight:600;color:#ef4444;text-transform:uppercase;margin-bottom:4px;">⚠️ Weaknesses</label>
+                        <div style="font-size:13px;color:#1e293b;">${f.weaknesses || '—'}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
 
     loadForm();
