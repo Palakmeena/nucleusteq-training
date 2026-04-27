@@ -826,34 +826,13 @@
                 source: document.getElementById('applySource').value
             };
 
-            fetch('http://localhost:8080/api/candidate/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload)
-            })
-                .then(res => res.json())
+            api.registerCandidate(payload)
                 .then(data => {
-                    if (!data.success) throw new Error(data.message);
                     const candidateId = data.data.id;
-
                     const resumeFile = document.getElementById('applyResume').files[0];
-                    const formData = new FormData();
-                    formData.append('file', resumeFile);
-
-                    return fetch(`http://localhost:8080/api/candidate/resume/${candidateId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                        },
-                        body: formData
-                    });
+                    return api.uploadResume(candidateId, resumeFile);
                 })
-                .then(res => res.json())
                 .then(data => {
-                    if (!data.success) throw new Error("Profile created, but resume upload failed: " + data.message);
                     successMsg.innerHTML = "<strong>Application successful!</strong><br>You will be redirected to your dashboard.";
                     successMsg.style.display = 'block';
                     setTimeout(() => {
