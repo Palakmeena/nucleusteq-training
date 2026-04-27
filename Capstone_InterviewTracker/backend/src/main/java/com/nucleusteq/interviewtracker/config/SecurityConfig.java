@@ -2,9 +2,14 @@ package com.nucleusteq.interviewtracker.config;
 
 import com.nucleusteq.interviewtracker.security.JwtFilter;
 import com.nucleusteq.interviewtracker.security.UserDetailsServiceImpl;
+import com.nucleusteq.interviewtracker.util.ApiResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -101,9 +106,16 @@ public class SecurityConfig {
 
                         // login is public — no token needed to log in
                         .requestMatchers("/auth/login").permitAll()
+                        
+                        // signup is public
+                        .requestMatchers("/auth/signup").permitAll()
 
                         // panel activation link sent via email — must be public
                         .requestMatchers("/auth/activate").permitAll()
+                        
+                        // Allow Spring Boot error endpoint so validation errors
+                        // don't get transformed into security 401/403 responses.
+                        .requestMatchers("/error").permitAll()
 
                         // public JD listing — candidates browse before logging in
                         .requestMatchers("/jd/**").permitAll()
@@ -136,6 +148,22 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            writeErrorResponse(
+                                    response,
+                                    HttpStatus.UNAUTHORIZED,
+                                    "Unauthorized request. Please login first."
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            writeErrorResponse(
+                                    response,
+                                    HttpStatus.FORBIDDEN,
+                                    "Access denied for this endpoint."
+                            );
+                        })
+                )
 
                 .authenticationProvider(authenticationProvider())
 
@@ -147,13 +175,31 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.addAllowedOriginPattern("*"); // Allow all origins for local testing (e.g., http://127.0.0.1:5500)
-        configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, PUT, DELETE, OPTIONS)
-        configuration.addAllowedHeader("*"); // Allow all headers
-        configuration.setAllowCredentials(true); // Allow credentials (like Authorization headers)
-        
+        configuration.setAllowedOrigins(java.util.List.of(
+                "http://127.0.0.1:5500",
+                "http://localhost:5500",
+                "http://127.0.0.1:5501",
+                "http://localhost:5501",
+                "http://127.0.0.1:5502",
+                "http://localhost:5502"
+        ));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.List.of("*"));
+        configuration.setAllowCredentials(true);
+
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private void writeErrorResponse(
+            final HttpServletResponse response,
+            final HttpStatus status,
+            final String message) throws java.io.IOException {
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        ApiResponse<Object> body = ApiResponse.error(message);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
     }
 }
