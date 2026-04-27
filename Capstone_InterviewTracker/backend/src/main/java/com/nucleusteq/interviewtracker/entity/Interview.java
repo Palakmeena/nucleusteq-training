@@ -50,6 +50,9 @@ public class Interview {
     @Column(name = "hr_comments", columnDefinition = "TEXT")
     private String hrComments;
 
+    @Column(name = "meeting_link")
+    private String meetingLink;
+
     @Column(name = "is_completed", nullable = false)
     private boolean isCompleted = false;
 
@@ -133,6 +136,14 @@ public class Interview {
 
     public void setHrComments(String hrComments) {
         this.hrComments = hrComments;
+    }
+
+    public String getMeetingLink() {
+        return meetingLink;
+    }
+
+    public void setMeetingLink(String meetingLink) {
+        this.meetingLink = meetingLink;
     }
 
     public boolean isCompleted() {
