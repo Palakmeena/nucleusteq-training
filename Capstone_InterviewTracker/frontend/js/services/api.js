@@ -31,6 +31,7 @@ const api = {
     login: (email, password) => request('POST', '/auth/login', { email, password }),
     signup: (fullName, email, password) => request('POST', '/auth/signup', { fullName, email, password }),
     activate: (token, password) => request('POST', `/auth/activate?token=${token}&password=${encodeURIComponent(password)}`),
+    verifyCandidate: (token) => request('POST', `/auth/verify-candidate?token=${token}`),
 
     // JD - public
     getAllPublicJds: () => request('GET', '/jd/all'),
