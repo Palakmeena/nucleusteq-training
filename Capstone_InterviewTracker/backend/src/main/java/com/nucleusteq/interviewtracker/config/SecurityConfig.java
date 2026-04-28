@@ -112,6 +112,9 @@ public class SecurityConfig {
 
                         // panel activation link sent via email — must be public
                         .requestMatchers("/auth/activate").permitAll()
+
+                        // candidate verification link sent via email — must be public
+                        .requestMatchers("/auth/verify-candidate").permitAll()
                         
                         // Allow Spring Boot error endpoint so validation errors
                         // don't get transformed into security 401/403 responses.
