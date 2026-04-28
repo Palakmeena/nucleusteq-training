@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     List<Feedback> findByInterview(Interview interview);
+    boolean existsByInterviewAndPanelMember(com.nucleusteq.interviewtracker.entity.Interview interview, com.nucleusteq.interviewtracker.entity.PanelMember panelMember);
 }

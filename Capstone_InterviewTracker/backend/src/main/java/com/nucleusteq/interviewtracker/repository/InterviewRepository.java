@@ -36,4 +36,12 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
      */
     Optional<Interview> findByCandidateAndInterviewStage(
             Candidate candidate, InterviewStage interviewStage);
+
+    /**
+     * Finds a non-completed interview by candidate and stage.
+     * Used to check if an active (non-completed) interview already exists
+     * before scheduling a new one — allows re-scheduling after rejection.
+     */
+    Optional<Interview> findByCandidateAndInterviewStageAndIsCompletedFalse(
+            Candidate candidate, InterviewStage interviewStage);
 }
