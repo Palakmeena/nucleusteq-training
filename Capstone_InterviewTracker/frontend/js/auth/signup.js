@@ -51,13 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await api.signup(fullName, email, password);
             if (!result.success) throw new Error(result.message || 'Signup failed');
 
-            if (result.data && result.data.token) {
-                auth.save(result.data);
-                auth.redirectByRole();
-                return;
-            }
-
-            window.location.href = 'login.html';
+            // Success state - Show verification message
+            form.innerHTML = `
+                <div style="text-align:center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">✉️</div>
+                    <h2 style="margin-bottom: 12px;">Check your email</h2>
+                    <p style="color: #64748b; line-height: 1.6; margin-bottom: 24px;">
+                        We've sent a verification link to <strong>${email}</strong>.<br>
+                        Please click the link in the email to activate your account.
+                    </p>
+                    <a href="login.html" class="primary-btn" style="text-decoration:none; display:inline-block;">Go to Login</a>
+                </div>
+            `;
         } catch (err) {
             if (errorDiv) {
                 errorDiv.textContent = err.message || 'Registration failed';
