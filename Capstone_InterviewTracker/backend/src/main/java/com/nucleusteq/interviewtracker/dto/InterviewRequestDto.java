@@ -1,7 +1,7 @@
 package com.nucleusteq.interviewtracker.dto;
 
 import com.nucleusteq.interviewtracker.enums.InterviewStage;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -34,7 +34,7 @@ public class InterviewRequestDto {
      * Must be a future date — can't schedule in the past.
      */
     @NotNull(message = "Interview date is required")
-    @Future(message = "Interview date must be in the future")
+    @FutureOrPresent(message = "Interview date must be today or in the future")
     private LocalDate interviewDate;
 
     /**
