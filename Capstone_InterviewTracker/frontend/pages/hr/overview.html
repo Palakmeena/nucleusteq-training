@@ -1,162 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | HR Overview</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
 </head>
+
 <body>
 
-<aside class="sidebar" id="sidebar"></aside>
+    <aside class="sidebar" id="sidebar"></aside>
 
-<main class="main-area">
-    <header class="topbar">
-        <div class="topbar-nav">Overview</div>
-        <div class="topbar-actions"></div>
-    </header>
+    <main class="main-area">
+        <header class="topbar">
+            <div class="topbar-nav">Overview</div>
+            <div class="topbar-actions"></div>
+        </header>
 
-    <div class="content-wrapper">
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Interview Pipeline</h1>
-                <p class="page-subtitle">Track and manage your hiring funnel from a single interface.</p>
+        <div class="content-wrapper">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Interview Pipeline</h1>
+                    <p class="page-subtitle">Track and manage your hiring funnel from a single interface.</p>
+                </div>
+            </div>
+
+            <!-- METRICS -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon blue">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-value" id="totalCandidates">—</div>
+                        <div class="metric-label">Total Candidates</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon amber">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v21"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-value" id="activeJds">—</div>
+                        <div class="metric-label">Active Job Roles</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon green">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-value" id="totalPanels">—</div>
+                        <div class="metric-label">Panel Members</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon red">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-value" id="inProgress">—</div>
+                        <div class="metric-label">In Progress</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FUNNEL -->
+            <div class="funnel-card">
+                <div class="funnel-title">Hiring Funnel Status</div>
+                <div class="funnel-stages">
+                    <div class="funnel-stage">
+                        <div class="funnel-stage-icon s1">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="funnel-stage-name">Profiling</div>
+                        <div class="funnel-stage-count" id="cnt-PROFILING">—</div>
+                    </div>
+                    <div class="funnel-stage">
+                        <div class="funnel-stage-icon s2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <div class="funnel-stage-name">Screening</div>
+                        <div class="funnel-stage-count" id="cnt-SCREENING">—</div>
+                    </div>
+                    <div class="funnel-stage">
+                        <div class="funnel-stage-icon s3">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                            </svg>
+                        </div>
+                        <div class="funnel-stage-name">L1 Interview</div>
+                        <div class="funnel-stage-count" id="cnt-L1_TECHNICAL">—</div>
+                    </div>
+                    <div class="funnel-stage">
+                        <div class="funnel-stage-icon s4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                            </svg>
+                        </div>
+                        <div class="funnel-stage-name">L2 Interview</div>
+                        <div class="funnel-stage-count" id="cnt-L2_TECHNICAL">—</div>
+                    </div>
+                    <div class="funnel-stage">
+                        <div class="funnel-stage-icon s5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <polyline points="16 11 18 13 22 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="funnel-stage-name">HR Round</div>
+                        <div class="funnel-stage-count" id="cnt-HR_ROUND">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT CANDIDATES TABLE -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 style="font-size:15px;font-weight:600;">Recent Candidates</h3>
+                    <a href="candidates.html" style="font-size:13px;color:#4f46e5;text-decoration:none;">View All →</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role Applied</th>
+                            <th>Experience</th>
+                            <th>Current Stage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentCandidates">
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </main>
 
-        <!-- METRICS -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-icon blue">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                </div>
-                <div><div class="metric-value" id="totalCandidates">—</div><div class="metric-label">Total Candidates</div></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon amber">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v21"></path></svg>
-                </div>
-                <div><div class="metric-value" id="activeJds">—</div><div class="metric-label">Active Job Roles</div></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon green">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-                </div>
-                <div><div class="metric-value" id="totalPanels">—</div><div class="metric-label">Panel Members</div></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon red">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                </div>
-                <div><div class="metric-value" id="inProgress">—</div><div class="metric-label">In Progress</div></div>
-            </div>
-        </div>
+    <script src="../../js/services/api.js"></script>
+    <script src="../../js/services/authService.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script>
+        auth.requireRole('HR');
+        document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'overview');
 
-        <!-- FUNNEL -->
-        <div class="funnel-card">
-            <div class="funnel-title">Hiring Funnel Status</div>
-            <div class="funnel-stages">
-                <div class="funnel-stage">
-                    <div class="funnel-stage-icon s1">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </div>
-                    <div class="funnel-stage-name">Profiling</div>
-                    <div class="funnel-stage-count" id="cnt-PROFILING">—</div>
-                </div>
-                <div class="funnel-stage">
-                    <div class="funnel-stage-icon s2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </div>
-                    <div class="funnel-stage-name">Screening</div>
-                    <div class="funnel-stage-count" id="cnt-SCREENING">—</div>
-                </div>
-                <div class="funnel-stage">
-                    <div class="funnel-stage-icon s3">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-                    </div>
-                    <div class="funnel-stage-name">L1 Interview</div>
-                    <div class="funnel-stage-count" id="cnt-L1_TECHNICAL">—</div>
-                </div>
-                <div class="funnel-stage">
-                    <div class="funnel-stage-icon s4">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-                    </div>
-                    <div class="funnel-stage-name">L2 Interview</div>
-                    <div class="funnel-stage-count" id="cnt-L2_TECHNICAL">—</div>
-                </div>
-                <div class="funnel-stage">
-                    <div class="funnel-stage-icon s5">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
-                    </div>
-                    <div class="funnel-stage-name">HR Round</div>
-                    <div class="funnel-stage-count" id="cnt-HR_ROUND">—</div>
-                </div>
-            </div>
-        </div>
+        async function loadOverview() {
+            try {
+                const [cRes, jRes, pRes] = await Promise.all([
+                    api.getAllCandidates(),
+                    api.getAllJdsForHr(),
+                    api.getAllPanelMembers()
+                ]);
 
-        <!-- RECENT CANDIDATES TABLE -->
-        <div class="table-card">
-            <div class="table-header">
-                <h3 style="font-size:15px;font-weight:600;">Recent Candidates</h3>
-                <a href="candidates.html" style="font-size:13px;color:#4f46e5;text-decoration:none;">View All →</a>
-            </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Role Applied</th>
-                        <th>Experience</th>
-                        <th>Current Stage</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="recentCandidates">
-                    <tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</main>
+                const candidates = cRes.data || [];
+                const jds = jRes.data || [];
+                const panels = pRes.data || [];
 
-<script src="../../js/services/api.js"></script>
-<script src="../../js/services/authService.js"></script>
-<script src="../../js/utils.js"></script>
-<script>
-    auth.requireRole('HR');
-    document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'overview');
+                document.getElementById('totalCandidates').textContent = candidates.length;
+                document.getElementById('activeJds').textContent = jds.filter(j => j.active).length;
+                document.getElementById('totalPanels').textContent = panels.length;
+                document.getElementById('inProgress').textContent = candidates.filter(c => !['SELECTED', 'REJECTED'].includes(c.currentStage)).length;
 
-    async function loadOverview() {
-        try {
-            const [cRes, jRes, pRes] = await Promise.all([
-                api.getAllCandidates(),
-                api.getAllJdsForHr(),
-                api.getAllPanelMembers()
-            ]);
+                // Funnel counts
+                ['PROFILING', 'SCREENING', 'L1_TECHNICAL', 'L2_TECHNICAL', 'HR_ROUND'].forEach(stage => {
+                    const el = document.getElementById('cnt-' + stage);
+                    if (el) el.textContent = candidates.filter(c => c.currentStage === stage).length + ' candidates';
+                });
 
-            const candidates = cRes.data || [];
-            const jds = jRes.data || [];
-            const panels = pRes.data || [];
-
-            document.getElementById('totalCandidates').textContent = candidates.length;
-            document.getElementById('activeJds').textContent = jds.filter(j => j.active).length;
-            document.getElementById('totalPanels').textContent = panels.length;
-            document.getElementById('inProgress').textContent = candidates.filter(c => !['SELECTED','REJECTED'].includes(c.currentStage)).length;
-
-            // Funnel counts
-            ['PROFILING','SCREENING','L1_TECHNICAL','L2_TECHNICAL','HR_ROUND'].forEach(stage => {
-                const el = document.getElementById('cnt-' + stage);
-                if (el) el.textContent = candidates.filter(c => c.currentStage === stage).length + ' candidates';
-            });
-
-            // Recent 6 candidates
-            const tbody = document.getElementById('recentCandidates');
-            const recent = candidates.slice(0, 6);
-            tbody.innerHTML = recent.length ? recent.map(c => `
+                // Recent 6 candidates
+                const tbody = document.getElementById('recentCandidates');
+                const recent = candidates.slice(0, 6);
+                tbody.innerHTML = recent.length ? recent.map(c => `
                 <tr>
                     <td>
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
-                                ${c.fullName.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                                ${c.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
                             <div>
                                 <div style="font-weight:500;font-size:14px;">${c.fullName}</div>
@@ -171,12 +230,13 @@
                 </tr>
             `).join('') : '<tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">No candidates yet</td></tr>';
 
-        } catch (e) {
-            showToast('Failed to load dashboard: ' + e.message, 'error');
+            } catch (e) {
+                showToast('Failed to load dashboard: ' + e.message, 'error');
+            }
         }
-    }
 
-    loadOverview();
-</script>
+        loadOverview();
+    </script>
 </body>
+
 </html>

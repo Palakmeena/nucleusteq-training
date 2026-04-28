@@ -267,11 +267,25 @@
             const container = document.getElementById('upcomingList');
             const stageLabels = { L1_TECHNICAL:'L1 Technical', L2_TECHNICAL:'L2 Technical', HR_ROUND:'HR Round' };
 
+            // Filter out REJECTED candidates — their old feedbacks should not appear
+            const activeCandidates = candidates.filter(c => c.currentStage !== 'REJECTED');
+
             const allInterviews = [];
-            for (const c of candidates) {
+            for (const c of activeCandidates) {
                 try {
                     const iRes = await api.getInterviewsForCandidate(c.id);
-                    (iRes.data || []).forEach(i => allInterviews.push({...i, candidateName: c.fullName}));
+                    const interviews = iRes.data || [];
+
+                    // Keep only the LATEST interview per stage (removes old rejected-cycle duplicates)
+                    const latestByStage = {};
+                    interviews.forEach(i => {
+                        const existing = latestByStage[i.interviewStage];
+                        if (!existing || new Date(i.interviewDate) > new Date(existing.interviewDate)) {
+                            latestByStage[i.interviewStage] = i;
+                        }
+                    });
+
+                    Object.values(latestByStage).forEach(i => allInterviews.push({...i, candidateName: c.fullName}));
                 } catch(e) {}
             }
 
