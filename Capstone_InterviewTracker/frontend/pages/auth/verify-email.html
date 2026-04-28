@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Verify Email</title>
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <style>
+        .verify-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .status-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc;">
+
+    <div class="verify-card" id="statusCard">
+        <div class="loader" id="loader"></div>
+        <h2 id="statusTitle">Verifying your email...</h2>
+        <p id="statusText" style="color: #64748b; margin-top: 12px; line-height: 1.6;">
+            Please wait while we confirm your account.
+        </p>
+    </div>
+
+    <script src="../../js/services/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const card = document.getElementById('statusCard');
+            const loader = document.getElementById('loader');
+            const title = document.getElementById('statusTitle');
+            const text = document.getElementById('statusText');
+
+            if (!token) {
+                showStatus('error', 'Invalid Link', 'The verification token is missing. Please check your email and try again.');
+                return;
+            }
+
+            try {
+                const res = await api.verifyCandidate(token);
+                if (res.success) {
+                    showStatus('success', 'Email Verified!', 'Your account has been successfully activated. You can now sign in to your dashboard.');
+                } else {
+                    throw new Error(res.message || 'Verification failed');
+                }
+            } catch (err) {
+                showStatus('error', 'Verification Failed', err.message || 'Something went wrong during verification.');
+            }
+
+            function showStatus(type, titleText, descText) {
+                loader.style.display = 'none';
+                title.textContent = titleText;
+                text.textContent = descText;
+                
+                const icon = document.createElement('div');
+                icon.className = 'status-icon';
+                icon.textContent = type === 'success' ? '✅' : '❌';
+                card.insertBefore(icon, title);
+
+                if (type === 'success') {
+                    const btn = document.createElement('a');
+                    btn.href = 'login.html';
+                    btn.className = 'primary-btn';
+                    btn.style.textDecoration = 'none';
+                    btn.style.marginTop = '24px';
+                    btn.style.display = 'inline-block';
+                    btn.textContent = 'Login Now';
+                    card.appendChild(btn);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
