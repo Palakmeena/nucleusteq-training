@@ -79,13 +79,25 @@ public class AuthController {
         try {
             LoginResponseDto response = authService.signup(request, passwordEncoder);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.success("Account created successfully", response));
+                    .body(ApiResponse.success("Account created successfully. Please check your email for verification link.", response));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Something went wrong."));
+        }
+    }
+
+    @PostMapping("/verify-candidate")
+    public ResponseEntity<ApiResponse<Void>> verifyCandidate(@org.springframework.web.bind.annotation.RequestParam String token) {
+        try {
+            authService.verifyCandidate(token);
+            return ResponseEntity.ok(ApiResponse.success("Email verified successfully. You can now login.", null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Something went wrong."));
         }
     }
 }
