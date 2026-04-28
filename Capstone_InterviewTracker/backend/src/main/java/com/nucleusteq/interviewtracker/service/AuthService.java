@@ -13,6 +13,12 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Service class that handles business logic for authentication.
@@ -24,6 +30,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final AuthMapper authMapper;
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username:}")
+    private String fromEmail;
+
+    @Value("${app.frontend.base-url:http://localhost:5500}")
+    private String frontendBaseUrl;
 
     /**
      * Constructor injection for required dependencies.
@@ -32,11 +45,13 @@ public class AuthService {
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
                        JwtUtil jwtUtil,
-                       AuthMapper authMapper) {
+                       AuthMapper authMapper,
+                       JavaMailSender mailSender) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.authMapper = authMapper;
+        this.mailSender = mailSender;
     }
 
     /**
@@ -79,13 +94,29 @@ public class AuthService {
         return authMapper.mapToLoginResponse(user, token);
     }
 
-    /**
-     * Handles candidate registration.
-     */
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AuthService.class);
+
+    @Transactional
     public LoginResponseDto signup(com.nucleusteq.interviewtracker.dto.SignupRequestDto request, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists.");
+        java.util.Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+        
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (user.isActive()) {
+                throw new IllegalArgumentException("Email already exists and is already verified.");
+            } else {
+                // User exists but not active - Resend verification email
+                String newToken = UUID.randomUUID().toString();
+                user.setActivationToken(newToken);
+                user.setTokenExpiry(LocalDateTime.now().plusHours(24));
+                userRepository.save(user);
+                sendVerificationEmail(user.getEmail(), user.getFullName(), newToken);
+                return authMapper.mapToLoginResponse(user, null);
+            }
         }
+
+        String activationToken = UUID.randomUUID().toString();
+        LocalDateTime tokenExpiry = LocalDateTime.now().plusHours(24);
 
         User user = new User(
                 request.getFullName(),
@@ -93,10 +124,51 @@ public class AuthService {
                 passwordEncoder.encode(request.getPassword()),
                 com.nucleusteq.interviewtracker.enums.UserRole.CANDIDATE
         );
-        user.setActive(true);
+        user.setActive(false);
+        user.setActivationToken(activationToken);
+        user.setTokenExpiry(tokenExpiry);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-        return authMapper.mapToLoginResponse(user, token);
+        sendVerificationEmail(user.getEmail(), user.getFullName(), activationToken);
+
+        return authMapper.mapToLoginResponse(user, null);
+    }
+
+    private void sendVerificationEmail(String toEmail, String fullName, String token) {
+        try {
+            String base = frontendBaseUrl == null ? "http://localhost:5500" : frontendBaseUrl.trim();
+            if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
+            String link = base + "/pages/auth/verify-email.html?token=" + token;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            if (fromEmail != null && !fromEmail.isBlank()) message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Verify your HireTrack account");
+            message.setText("Hi " + fullName + ",\n\n"
+                    + "Thanks for signing up for HireTrack!\n"
+                    + "Please verify your email address by clicking the link below:\n"
+                    + link + "\n\n"
+                    + "This link will expire in 24 hours.\n\n"
+                    + "Best regards,\nHireTrack Team");
+            mailSender.send(message);
+            logger.info("Verification email sent successfully to: {}", toEmail);
+        } catch (Exception e) {
+            logger.error("CRITICAL: Failed to send verification email to {}: {}", toEmail, e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void verifyCandidate(String token) {
+        User user = userRepository.findByActivationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
+
+        if (user.getTokenExpiry() == null || LocalDateTime.now().isAfter(user.getTokenExpiry())) {
+            throw new IllegalArgumentException("Verification token has expired.");
+        }
+
+        user.setActive(true);
+        user.setActivationToken(null);
+        user.setTokenExpiry(null);
+        userRepository.save(user);
     }
 }
