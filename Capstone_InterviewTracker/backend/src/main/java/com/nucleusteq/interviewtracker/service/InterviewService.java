@@ -16,12 +16,18 @@ import com.nucleusteq.interviewtracker.repository.PanelMemberRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.nucleusteq.interviewtracker.dto.FeedbackRequestDto;
 import com.nucleusteq.interviewtracker.entity.Feedback;
 import com.nucleusteq.interviewtracker.enums.FeedbackStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +38,8 @@ import java.util.stream.Collectors;
 @Service
 public class InterviewService {
 
+    private static final Logger logger = LoggerFactory.getLogger(InterviewService.class);
+
     private final InterviewRepository interviewRepository;
     private final CandidateRepository candidateRepository;
     private final PanelMemberRepository panelMemberRepository;
@@ -39,6 +47,10 @@ public class InterviewService {
     private final UserRepository userRepository;
     private final InterviewMapper interviewMapper;
     private final FeedbackRepository feedbackRepository;
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username:}")
+    private String fromEmail;
 
     @Autowired
     public InterviewService(final InterviewRepository interviewRepository,
@@ -47,7 +59,8 @@ public class InterviewService {
             final InterviewPanelRepository interviewPanelRepository,
             final UserRepository userRepository,
             final InterviewMapper interviewMapper,
-            final FeedbackRepository feedbackRepository) {
+            final FeedbackRepository feedbackRepository,
+            final JavaMailSender mailSender) {
         this.interviewRepository = interviewRepository;
         this.candidateRepository = candidateRepository;
         this.panelMemberRepository = panelMemberRepository;
@@ -55,6 +68,7 @@ public class InterviewService {
         this.userRepository = userRepository;
         this.interviewMapper = interviewMapper;
         this.feedbackRepository = feedbackRepository;
+        this.mailSender = mailSender;
     }
 
     /**
@@ -121,7 +135,57 @@ public class InterviewService {
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
                         "Interview not found after saving — this should never happen"));
 
+        // Send email notification to candidate
+        sendInterviewScheduledEmail(candidate, request);
+
         return interviewMapper.mapToResponseDto(reloaded);
+    }
+
+    /**
+     * Sends a simple email to the candidate informing them about
+     * their scheduled interview. Only essential details are shared.
+     */
+    private void sendInterviewScheduledEmail(final Candidate candidate, final InterviewRequestDto request) {
+        try {
+            String candidateEmail = candidate.getEmail();
+            String candidateName = candidate.getFullName();
+            String stageName = formatStageName(request.getInterviewStage());
+            String date = request.getInterviewDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+            String time = request.getInterviewTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            if (fromEmail != null && !fromEmail.isBlank()) {
+                message.setFrom(fromEmail);
+            }
+            message.setTo(candidateEmail);
+            message.setSubject("Your " + stageName + " Interview has been Scheduled - HireTrack");
+            message.setText(
+                    "Hi " + candidateName + ",\n\n"
+                    + "Your " + stageName + " interview has been scheduled.\n\n"
+                    + "Date: " + date + "\n"
+                    + "Time: " + time + "\n\n"
+                    + "Please be prepared and ensure you are available at the scheduled time.\n\n"
+                    + "Best of luck!\n"
+                    + "HireTrack Team"
+            );
+
+            mailSender.send(message);
+            logger.info("Interview scheduled email sent to {}", candidateEmail);
+        } catch (Exception ex) {
+            logger.warn("Failed to send interview schedule email to {}: {}", candidate.getEmail(), ex.getMessage());
+        }
+    }
+
+    /**
+     * Converts InterviewStage enum to a human-readable name for email.
+     */
+    private String formatStageName(final InterviewStage stage) {
+        switch (stage) {
+            case L1_TECHNICAL: return "L1 Technical";
+            case L2_TECHNICAL: return "L2 Technical";
+            case HR_ROUND: return "HR Round";
+            default: return stage.name();
+        }
     }
 
     /**
@@ -166,11 +230,16 @@ public class InterviewService {
                         "Panel member not found for this user"));
 
         /*
-         * Get all InterviewPanel assignments for this panel member,
-         * extract the Interview from each, and map to response DTOs.
+         * Get all InterviewPanel assignments for this panel member.
+         * Filter out interviews where this specific panel member has already submitted feedback.
          */
         return interviewPanelRepository.findByPanelMember(panelMember)
                 .stream()
+                .filter(assignment -> {
+                    Interview interview = assignment.getInterview();
+                    // Check if feedback exists for this (interview, panelMember) pair
+                    return !feedbackRepository.existsByInterviewAndPanelMember(interview, panelMember);
+                })
                 .map(InterviewPanel::getInterview)
                 .map(interviewMapper::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -222,7 +291,7 @@ public class InterviewService {
     private void validateNoDuplicateInterview(final Candidate candidate,
             final InterviewStage stage) {
         interviewRepository
-                .findByCandidateAndInterviewStage(candidate, stage)
+                .findByCandidateAndInterviewStageAndIsCompletedFalse(candidate, stage)
                 .ifPresent(existing -> {
                     throw new IllegalArgumentException(
                             "An interview for stage " + stage
@@ -261,17 +330,20 @@ public class InterviewService {
             }
         }
         if (requestedStage == InterviewStage.L2_TECHNICAL) {
-            boolean l1Completed = interviewRepository.findByCandidateAndInterviewStage(candidate, InterviewStage.L1_TECHNICAL)
-                    .map(Interview::isCompleted)
-                    .orElse(false);
+            // Check if ANY L1 interview for this candidate is completed
+            boolean l1Completed = interviewRepository.findByCandidate(candidate)
+                    .stream()
+                    .filter(i -> i.getInterviewStage() == InterviewStage.L1_TECHNICAL)
+                    .anyMatch(Interview::isCompleted);
             if (!l1Completed) {
                 throw new IllegalArgumentException("Cannot schedule L2 Technical interview. L1 Technical interview must be completed first.");
             }
         }
         if (requestedStage == InterviewStage.HR_ROUND) {
-            boolean l2Completed = interviewRepository.findByCandidateAndInterviewStage(candidate, InterviewStage.L2_TECHNICAL)
-                    .map(Interview::isCompleted)
-                    .orElse(false);
+            boolean l2Completed = interviewRepository.findByCandidate(candidate)
+                    .stream()
+                    .filter(i -> i.getInterviewStage() == InterviewStage.L2_TECHNICAL)
+                    .anyMatch(Interview::isCompleted);
             if (!l2Completed) {
                 throw new IllegalArgumentException("Cannot schedule HR Round. L2 Technical interview must be completed first.");
             }
