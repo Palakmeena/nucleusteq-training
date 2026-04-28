@@ -37,18 +37,16 @@ function buildSidebar(role, activePage) {
             { key: 'jobs',       icon: svgBriefcase, label: 'Job Descriptions',  href: base + 'pages/hr/jobs.html' },
             { key: 'candidates', icon: svgUsers,     label: 'Candidates',        href: base + 'pages/hr/candidates.html' },
             { key: 'panels',     icon: svgUserCheck, label: 'Panel Members',     href: base + 'pages/hr/panel-onboarding.html' },
-            { key: 'interviews', icon: svgCalendar,  label: 'Interview Calendar',href: base + 'pages/hr/schedule-interview.html' },
+            { key: 'interviews', icon: svgFileText,  label: 'Feedback',          href: base + 'pages/hr/schedule-interview.html' },
         ],
         CANDIDATE: [
             { key: 'dashboard',  icon: svgDashboard, label: 'My Progress',       href: base + 'pages/candidate/dashboard.html' },
             { key: 'jobs',       icon: svgBriefcase, label: 'Jobs',              href: base + 'pages/candidate/jobs.html' },
-            { key: 'profile',    icon: svgUser,      label: 'My Profile',        href: base + 'pages/candidate/profile.html' },
         ],
         PANEL: [
             { key: 'overview',   icon: svgDashboard, label: 'Overview',          href: base + 'pages/panel/overview.html' },
             { key: 'interviews', icon: svgCalendar,  label: 'Assigned Interviews',href: base + 'pages/panel/assigned-Interviews.html' },
             { key: 'feedback',   icon: svgFileText,  label: 'Feedback',          href: base + 'pages/panel/feedback.html' },
-            { key: 'settings',   icon: svgSettings,  label: 'Profile / Settings',href: base + 'pages/panel/settings.html' },
         ]
     };
 
