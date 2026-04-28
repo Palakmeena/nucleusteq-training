@@ -165,13 +165,8 @@
                             <div class="interview-meta-row"> <span id="iDate">—</span></div>
                             <div class="interview-meta-row"> <span id="iTime">—</span></div>
                             <div class="interview-meta-row"> <span id="iStage">—</span></div>
-                            <div class="interview-meta-row"> Panel: <span id="iPanels">—</span></div>
                         </div>
-                        <div id="iFocusAreas"
-                            style="margin-top:16px;background:rgba(255,255,255,0.15);border-radius:8px;padding:12px;font-size:13px;display:none;">
-                            <div style="font-weight:600;margin-bottom:4px;"> Focus Areas</div>
-                            <div id="iFocusText"></div>
-                        </div>
+
                     </div>
                     <div id="noInterviewSection"
                         style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;text-align:center;color:#94a3b8;">
@@ -261,11 +256,6 @@
                         document.getElementById('iDate').textContent = formatDate(next.interviewDate);
                         document.getElementById('iTime').textContent = next.interviewTime || '—';
                         document.getElementById('iStage').textContent = stageLabels[next.interviewStage] || next.interviewStage;
-                        document.getElementById('iPanels').textContent = (next.panelMemberNames || []).join(', ') || '—';
-                        if (next.focusAreas) {
-                            document.getElementById('iFocusAreas').style.display = 'block';
-                            document.getElementById('iFocusText').textContent = next.focusAreas;
-                        }
 
                         // Add Join Meeting button if link exists
                         const existingBtn = document.getElementById('joinBtnContainer');
