@@ -94,6 +94,20 @@ public class InterviewService {
         validateNoDuplicateInterview(candidate, request.getInterviewStage());
         validateSequentialWorkflow(candidate, request.getInterviewStage());
 
+        /*
+         * Panel members are required for L1 and L2 interviews.
+         * HR Round is conducted by HR themselves — no panel needed.
+         */
+        List<Long> panelIds = request.getPanelMemberIds() != null ? request.getPanelMemberIds() : java.util.Collections.emptyList();
+        if (request.getInterviewStage() != InterviewStage.HR_ROUND) {
+            if (panelIds.isEmpty()) {
+                throw new IllegalArgumentException("At least one panel member is required for " + request.getInterviewStage());
+            }
+            if (panelIds.size() > 2) {
+                throw new IllegalArgumentException("Maximum 2 panel members allowed per interview");
+            }
+        }
+
         Interview interview = new Interview(
                 request.getInterviewStage(),
                 request.getInterviewDate(),
@@ -108,10 +122,9 @@ public class InterviewService {
         /*
          * Fetch each panel member by ID, validate they are active,
          * and create an InterviewPanel assignment for each one.
-         * Max 2 panel members enforced by DTO validation already
-         * but we double check here for safety.
+         * For HR_ROUND, this list is empty so the loop is skipped.
          */
-        for (Long panelMemberId : request.getPanelMemberIds()) {
+        for (Long panelMemberId : panelIds) {
             PanelMember panelMember = panelMemberRepository
                     .findById(panelMemberId)
                     .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
@@ -384,6 +397,115 @@ public class InterviewService {
         if (allFeedbacks.size() >= assignedCount) {
             interview.setCompleted(true);
             interviewRepository.save(interview);
+
+            // If any feedback was a rejection, the candidate is rejected
+            boolean isRejected = allFeedbacks.stream()
+                    .anyMatch(f -> f.getFeedbackStatus() == FeedbackStatus.REJECTED);
+
+            if (isRejected) {
+                Candidate candidate = interview.getCandidate();
+                candidate.setCurrentStage(InterviewStage.REJECTED);
+                candidateRepository.save(candidate);
+                sendResultEmail(candidate, false);
+            }
+        }
+    }
+    /**
+     * Submits HR feedback for an HR Round interview.
+     * HR conducts the interview themselves, so no panel member is involved.
+     * The interview is marked as completed immediately after feedback.
+     *
+     * @param interviewId the interview ID
+     * @param request     the feedback details
+     * @throws IllegalArgumentException if the interview is not an HR Round
+     */
+    @Transactional
+    public void submitHrFeedback(Long interviewId, FeedbackRequestDto request) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Interview not found"));
+
+        if (interview.getInterviewStage() != InterviewStage.HR_ROUND) {
+            throw new IllegalArgumentException("HR feedback can only be submitted for HR Round interviews");
+        }
+
+        if (interview.isCompleted()) {
+            throw new IllegalArgumentException("Feedback has already been submitted for this interview");
+        }
+
+        FeedbackStatus status = (request.getDecision() != null && request.getDecision().toUpperCase().contains("REJECT"))
+                                ? FeedbackStatus.REJECTED : FeedbackStatus.SELECTED;
+
+        Feedback feedback = new Feedback(
+                request.getComments(),
+                request.getStrengths(),
+                request.getWeaknesses(),
+                "HR Round Assessment",
+                request.getRating(),
+                status,
+                interview,
+                null  // No panel member for HR Round
+        );
+
+        feedbackRepository.save(feedback);
+
+        // HR is the only interviewer, so mark completed immediately
+        interview.setCompleted(true);
+        interviewRepository.save(interview);
+
+        // Update candidate status based on HR decision
+        Candidate candidate = interview.getCandidate();
+        if (status == FeedbackStatus.REJECTED) {
+            candidate.setCurrentStage(InterviewStage.REJECTED);
+            candidateRepository.save(candidate);
+            sendResultEmail(candidate, false);
+        } else {
+            candidate.setCurrentStage(InterviewStage.SELECTED);
+            candidateRepository.save(candidate);
+            sendResultEmail(candidate, true);
+        }
+    }
+    /**
+     * Sends an email to the candidate regarding their selection or rejection.
+     * 
+     * @param candidate  the candidate entity
+     * @param isSelected true if selected, false if rejected
+     */
+    private void sendResultEmail(final Candidate candidate, final boolean isSelected) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            if (fromEmail != null && !fromEmail.isBlank()) {
+                message.setFrom(fromEmail);
+            }
+            message.setTo(candidate.getEmail());
+            
+            if (isSelected) {
+                message.setSubject("Congratulations! You are selected for " + candidate.getJobDescription().getJobTitle() + " - HireTrack");
+                message.setText(
+                    "Hi " + candidate.getFullName() + ",\n\n"
+                    + "We are pleased to inform you that you have been selected for the position of " 
+                    + candidate.getJobDescription().getJobTitle() + " at our organization.\n\n"
+                    + "Our HR team will get in touch with you shortly regarding the next steps and offer details.\n\n"
+                    + "Congratulations once again!\n\n"
+                    + "Best Regards,\n"
+                    + "HireTrack Recruitment Team"
+                );
+            } else {
+                message.setSubject("Update regarding your application for " + candidate.getJobDescription().getJobTitle() + " - HireTrack");
+                message.setText(
+                    "Hi " + candidate.getFullName() + ",\n\n"
+                    + "Thank you for your interest in the " + candidate.getJobDescription().getJobTitle() 
+                    + " position and for taking the time to interview with us.\n\n"
+                    + "After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.\n\n"
+                    + "We appreciate your time and wish you the best in your future endeavors.\n\n"
+                    + "Best Regards,\n"
+                    + "HireTrack Recruitment Team"
+                );
+            }
+            
+            mailSender.send(message);
+            logger.info("Result email sent successfully to {}", candidate.getEmail());
+        } catch (Exception e) {
+            logger.error("Failed to send result email to {}: {}", candidate.getEmail(), e.getMessage());
         }
     }
 }

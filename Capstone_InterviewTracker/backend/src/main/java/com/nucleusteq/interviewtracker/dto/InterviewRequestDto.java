@@ -57,10 +57,9 @@ public class InterviewRequestDto {
 
     /**
      * List of panel member IDs to assign to this interview.
-     * Minimum 1 and maximum 2 panel members allowed per SRS.
+     * Required for L1_TECHNICAL and L2_TECHNICAL (1-2 members).
+     * Optional for HR_ROUND (HR conducts it themselves).
      */
-    @NotNull(message = "At least one panel member is required")
-    @Size(min = 1, max = 2, message = "Interview must have between 1 and 2 panel members")
     private List<Long> panelMemberIds;
 
     /**

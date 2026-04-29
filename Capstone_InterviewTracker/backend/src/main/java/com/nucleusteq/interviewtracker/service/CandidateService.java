@@ -13,6 +13,7 @@ import com.nucleusteq.interviewtracker.repository.CandidateRepository;
 import com.nucleusteq.interviewtracker.repository.JobDescriptionRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,10 @@ public class CandidateService {
     private final PasswordEncoder passwordEncoder;
     private final CandidateMapper candidateMapper;
     private final CandidateProfileRepository candidateProfileRepository;
+    private final JavaMailSender mailSender;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
+    private String fromEmail;
 
     /**
      * Constructor injection for all required dependencies.
@@ -42,6 +47,7 @@ public class CandidateService {
      * @param userRepository           for creating linked user account
      * @param passwordEncoder          for hashing candidate password
      * @param candidateMapper          for entity and DTO conversions
+     * @param mailSender               for sending activation emails
      */
     @Autowired
     public CandidateService(final CandidateRepository candidateRepository,
@@ -49,13 +55,15 @@ public class CandidateService {
                             final UserRepository userRepository,
                             final PasswordEncoder passwordEncoder,
                             final CandidateMapper candidateMapper,
-                            final CandidateProfileRepository candidateProfileRepository) {
+                            final CandidateProfileRepository candidateProfileRepository,
+                            final JavaMailSender mailSender) {
         this.candidateRepository = candidateRepository;
         this.jobDescriptionRepository = jobDescriptionRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.candidateMapper = candidateMapper;
         this.candidateProfileRepository = candidateProfileRepository;
+        this.mailSender = mailSender;
     }
 
     /**
@@ -155,7 +163,37 @@ public class CandidateService {
 
         Candidate candidate = candidateMapper.mapToEntity(request, jd, savedUser);
         Candidate saved = candidateRepository.save(candidate);
+
+        // Send welcome email with temporary password
+        sendActivationEmail(request.getEmail(), request.getFullName(), request.getMobileNumber());
+
         return candidateMapper.mapToResponseDto(saved);
+    }
+
+    private void sendActivationEmail(String email, String name, String tempPassword) {
+        try {
+            org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
+            if (fromEmail != null && !fromEmail.isBlank()) {
+                message.setFrom(fromEmail);
+            }
+            message.setTo(email);
+            message.setSubject("Welcome to HireTrack - Account Created");
+            message.setText(
+                "Hi " + name + ",\n\n"
+                + "An account has been created for you on HireTrack by our HR team.\n\n"
+                + "You can now log in to your dashboard to track your application status.\n\n"
+                + "Login Credentials:\n"
+                + "Email: " + email + "\n"
+                + "Temporary Password: " + tempPassword + "\n\n"
+                + "Please log in at: http://localhost:5501/frontend/pages/auth/login.html\n\n"
+                + "Best Regards,\n"
+                + "HireTrack Recruitment Team"
+            );
+            mailSender.send(message);
+        } catch (Exception e) {
+            // Log error but don't fail registration
+            System.err.println("Failed to send activation email to " + email + ": " + e.getMessage());
+        }
     }
 
     /**

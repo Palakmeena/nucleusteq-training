@@ -69,7 +69,7 @@ public class InterviewMapper {
         if (interview.getFeedbacks() != null) {
             dto.setFeedbacks(interview.getFeedbacks().stream().map(f -> {
                 com.nucleusteq.interviewtracker.dto.FeedbackResponseDto fr = new com.nucleusteq.interviewtracker.dto.FeedbackResponseDto();
-                fr.setPanelMemberName(f.getPanelMember().getFullName());
+                fr.setPanelMemberName(f.getPanelMember() != null ? f.getPanelMember().getFullName() : "HR Admin");
                 fr.setRating(f.getRating());
                 fr.setComments(f.getComments());
                 fr.setStrengths(f.getStrengths());

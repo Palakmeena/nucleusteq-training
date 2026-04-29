@@ -57,7 +57,7 @@ public class Feedback {
     private Interview interview;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "panel_member_id", nullable = false)
+    @JoinColumn(name = "panel_member_id", nullable = true)
     private PanelMember panelMember;
 
     /**

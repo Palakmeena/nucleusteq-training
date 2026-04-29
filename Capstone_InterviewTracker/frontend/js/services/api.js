@@ -100,6 +100,7 @@ const api = {
     getInterviewById: (id) => request('GET', `/hr/interview/${id}`),
     getInterviewsForCandidate: (candidateId) => request('GET', `/hr/interview/candidate/${candidateId}`),
     updateInterviewFeedback: (id, body) => request('PUT', `/panel/interview/${id}/feedback`, body),
+    submitHrFeedback: (id, body) => request('PUT', `/hr/interview/${id}/hr-feedback`, body),
 };
 
 window.api = api;

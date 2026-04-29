@@ -124,4 +124,22 @@ public class InterviewController {
                     .body(ApiResponse.error("Failed to submit feedback: " + e.getMessage()));
         }
     }
+
+    @PutMapping("/hr/interview/{id}/hr-feedback")
+    public ResponseEntity<ApiResponse<Void>> submitHrFeedback(
+            @PathVariable final Long id,
+            @Valid @RequestBody final FeedbackRequestDto request) {
+
+        try {
+            interviewService.submitHrFeedback(id, request);
+            return ResponseEntity.ok(ApiResponse.success("HR feedback submitted successfully", null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Failed to submit HR feedback: " + e.getMessage()));
+        }
+    }
 }

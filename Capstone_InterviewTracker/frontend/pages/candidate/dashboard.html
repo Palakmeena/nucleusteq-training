@@ -248,8 +248,10 @@
                 // Load interviews
                 try {
                     const iRes = await api.getMyInterviews();
+                    // Only show if NOT selected and there is a pending interview
                     const interviews = (iRes.data || []).filter(i => !i.completed);
-                    if (interviews.length) {
+                    
+                    if (interviews.length && profile.currentStage !== 'SELECTED' && profile.currentStage !== 'REJECTED') {
                         const next = interviews[0];
                         document.getElementById('interviewSection').style.display = 'block';
                         document.getElementById('noInterviewSection').style.display = 'none';
