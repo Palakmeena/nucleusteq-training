@@ -2,7 +2,10 @@ package com.nucleusteq.interviewtracker.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 public class SignupRequestDto {
 
@@ -14,9 +17,19 @@ public class SignupRequestDto {
     @Email(message = "Please provide a valid email address")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
-    private String password;
+    @NotBlank(message = "Mobile code is required")
+    @Size(max = 5, message = "Mobile code cannot exceed 5 characters")
+    private String mobileCode;
+
+    @NotBlank(message = "Mobile number is required")
+    @Size(min = 10, max = 15, message = "Mobile number must be between 10 and 15 digits")
+    private String mobileNumber;
+
+    @NotNull(message = "Date of birth is required")
+    private LocalDate dateOfBirth;
+
+    @NotBlank(message = "Gender is required")
+    private String gender;
 
     public SignupRequestDto() {
     }
@@ -37,11 +50,35 @@ public class SignupRequestDto {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getMobileCode() {
+        return mobileCode;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setMobileCode(String mobileCode) {
+        this.mobileCode = mobileCode;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

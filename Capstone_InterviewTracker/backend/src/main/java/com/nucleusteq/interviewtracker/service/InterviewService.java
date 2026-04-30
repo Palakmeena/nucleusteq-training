@@ -187,6 +187,54 @@ public class InterviewService {
         } catch (Exception ex) {
             logger.warn("Failed to send interview schedule email to {}: {}", candidate.getEmail(), ex.getMessage());
         }
+
+        /*
+         * Notify selected panel members (if any). Each panel member gets their
+         * own email containing candidate details, JD, interview time and focus areas.
+         * Failures here are non-fatal and are logged per recipient.
+         */
+        List<Long> panelIds = request.getPanelMemberIds() != null ? request.getPanelMemberIds() : java.util.Collections.emptyList();
+        if (!panelIds.isEmpty()) {
+            for (Long panelId : panelIds) {
+                try {
+                    PanelMember panel = panelMemberRepository.findById(panelId)
+                            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Panel member not found with id: " + panelId));
+
+                    String panelEmail = panel.getEmail();
+                    String panelName = panel.getFullName();
+
+                    SimpleMailMessage pm = new SimpleMailMessage();
+                    if (fromEmail != null && !fromEmail.isBlank()) {
+                        pm.setFrom(fromEmail);
+                    }
+                    pm.setTo(panelEmail);
+                    pm.setSubject("Interview Assignment: " + candidate.getFullName() + " - " + candidate.getJobDescription().getJobTitle());
+
+                    StringBuilder body = new StringBuilder();
+                    body.append("Hi ").append(panelName).append(",\n\n");
+                    body.append("You have been assigned as a panel member for the following interview:\n\n");
+                    body.append("Candidate: ").append(candidate.getFullName()).append(" (" ).append(candidate.getEmail()).append(")\n");
+                    body.append("Job: ").append(candidate.getJobDescription().getJobTitle()).append("\n");
+                    body.append("Stage: ").append(formatStageName(request.getInterviewStage())).append("\n");
+                    body.append("Date: ").append(request.getInterviewDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).append("\n");
+                    body.append("Time: ").append(request.getInterviewTime().format(DateTimeFormatter.ofPattern("hh:mm a"))).append("\n");
+                    if (request.getMeetingLink() != null && !request.getMeetingLink().isBlank()) {
+                        body.append("Meeting Link: ").append(request.getMeetingLink()).append("\n");
+                    }
+                    if (request.getFocusAreas() != null && !request.getFocusAreas().isBlank()) {
+                        body.append("Focus Areas: ").append(request.getFocusAreas()).append("\n");
+                    }
+                    body.append("\nPlease be prepared to evaluate the candidate on the focus areas mentioned.\n\n");
+                    body.append("Best Regards,\nHireTrack Team");
+
+                    pm.setText(body.toString());
+                    mailSender.send(pm);
+                    logger.info("Interview assignment email sent to panel member {} <{}>", panelName, panelEmail);
+                } catch (Exception pex) {
+                    logger.warn("Failed to send interview assignment email to panel id {}: {}", panelId, pex.getMessage());
+                }
+            }
+        }
     }
 
     /**

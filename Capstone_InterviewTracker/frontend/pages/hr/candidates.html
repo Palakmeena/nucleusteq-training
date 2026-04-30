@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Candidates</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .panel-option {
             display: flex;
@@ -124,11 +125,29 @@
                     <div class="form-group"><label>Full Name</label><input type="text" id="addFullName" required></div>
                     <div class="form-group"><label>Email Address</label><input type="email" id="addEmail" required>
                     </div>
-                    <div class="form-group"><label>Mobile Code</label><input type="text" id="addMobileCode" value="+91"
-                            required></div>
-                    <div class="form-group"><label>Mobile Number</label><input type="text" id="addMobile" required>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Mobile Number</label>
+                        <div
+                            style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                            <input type="text" id="addMobileCode" value="+91" required maxlength="5"
+                                oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                                style="width:70px; border:none; border-right:1px solid #e2e8f0; border-radius:0; background:#f8fafc; text-align:center; padding:10px 5px;">
+                            <input type="text" id="addMobile" placeholder="Enter 10-digit number" required
+                                maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                style="flex:1; border:none; border-radius:0; padding:10px 14px;">
+                        </div>
                     </div>
                     <div class="form-group"><label>Job Role</label><select id="jdSelect" required></select></div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="addGender" required
+                            style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
                     <div class="form-group"><label>Total Experience (Yrs)</label><input type="number" step="0.1"
                             id="addTotalExp" required></div>
                     <div class="form-group"><label>Relevant Experience (Yrs)</label><input type="number" step="0.1"
@@ -139,8 +158,8 @@
                             id="addExpectedCtc" required></div>
                     <div class="form-group"><label>Notice Period (Days)</label><input type="number" id="addNotice"
                             required></div>
-                    <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required>
-                    </div>
+                    <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required></div>
+                    <div class="form-group"><label>Date of Birth</label><input type="date" id="addDob" required></div>
                     <div class="form-group" style="grid-column: span 2;"><label>Resume (PDF)</label><input type="file"
                             id="addResume" accept=".pdf,application/pdf"></div>
                     <div class="form-group" style="grid-column: span 2;"><label>Preferred Location</label><input
@@ -198,6 +217,11 @@
                                 style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Date
                                 of Birth</label>
                             <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateDob">—</div>
+                        </div>
+                        <div>
+                            <label
+                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Gender</label>
+                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateGender">—</div>
                         </div>
                     </div>
                 </div>
@@ -387,7 +411,7 @@
         document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'candidates');
 
         // Add stage listener to hide/show panel search
-        document.getElementById('schedStage').addEventListener('change', function(e) {
+        document.getElementById('schedStage').addEventListener('change', function (e) {
             const panelGroup = document.getElementById('panelGroup');
             if (e.target.value === 'HR_ROUND') {
                 panelGroup.style.display = 'none';
@@ -443,7 +467,8 @@
                 <td style="font-size:13px;color:#64748b;">${formatDate(c.createdAt)}</td>
                 <td>
                     <button onclick="openScheduleModal(${c.id}, '${c.fullName.replace(/'/g, "\\'")}')" style="font-size:13px;color:#4f46e5;background:none;border:1px solid #4f46e5;border-radius:6px;padding:4px 10px;cursor:pointer;margin-right:6px;">Schedule</button>
-                    <span style="font-size:13px;color:#64748b;cursor:pointer;" onclick="viewCandidate(${c.id})">View</span>
+                    <span style="font-size:13px;color:#64748b;cursor:pointer;margin-right:12px;" onclick="viewCandidate(${c.id})">View</span>
+                    <button onclick="deleteCandidate(${c.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;padding:0;font-size:16px;" title="Delete Candidate"><i class="fas fa-trash-alt"></i></button>
                 </td>
             </tr>
         `).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No candidates found</td></tr>';
@@ -458,6 +483,17 @@
             } catch (e) {
                 showToast('Failed to update stage: ' + e.message, 'error');
                 loadCandidates();
+            }
+        }
+
+        async function deleteCandidate(id) {
+            if (!confirm('Are you sure you want to delete this candidate? This will also remove all their interview history and account.')) return;
+            try {
+                await api.deleteCandidate(id);
+                showToast('Candidate deleted successfully', 'success');
+                loadCandidates();
+            } catch (e) {
+                showToast(e.message, 'error');
             }
         }
 
@@ -481,6 +517,7 @@
             document.getElementById('candidateEmail').textContent = c.email;
             document.getElementById('candidateMobile').textContent = (c.mobileCode || '') + ' ' + (c.mobileNumber || '—');
             document.getElementById('candidateDob').textContent = c.dateOfBirth ? formatDate(c.dateOfBirth) : '—';
+            document.getElementById('candidateGender').textContent = c.gender || '—';
             document.getElementById('candidateOrg').textContent = c.currentOrganization || '—';
             document.getElementById('candidateLocation').textContent = c.preferredLocation || '—';
             document.getElementById('candidateTotalExp').textContent = (c.totalExperience || 0) + ' years';
@@ -548,8 +585,55 @@
                 noticePeriod: parseInt(document.getElementById('addNotice').value),
                 currentOrganization: document.getElementById('addOrg').value,
                 preferredLocation: document.getElementById('addLocation').value,
+                gender: document.getElementById('addGender').value,
+                dateOfBirth: document.getElementById('addDob').value,
                 source: 'Manual'
             };
+
+            // Strict Validation
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(body.email)) {
+                showToast("Please provide a valid email (e.g. name@example.com).", "error");
+                btn.disabled = false;
+                btn.textContent = 'Create Candidate';
+                return;
+            }
+
+            if (body.mobileNumber.length !== 10 || isNaN(body.mobileNumber)) {
+                showToast("Mobile number must be exactly 10 digits.", "error");
+                btn.disabled = false;
+                btn.textContent = 'Create Candidate';
+                return;
+            }
+
+            if (body.dateOfBirth) {
+                const birthDate = new Date(body.dateOfBirth);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age < 18) {
+                    showToast("Candidate must be at least 18 years old.", "error");
+                    btn.disabled = false;
+                    btn.textContent = 'Create Candidate';
+                    return;
+                }
+                if (birthDate.getFullYear() < 1950) {
+                    showToast("Please provide a valid Date of Birth (Year > 1950).", "error");
+                    btn.disabled = false;
+                    btn.textContent = 'Create Candidate';
+                    return;
+                }
+            }
+
+            if (body.relevantExperience > body.totalExperience) {
+                showToast("Relevant experience cannot be greater than total experience.", "error");
+                btn.disabled = false;
+                btn.textContent = 'Create Candidate';
+                return;
+            }
             try {
                 const created = await api.createCandidateByHr(body);
                 const resumeFile = document.getElementById('addResume').files[0];

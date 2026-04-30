@@ -18,7 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -28,16 +35,22 @@ import java.util.stream.Collectors;
 @Service
 public class CandidateService {
 
+        private static final Logger logger = LoggerFactory.getLogger(CandidateService.class);
+
+        @Value("${app.frontend.base-url:http://localhost:5500}")
+        private String frontendBaseUrl;
+
+        @Value("${spring.mail.username}")
+        private String fromEmail;
+
     private final CandidateRepository candidateRepository;
     private final JobDescriptionRepository jobDescriptionRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CandidateMapper candidateMapper;
     private final CandidateProfileRepository candidateProfileRepository;
+    private final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository;
     private final JavaMailSender mailSender;
-
-    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
-    private String fromEmail;
 
     /**
      * Constructor injection for all required dependencies.
@@ -56,6 +69,7 @@ public class CandidateService {
                             final PasswordEncoder passwordEncoder,
                             final CandidateMapper candidateMapper,
                             final CandidateProfileRepository candidateProfileRepository,
+                            final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository,
                             final JavaMailSender mailSender) {
         this.candidateRepository = candidateRepository;
         this.jobDescriptionRepository = jobDescriptionRepository;
@@ -63,6 +77,7 @@ public class CandidateService {
         this.passwordEncoder = passwordEncoder;
         this.candidateMapper = candidateMapper;
         this.candidateProfileRepository = candidateProfileRepository;
+        this.interviewRepository = interviewRepository;
         this.mailSender = mailSender;
     }
 
@@ -133,6 +148,7 @@ public class CandidateService {
         profile.setExpectedCtc(snapshot.getExpectedCtc());
         profile.setNoticePeriod(snapshot.getNoticePeriod());
         profile.setPreferredLocation(snapshot.getPreferredLocation());
+        profile.setGender(snapshot.getGender());
         
         candidateProfileRepository.save(profile);
     }
@@ -152,47 +168,62 @@ public class CandidateService {
         validateNoDuplicates(request.getEmail(), request.getMobileNumber());
         JobDescription jd = findActiveJdOrThrow(request.getJobDescriptionId());
 
+                // Generate activation token with 24-hour expiry (like panel members)
+                String activationToken = UUID.randomUUID().toString();
+                LocalDateTime tokenExpiry = LocalDateTime.now().plusHours(24);
+
         User user = new User(
                 request.getFullName(),
                 request.getEmail(),
-                passwordEncoder.encode(request.getMobileNumber()),
+                                passwordEncoder.encode(UUID.randomUUID().toString()),
                 UserRole.CANDIDATE
         );
-        user.setActive(true);
+                user.setActive(false);
+                user.setActivationToken(activationToken);
+                user.setTokenExpiry(tokenExpiry);
         User savedUser = userRepository.save(user);
 
         Candidate candidate = candidateMapper.mapToEntity(request, jd, savedUser);
         Candidate saved = candidateRepository.save(candidate);
 
-        // Send welcome email with temporary password
-        sendActivationEmail(request.getEmail(), request.getFullName(), request.getMobileNumber());
+        // SYNC TO LIVE PROFILE: So the candidate sees their updated info in dashboard
+        syncToLiveProfile(saved, savedUser);
+
+                // Send activation email with link
+                String activationLink = buildCandidateActivationLink(activationToken);
+                sendCandidateActivationEmail(request.getEmail(), request.getFullName(), activationLink);
 
         return candidateMapper.mapToResponseDto(saved);
     }
 
-    private void sendActivationEmail(String email, String name, String tempPassword) {
+        private String buildCandidateActivationLink(final String activationToken) {
+                String base = frontendBaseUrl == null ? "http://localhost:5501" : frontendBaseUrl.trim();
+                if (base.endsWith("/")) {
+                        base = base.substring(0, base.length() - 1);
+                }
+                return base + "/pages/auth/activate.html?token=" + activationToken;
+        }
+
+        private void sendCandidateActivationEmail(String email, String name, String activationLink) {
         try {
-            org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
+                        SimpleMailMessage message = new SimpleMailMessage();
             if (fromEmail != null && !fromEmail.isBlank()) {
                 message.setFrom(fromEmail);
             }
             message.setTo(email);
-            message.setSubject("Welcome to HireTrack - Account Created");
+                        message.setSubject("Activate your HireTrack account");
             message.setText(
-                "Hi " + name + ",\n\n"
-                + "An account has been created for you on HireTrack by our HR team.\n\n"
-                + "You can now log in to your dashboard to track your application status.\n\n"
-                + "Login Credentials:\n"
-                + "Email: " + email + "\n"
-                + "Temporary Password: " + tempPassword + "\n\n"
-                + "Please log in at: http://localhost:5501/frontend/pages/auth/login.html\n\n"
-                + "Best Regards,\n"
-                + "HireTrack Recruitment Team"
+                                "Hi " + name + ",\n\n"
+                                + "Your account has been created by our HR team on HireTrack.\n"
+                                + "Set your password using this activation link:\n"
+                                + activationLink + "\n\n"
+                                + "This link expires in 24 hours.\n\n"
+                                + "Thanks,\n"
+                                + "HireTrack Recruitment Team"
             );
             mailSender.send(message);
         } catch (Exception e) {
-            // Log error but don't fail registration
-            System.err.println("Failed to send activation email to " + email + ": " + e.getMessage());
+                        logger.warn("Failed to send candidate activation email to {}: {}", email, e.getMessage());
         }
     }
 
@@ -327,5 +358,79 @@ public class CandidateService {
             );
         }
         return jd;
+    }
+
+    /**
+     * Deletes a candidate and all associated data.
+     * 1. Deletes all interviews linked to the candidate.
+     * 2. Deletes the candidate entity.
+     * 3. Deletes the linked User account.
+     * 4. Deletes the CandidateProfile.
+     *
+     * @param id the candidate ID
+     */
+    @Transactional
+    public void deleteCandidate(final Long id) {
+        Candidate candidate = candidateRepository.findById(id)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Candidate not found with id: " + id
+                ));
+
+        User user = candidate.getUser();
+
+        // 1. Delete Interviews (and cascade to InterviewPanel/Feedback)
+        java.util.List<com.nucleusteq.interviewtracker.entity.Interview> interviews = 
+                interviewRepository.findByCandidate(candidate);
+        interviewRepository.deleteAll(interviews);
+
+        // 2. Delete Candidate
+        candidateRepository.delete(candidate);
+
+        // 3. Delete CandidateProfile
+        if (user != null) {
+            candidateProfileRepository.findByUser(user)
+                    .ifPresent(candidateProfileRepository::delete);
+            
+            // 4. Delete User
+            userRepository.delete(user);
+        }
+    }
+
+    /**
+     * Activates a candidate account using the token from the email link.
+     * Sets the password, marks the account as active, and clears the token.
+     * Token is valid for 24 hours — expired tokens are rejected.
+     *
+     * @param token    the activation token from the email link
+     * @param password the new password chosen by the candidate
+     * @throws IllegalArgumentException if token is invalid or expired
+     */
+    @Transactional
+    public void activateCandidateAccount(final String token, final String password) {
+        /*
+         * Find the user by activation token efficiently using the repository.
+         */
+        User user = userRepository.findByActivationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Invalid activation token"
+                ));
+
+        if (user.getTokenExpiry() == null
+                || LocalDateTime.now().isAfter(user.getTokenExpiry())) {
+            logger.warn("Activation attempt with expired token for email: {}", user.getEmail());
+            throw new IllegalArgumentException(
+                    "Activation token has expired. Please ask HR to resend the link."
+            );
+        }
+
+        /*
+         * Set the real password, activate the account, and clear the token
+         * so it cannot be reused for security.
+         */
+        user.setPassword(passwordEncoder.encode(password));
+        user.setActive(true);
+        user.setActivationToken(null);
+        user.setTokenExpiry(null);
+        userRepository.save(user);
     }
 }

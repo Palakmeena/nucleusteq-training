@@ -48,6 +48,7 @@ public class CandidateMapper {
             candidate.setDateOfBirth(request.getDateOfBirth());
         }
 
+        candidate.setGender(request.getGender());
         candidate.setCurrentStage(InterviewStage.PROFILING);
         return candidate;
     }
@@ -76,6 +77,7 @@ public class CandidateMapper {
         dto.setNoticePeriod(candidate.getNoticePeriod());
         dto.setPreferredLocation(candidate.getPreferredLocation());
         dto.setSource(candidate.getSource());
+        dto.setGender(candidate.getGender());
         dto.setCurrentStage(candidate.getCurrentStage());
         dto.setCreatedAt(candidate.getCreatedAt());
         dto.setJobDescriptionId(candidate.getJobDescription().getId());

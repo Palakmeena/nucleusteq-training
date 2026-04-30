@@ -74,6 +74,9 @@ public class Candidate {
     @Column(name = "source", nullable = false)
     private String source;
 
+    @Column(name = "gender", nullable = false)
+    private String gender;
+
     /**
      * Current stage of the candidate in the interview process.
      * Starts at PROFILING and is moved forward manually by HR.
@@ -248,6 +251,14 @@ public class Candidate {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public InterviewStage getCurrentStage() {

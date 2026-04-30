@@ -21,6 +21,9 @@ public class CandidateProfile {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Transient
+    private String email;
+
     @Column(name = "full_name")
     private String fullName;
 
@@ -57,6 +60,9 @@ public class CandidateProfile {
     @Column(name = "preferred_location")
     private String preferredLocation;
 
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -75,6 +81,8 @@ public class CandidateProfile {
     public void setId(Long id) { this.id = id; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
     public String getMobileCode() { return mobileCode; }
@@ -99,6 +107,8 @@ public class CandidateProfile {
     public void setNoticePeriod(Integer noticePeriod) { this.noticePeriod = noticePeriod; }
     public String getPreferredLocation() { return preferredLocation; }
     public void setPreferredLocation(String preferredLocation) { this.preferredLocation = preferredLocation; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

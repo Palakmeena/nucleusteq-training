@@ -102,6 +102,17 @@
                         <div class="form-group"><label style="display:block; font-size:13px; font-weight:500; margin-bottom:6px;">Preferred Location</label><input type="text" id="applyLocation" required style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;"></div>
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                        <div class="form-group">
+                            <label style="display:block; font-size:13px; font-weight:500; margin-bottom:6px;">Gender</label>
+                            <select id="applyGender" required style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;">
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                         <div class="form-group"><label style="display:block; font-size:13px; font-weight:500; margin-bottom:6px;">Total Exp (Yrs)</label><input type="number" step="0.1" id="applyTotalExp" required style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;"></div>
                         <div class="form-group"><label style="display:block; font-size:13px; font-weight:500; margin-bottom:6px;">Rel Exp (Yrs)</label><input type="number" step="0.1" id="applyRelExp" required style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;"></div>
                     </div>
@@ -141,7 +152,8 @@
     auth.requireRole('CANDIDATE');
     document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'jobs');
 
-    let myProfile = null;
+    let myApplication = null;
+    let myLiveProfile = null;
     let allOpenJobs = [];
 
     function shortText(text, max = 180) {
@@ -157,15 +169,26 @@
     }
 
     function canApplyNow() {
-        return !myProfile || !myProfile.currentStage || myProfile.currentStage === 'REJECTED';
+        return !myApplication || !myApplication.currentStage || myApplication.currentStage === 'REJECTED';
+    }
+
+    function getApplyFieldValue(id, fallback = '') {
+        const element = document.getElementById(id);
+        return element ? element.value : fallback;
     }
 
     async function loadCandidateProfile() {
         try {
-            const profileRes = await api.getMyProfile();
-            myProfile = profileRes.data;
+            const [applicationRes, liveProfileRes] = await Promise.all([
+                api.getMyProfile().catch(() => null),
+                api.getMyLiveProfile().catch(() => null)
+            ]);
+
+            myApplication = applicationRes ? applicationRes.data : null;
+            myLiveProfile = liveProfileRes ? liveProfileRes.data : null;
         } catch (e) {
-            myProfile = null;
+            myApplication = null;
+            myLiveProfile = null;
         }
     }
 
@@ -218,19 +241,23 @@
         document.getElementById('candidateApplyModal').style.display = 'flex';
 
         // Pre-fill if profile exists
-        if (myProfile) {
-            document.getElementById('applyName').value = myProfile.fullName || '';
-            document.getElementById('applyEmail').value = myProfile.email || '';
-            document.getElementById('applyMobileCode').value = myProfile.mobileCode || '+91';
-            document.getElementById('applyMobile').value = myProfile.mobileNumber || '';
-            document.getElementById('applyDob').value = myProfile.dateOfBirth || '';
-            document.getElementById('applyOrg').value = myProfile.currentOrganization || '';
-            document.getElementById('applyLocation').value = myProfile.preferredLocation || '';
-            document.getElementById('applyTotalExp').value = myProfile.totalExperience || '';
-            document.getElementById('applyRelExp').value = myProfile.relevantExperience || '';
-            document.getElementById('applyCurrentCtc').value = myProfile.currentCtc || '';
-            document.getElementById('applyExpectedCtc').value = myProfile.expectedCtc || '';
-            document.getElementById('applyNotice').value = myProfile.noticePeriod || '';
+        const profileToUse = myLiveProfile || myApplication;
+        if (profileToUse) {
+            document.getElementById('applyName').value = profileToUse.fullName || '';
+            document.getElementById('applyEmail').value = profileToUse.email || '';
+            document.getElementById('applyMobileCode').value = profileToUse.mobileCode || '+91';
+            document.getElementById('applyMobile').value = profileToUse.mobileNumber || '';
+            document.getElementById('applyDob').value = profileToUse.dateOfBirth || '';
+            document.getElementById('applyOrg').value = profileToUse.currentOrganization || '';
+            document.getElementById('applyLocation').value = profileToUse.preferredLocation || '';
+            if (profileToUse.gender && document.getElementById('applyGender')) {
+                document.getElementById('applyGender').value = profileToUse.gender;
+            }
+            document.getElementById('applyTotalExp').value = profileToUse.totalExperience || '';
+            document.getElementById('applyRelExp').value = profileToUse.relevantExperience || '';
+            document.getElementById('applyCurrentCtc').value = profileToUse.currentCtc || '';
+            document.getElementById('applyExpectedCtc').value = profileToUse.expectedCtc || '';
+            document.getElementById('applyNotice').value = profileToUse.noticePeriod || '';
         } else {
             document.getElementById('applyEmail').value = localStorage.getItem('userEmail') || '';
             document.getElementById('applyName').value = localStorage.getItem('userName') || '';
@@ -256,25 +283,77 @@
             return;
         }
 
+        const emailValue = getApplyFieldValue('applyEmail').trim();
+        const mobileValue = getApplyFieldValue('applyMobile').trim();
+        const dobValue = getApplyFieldValue('applyDob');
+        const totalExperienceValue = parseFloat(getApplyFieldValue('applyTotalExp'));
+        const relevantExperienceValue = parseFloat(getApplyFieldValue('applyRelExp'));
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(emailValue)) {
+            errorMsg.textContent = 'Please provide a valid email (e.g. name@example.com).';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        if (mobileValue.length !== 10 || isNaN(mobileValue)) {
+            errorMsg.textContent = 'Mobile number must be exactly 10 digits.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        if (!getApplyFieldValue('applyGender')) {
+            errorMsg.textContent = 'Gender is required.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        if (dobValue) {
+            const birthDate = new Date(dobValue);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if (age < 18) {
+                errorMsg.textContent = 'Candidate must be at least 18 years old.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (birthDate.getFullYear() < 1950) {
+                errorMsg.textContent = 'Please provide a valid Date of Birth (Year > 1950).';
+                errorMsg.style.display = 'block';
+                return;
+            }
+        }
+
+        if (!isNaN(relevantExperienceValue) && !isNaN(totalExperienceValue) && relevantExperienceValue > totalExperienceValue) {
+            errorMsg.textContent = 'Relevant experience cannot be greater than total experience.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
         errorMsg.style.display = 'none';
         btn.disabled = true;
         btn.textContent = 'Submitting...';
 
         const payload = {
-            jobDescriptionId: parseInt(document.getElementById('applyJdId').value),
-            fullName: document.getElementById('applyName').value,
-            email: document.getElementById('applyEmail').value,
-            mobileCode: document.getElementById('applyMobileCode').value,
-            mobileNumber: document.getElementById('applyMobile').value,
-            dateOfBirth: document.getElementById('applyDob').value,
-            currentOrganization: document.getElementById('applyOrg').value,
-            preferredLocation: document.getElementById('applyLocation').value,
-            totalExperience: parseFloat(document.getElementById('applyTotalExp').value),
-            relevantExperience: parseFloat(document.getElementById('applyRelExp').value),
-            currentCtc: parseFloat(document.getElementById('applyCurrentCtc').value),
-            expectedCtc: parseFloat(document.getElementById('applyExpectedCtc').value),
-            noticePeriod: parseInt(document.getElementById('applyNotice').value),
-            source: document.getElementById('applySource').value
+            jobDescriptionId: parseInt(getApplyFieldValue('applyJdId')),
+            fullName: getApplyFieldValue('applyName'),
+            email: emailValue,
+            mobileCode: getApplyFieldValue('applyMobileCode'),
+            mobileNumber: mobileValue,
+            dateOfBirth: dobValue,
+            currentOrganization: getApplyFieldValue('applyOrg'),
+            preferredLocation: getApplyFieldValue('applyLocation'),
+            gender: getApplyFieldValue('applyGender'),
+            totalExperience: totalExperienceValue,
+            relevantExperience: relevantExperienceValue,
+            currentCtc: parseFloat(getApplyFieldValue('applyCurrentCtc')),
+            expectedCtc: parseFloat(getApplyFieldValue('applyExpectedCtc')),
+            noticePeriod: parseInt(getApplyFieldValue('applyNotice')),
+            source: getApplyFieldValue('applySource')
         };
 
         try {

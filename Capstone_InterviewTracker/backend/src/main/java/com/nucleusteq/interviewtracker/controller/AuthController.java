@@ -2,6 +2,7 @@ package com.nucleusteq.interviewtracker.controller;
 
 import com.nucleusteq.interviewtracker.dto.LoginRequestDto;
 import com.nucleusteq.interviewtracker.dto.LoginResponseDto;
+import com.nucleusteq.interviewtracker.dto.SignupRequestDto;
 import com.nucleusteq.interviewtracker.service.AuthService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
 import jakarta.validation.Valid;
@@ -75,11 +76,11 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<LoginResponseDto>> signup(
-            @Valid @RequestBody com.nucleusteq.interviewtracker.dto.SignupRequestDto request) {
+            @Valid @RequestBody SignupRequestDto request) {
         try {
             LoginResponseDto response = authService.signup(request, passwordEncoder);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.success("Account created successfully. Please check your email for verification link.", response));
+                .body(ApiResponse.success("Account created successfully. Please check your email for the activation link.", response));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(e.getMessage()));

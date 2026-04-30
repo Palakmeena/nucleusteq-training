@@ -3,6 +3,10 @@ package com.nucleusteq.interviewtracker.controller;
 import com.nucleusteq.interviewtracker.dto.PanelMemberRequestDto;
 import com.nucleusteq.interviewtracker.dto.PanelMemberResponseDto;
 import com.nucleusteq.interviewtracker.service.PanelMemberService;
+import com.nucleusteq.interviewtracker.service.CandidateService;
+import com.nucleusteq.interviewtracker.repository.UserRepository;
+import com.nucleusteq.interviewtracker.entity.User;
+import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +32,8 @@ import java.util.List;
 public class PanelMemberController {
 
     private final PanelMemberService panelMemberService;
+        private final CandidateService candidateService;
+        private final UserRepository userRepository;
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -35,8 +41,12 @@ public class PanelMemberController {
      * @param panelMemberService handles all panel member business logic
      */
     @Autowired
-    public PanelMemberController(final PanelMemberService panelMemberService) {
+        public PanelMemberController(final PanelMemberService panelMemberService,
+                        final CandidateService candidateService,
+                        final UserRepository userRepository) {
         this.panelMemberService = panelMemberService;
+                this.candidateService = candidateService;
+                this.userRepository = userRepository;
     }
 
     /**
@@ -127,23 +137,35 @@ public class PanelMemberController {
     }
 
     /**
-     * Panel member activates their account using the token from email.
+         * Activates account (panel member or candidate) using the token from email.
      * Public endpoint — panel member doesn't have a token yet at this point.
      * POST /auth/activate?token=xxx&password=xxx
      *
      * @param token    the activation token from the email link
-     * @param password the new password chosen by the panel member
+         * @param password the new password chosen by the user
      * @return 200 OK on success, or 400 if token is invalid or expired
      */
     @PostMapping("/auth/activate")
-    public ResponseEntity<ApiResponse<Void>> activatePanelMember(
+        public ResponseEntity<ApiResponse<Void>> activateAccount(
             @RequestParam final String token,
             @RequestParam @NotBlank(message = "Password is required")
             @Size(min = 6, message = "Password must be at least 6 characters")
             final String password) {
 
         try {
-            panelMemberService.activatePanelMember(token, password);
+                        // Find the user by token to determine their role
+                        User user = userRepository.findByActivationToken(token)
+                                        .orElseThrow(() -> new IllegalArgumentException("Invalid activation token"));
+
+                        // Route to appropriate activation method based on role
+                        if (user.getRole() == UserRole.PANEL) {
+                                panelMemberService.activatePanelMember(token, password);
+                        } else if (user.getRole() == UserRole.CANDIDATE) {
+                                candidateService.activateCandidateAccount(token, password);
+                        } else {
+                                throw new IllegalArgumentException("Invalid user role for activation");
+                        }
+
             return ResponseEntity.ok(
                     ApiResponse.success(
                             "Account activated successfully. You can now log in.",

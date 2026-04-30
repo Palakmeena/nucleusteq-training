@@ -75,7 +75,7 @@ function buildSidebar(role, activePage) {
             `).join('')}
         </nav>
         <div class="sidebar-bottom">
-            <a href="${base}index.html" class="bottom-item">${svgHome} Public Jobs</a>
+            <a href="${base}index.html" class="bottom-item">${svgHome} Home</a>
             <a href="#" class="bottom-item logout" onclick="auth.logout(); return false;">${svgLogout} Sign Out</a>
             <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-top:8px;border-top:1px solid #e2e8f0;">
                 <div style="width:32px;height:32px;background:#eef2ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4f46e5;font-size:13px;flex-shrink:0;">${initials}</div>
@@ -158,19 +158,13 @@ function showResumeModal(resumeUrl) {
         showToast('No resume available for this candidate', 'error');
         return;
     }
-
-    const content = `
-        <div style="height: 600px; background: #f3f4f6; border-radius: 8px; overflow: hidden;">
-            <iframe src="${resumeUrl}" width="100%" height="100%" frameborder="0"></iframe>
-        </div>
-    `;
-    
-    const footer = `
-        <button class="btn-secondary" onclick="window.open('${resumeUrl}', '_blank')">${svgExternal} View Full</button>
-        <button class="btn-primary" onclick="window.location.href='${resumeUrl}'">${svgDownload} Download</button>
-    `;
-
-    showModal('Candidate Resume', content, footer);
+    // Open resume in a new tab (same as 'View Full') instead of showing popup/modal
+    try {
+        window.open(resumeUrl, '_blank');
+    } catch (e) {
+        // Fallback: navigate in same tab
+        window.location.href = resumeUrl;
+    }
 }
 
 function showJdModal(jdData) {

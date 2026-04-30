@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const fullName = document.getElementById('fullName')?.value?.trim();
         const email = document.getElementById('email')?.value?.trim();
-        const password = document.getElementById('password')?.value || '';
-        const confirmPassword = document.getElementById('confirmPassword')?.value || '';
+        const mobileNumber = document.getElementById('mobileNumber')?.value?.trim();
+        const dateOfBirth = document.getElementById('dateOfBirth')?.value || '';
+        const gender = document.getElementById('gender')?.value || '';
 
-        if (!fullName || !email || !password || !confirmPassword) {
+        if (!fullName || !email || !mobileNumber || !dateOfBirth || !gender) {
             if (errorDiv) {
                 errorDiv.textContent = 'Please fill all required fields.';
                 errorDiv.style.display = 'block';
@@ -26,17 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (password.length < 6) {
+        if (mobileNumber.length < 10 || mobileNumber.length > 15 || isNaN(mobileNumber)) {
             if (errorDiv) {
-                errorDiv.textContent = 'Password must be at least 6 characters.';
-                errorDiv.style.display = 'block';
-            }
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            if (errorDiv) {
-                errorDiv.textContent = 'Password and Confirm Password do not match.';
+                errorDiv.textContent = 'Please enter a valid phone number.';
                 errorDiv.style.display = 'block';
             }
             return;
@@ -44,11 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating Account...';
+            submitBtn.textContent = 'Sending link...';
         }
 
         try {
-            const result = await api.signup(fullName, email, password);
+            const result = await api.signup({
+                fullName,
+                email,
+                mobileCode: '+91',
+                mobileNumber,
+                dateOfBirth,
+                gender
+            });
             if (!result.success) throw new Error(result.message || 'Signup failed');
 
             // Success state - Show verification message
@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="font-size: 48px; margin-bottom: 16px;">✉️</div>
                     <h2 style="margin-bottom: 12px;">Check your email</h2>
                     <p style="color: #64748b; line-height: 1.6; margin-bottom: 24px;">
-                        We've sent a verification link to <strong>${email}</strong>.<br>
-                        Please click the link in the email to activate your account.
+                        We've sent an activation link to <strong>${email}</strong>.<br>
+                        Open the link, set your password, and then sign in.
                     </p>
                     <a href="login.html" class="primary-btn" style="text-decoration:none; display:inline-block;">Go to Login</a>
                 </div>

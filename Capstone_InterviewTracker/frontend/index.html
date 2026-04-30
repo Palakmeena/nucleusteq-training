@@ -498,51 +498,50 @@
             padding: 60px 40px 20px 40px;
         }
 
-        .footer-content {
+        .jobs-section {
+            background-color: #f8fafc;
+            padding: 60px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .jobs-section-header {
             max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
+            margin: 0 auto 40px auto;
         }
 
-        .footer-brand p {
-            font-size: 13px;
-            color: #64748b;
-            max-width: 250px;
-            line-height: 1.6;
-            margin-top: 15px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 60px;
-        }
-
-        .link-column h4 {
-            font-size: 12px;
-            font-weight: 700;
+        .jobs-section-header h2 {
+            font-size: 32px;
+            font-weight: 600;
             color: #0f172a;
-            margin: 0 0 15px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            margin: 0 0 10px 0;
         }
 
-        .link-column a {
-            display: block;
+        .jobs-section-header p {
+            font-size: 15px;
             color: #64748b;
-            text-decoration: none;
-            font-size: 13px;
-            margin-bottom: 10px;
+            margin: 0 0 25px 0;
         }
 
-        .footer-bottom {
+        .jobs-search-wrapper {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 0 auto 30px auto;
+        }
+
+        .jobs-search-wrapper input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        footer {
+            background: #f8fafc;
             border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-            font-size: 12px;
-            color: #94a3b8;
+            padding: 60px 40px 20px 40px;
         }
     </style>
 </head>
@@ -568,7 +567,7 @@
 
         <div class="header-nav">
             <a href="index.html" class="active">Home</a>
-            <a href="pages/jobs/jobs.html">Jobs</a>
+            <a href="#jobsSection" onclick="document.getElementById('jobsSection').scrollIntoView({behavior: 'smooth'}); return false;">Jobs</a>
         </div>
 
         <div class="landing-actions" id="authSection">
@@ -585,43 +584,55 @@
 
     <div class="cta-section">
         <div class="cta-text">
-            <h3>Stay updated on new roles</h3>
-            <p>Get notified when new positions that match your profile become available in our team.</p>
+            <h3>Streamlined Recruitment Flow</h3>
+            <p>Experience a transparent and efficient hiring process designed to get you from application to offer
+                faster.</p>
         </div>
-        <div class="cta-form">
-            <div class="cta-input-group">
-                <input type="email" placeholder="Enter your email">
-                <button>Subscribe</button>
+        <div style="display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
+            <div style="text-align:center;">
+                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">01</div>
+                <div
+                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
+                    Apply</div>
             </div>
-            <div class="cta-disclaimer">We value your privacy. No spam, ever.</div>
+            <div style="width:30px; height:2px; background:rgba(255,255,255,0.2); margin-top:-15px;"
+                class="flow-divider"></div>
+            <div style="text-align:center;">
+                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">02</div>
+                <div
+                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
+                    Interview</div>
+            </div>
+            <div style="width:30px; height:2px; background:rgba(255,255,255,0.2); margin-top:-15px;"
+                class="flow-divider"></div>
+            <div style="text-align:center;">
+                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">03</div>
+                <div
+                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
+                    Track</div>
+            </div>
         </div>
     </div>
 
+    <section class="jobs-section" id="jobsSection">
+        <div class="jobs-section-header">
+            <h2>Open Positions</h2>
+            <p>Browse and apply to current opportunities at HireTrack</p>
+        </div>
+        <div class="jobs-search-wrapper">
+            <input type="text" id="jobsSearchInput" placeholder="Search by title or location...">
+        </div>
+        <div class="jd-grid" id="jobsGrid">
+            <div style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:40px;">Loading positions...</div>
+        </div>
+    </section>
+
     <footer>
-        <div class="footer-content">
+        <div class="footer-content" style="justify-content: center; text-align: center;">
             <div class="footer-brand">
-                <div class="landing-brand">HireTrack</div>
-                <p>Our official internal recruitment system. Helping you find your place in the HireTrack family.</p>
-            </div>
-            <div class="footer-links">
-                <div class="link-column">
-                    <h4>Company</h4>
-                    <a href="#">About</a>
-                    <a href="#">Contact</a>
-                    <a href="#">Careers</a>
-                </div>
-                <div class="link-column">
-                    <h4>Resources</h4>
-                    <a href="#">Privacy</a>
-                    <a href="#">Terms</a>
-                    <a href="#">Cookies</a>
-                </div>
-                <div class="link-column">
-                    <h4>Services</h4>
-                    <a href="#">Post a Job</a>
-                    <a href="#">HireTalent</a>
-                    <a href="#">API</a>
-                </div>
+                <div class="landing-brand" style="justify-content: center;">HireTrack</div>
+                <p style="max-width: 400px; margin: 15px auto;">Our official internal recruitment system. Helping you
+                    find your place in the HireTrack family.</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -660,79 +671,91 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group" style="display:flex; gap:8px;">
-                            <div style="flex:0 0 80px;">
-                                <label>Code</label>
-                                <input type="text" id="applyMobileCode" value="+91" required>
-                            </div>
-                            <div style="flex:1;">
-                                <label>Mobile Number</label>
-                                <input type="text" id="applyMobile" required>
-                            </div>
-                        </div>
                         <div class="form-group">
-                            <label>Date of Birth (Optional)</label>
-                            <input type="date" id="applyDob"
-                                style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Current Organization</label>
-                            <input type="text" id="applyOrg" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Preferred Location</label>
-                            <input type="text" id="applyLocation" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Total Experience (Yrs)</label>
-                            <input type="number" id="applyTotalExp" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Relevant Experience (Yrs)</label>
-                            <input type="number" id="applyRelExp" min="0" step="0.1" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Current CTC (LPA)</label>
-                            <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Expected CTC (LPA)</label>
-                            <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Notice Period (Days)</label>
-                            <input type="number" id="applyNotice" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Source</label>
-                            <select id="applySource" required>
-                                <option value="LinkedIn">LinkedIn</option>
-                                <option value="Indeed">Indeed</option>
-                                <option value="Company Website">Company Website</option>
-                                <option value="Referral">Referral</option>
+                            <label>Gender</label>
+                            <select id="applyGender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <div
+                                style="display:flex; gap:0; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                                <input type="text" id="applyMobileCode" value="+91" required maxlength="5"
+                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                                    style="width:70px; border:none; border-right:1px solid #e2e8f0; border-radius:0; background:#f8fafc; text-align:center; padding:10px 5px;">
+                                <input type="text" id="applyMobile" placeholder="Enter 10-digit number" required
+                                    maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    style="flex:1; border:none; border-radius:0; padding:10px 14px;">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Resume (PDF only, Max 5MB)</label>
-                        <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;" required>
+                        <label>Date of Birth</label>
+                        <input type="date" id="applyDob" required
+                            style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
                     </div>
-                </form>
             </div>
-            <div class="modal-footer">
-                <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
-                <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit
-                    Application</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Current Organization</label>
+                    <input type="text" id="applyOrg" required>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Location</label>
+                    <input type="text" id="applyLocation" required>
+                </div>
             </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Experience (Yrs)</label>
+                    <input type="number" id="applyTotalExp" min="0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Relevant Experience (Yrs)</label>
+                    <input type="number" id="applyRelExp" min="0" step="0.1" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Current CTC (LPA)</label>
+                    <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Expected CTC (LPA)</label>
+                    <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Notice Period (Days)</label>
+                    <input type="number" id="applyNotice" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Source</label>
+                    <select id="applySource" required>
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="Indeed">Indeed</option>
+                        <option value="Company Website">Company Website</option>
+                        <option value="Referral">Referral</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Resume (PDF only, Max 5MB)</label>
+                <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;" required>
+            </div>
+            </form>
         </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
+            <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit
+                Application</button>
+        </div>
+    </div>
     </div>
 
     <script>
@@ -754,16 +777,82 @@
             `;
             }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const openApplyId = urlParams.get('openApply');
-            if (openApplyId) {
-                window.location.href = `pages/jobs/jobs.html?openApply=${openApplyId}`;
-            }
+            // Load and render jobs
+            loadAndRenderJobs();
         });
+
+        let allJobs = [];
+
+        function loadAndRenderJobs() {
+            const jobsGrid = document.getElementById('jobsGrid');
+            const searchInput = document.getElementById('jobsSearchInput');
+
+            // Load jobs from API
+            api.getAllPublicJds()
+                .then(result => {
+                    allJobs = result.data || [];
+                    renderJobs(allJobs);
+                })
+                .catch(err => {
+                    jobsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">Error loading positions. Please try again later.</div>`;
+                });
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = allJobs.filter(jd =>
+                    jd.jobTitle.toLowerCase().includes(term) ||
+                    jd.location.toLowerCase().includes(term)
+                );
+                renderJobs(filtered);
+            });
+        }
+
+        function renderJobs(jobs) {
+            const jobsGrid = document.getElementById('jobsGrid');
+            
+            if (jobs.length === 0) {
+                jobsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b; padding:40px;">No positions available.</div>`;
+                return;
+            }
+
+            jobsGrid.innerHTML = jobs.map((jd, idx) => {
+                const initials = jd.jobTitle.substring(0, 1).toUpperCase();
+                const colors = ['#0f172a', '#334155', '#475569', '#1e293b'];
+                const bgColor = colors[idx % colors.length];
+                const isFullTime = jd.jobType.includes('FULL');
+                const badgeClass = isFullTime ? 'badge-fulltime' : 'badge-remote';
+                const badgeText = isFullTime ? 'Full-time' : 'Remote';
+                return `
+                    <div class="ref-card">
+                        <div class="ref-card-header">
+                            <div class="company-initial" style="background: ${bgColor}">${initials}</div>
+                            <div class="${badgeClass}">${badgeText}</div>
+                        </div>
+                        <div class="ref-card-title">${jd.jobTitle}</div>
+                        <div class="ref-card-desc">${jd.jobDescription || 'Apply to explore this role.'}</div>
+                        <div class="ref-card-footer">
+                            <div class="ref-location">${jd.location}</div>
+                            <button class="btn-apply-light" onclick="openApplyModal(${jd.id}, '${jd.jobTitle.replace(/'/g, "\\'")}')">Apply Now</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
         const modal = document.getElementById('applyModal');
 
-        function openApplyModal(jdId, jobTitle) {
+        async function canCandidateApply() {
+            try {
+                const profileRes = await api.getMyProfile();
+                const profile = profileRes.data;
+                return !profile || profile.currentStage === 'REJECTED';
+            } catch (e) {
+                return true;
+            }
+        }
+
+        async function openApplyModal(jdId, jobTitle) {
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('role');
 
@@ -774,6 +863,12 @@
 
             if (role === 'HR' || role === 'PANEL') {
                 alert("Only candidates can apply for jobs.");
+                return;
+            }
+
+            const eligible = await canCandidateApply();
+            if (!eligible) {
+                alert('You already have an active application. You can apply again only after HR marks it Rejected.');
                 return;
             }
 
@@ -798,8 +893,41 @@
             const successMsg = document.getElementById('applySuccessMsg');
             const form = document.getElementById('applyForm');
 
-            if (!form.checkValidity()) {
-                errorMsg.innerText = "Please fill out all required fields.";
+            const email = document.getElementById('applyEmail').value;
+            const mobile = document.getElementById('applyMobile').value;
+            const dob = document.getElementById('applyDob').value;
+
+            if (dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age < 18) {
+                    errorMsg.innerText = "Candidate must be at least 18 years old.";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+                if (birthDate.getFullYear() < 1950) {
+                    errorMsg.innerText = "Please provide a valid Date of Birth (Year > 1950).";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+            }
+
+            // Strict Email Validation (requires @ and .something)
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                errorMsg.innerText = "Please provide a valid email (e.g. name@example.com).";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            // Mobile Number Validation (Exactly 10 digits)
+            if (mobile.length !== 10) {
+                errorMsg.innerText = "Mobile number must be exactly 10 digits.";
                 errorMsg.style.display = "block";
                 return;
             }
@@ -808,6 +936,15 @@
             const submitBtn = document.querySelector('.modal-footer .primary-btn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
+
+            const totalExp = parseFloat(document.getElementById('applyTotalExp').value);
+            const relExp = parseFloat(document.getElementById('applyRelExp').value);
+
+            if (relExp > totalExp) {
+                errorMsg.innerText = "Relevant experience cannot be greater than total experience.";
+                errorMsg.style.display = "block";
+                return;
+            }
 
             const payload = {
                 jobDescriptionId: parseInt(jdId),
@@ -823,7 +960,8 @@
                 currentCtc: parseFloat(document.getElementById('applyCurrentCtc').value),
                 expectedCtc: parseFloat(document.getElementById('applyExpectedCtc').value),
                 noticePeriod: parseInt(document.getElementById('applyNotice').value),
-                source: document.getElementById('applySource').value
+                source: document.getElementById('applySource').value,
+                gender: document.getElementById('applyGender').value
             };
 
             api.registerCandidate(payload)

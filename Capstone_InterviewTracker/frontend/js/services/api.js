@@ -29,7 +29,7 @@ async function request(method, path, body = null) {
 const api = {
     // AUTH
     login: (email, password) => request('POST', '/auth/login', { email, password }),
-    signup: (fullName, email, password) => request('POST', '/auth/signup', { fullName, email, password }),
+    signup: (body) => request('POST', '/auth/signup', body),
     activate: (token, password) => request('POST', `/auth/activate?token=${token}&password=${encodeURIComponent(password)}`),
     verifyCandidate: (token) => request('POST', `/auth/verify-candidate?token=${token}`),
 
@@ -51,9 +51,11 @@ const api = {
     getAllCandidates: () => request('GET', '/hr/candidates'),
     getCandidateById: (id) => request('GET', `/hr/candidate/${id}`),
     updateCandidateStage: (id, stage) => request('PUT', `/hr/candidate/${id}/stage?stage=${stage}`),
+    deleteCandidate: (id) => request('DELETE', `/hr/candidate/${id}`),
 
     // CANDIDATES - candidate
-    getMyProfile: () => request('GET', '/candidate/profile'),
+    getMyProfile: () => request('GET', '/candidate/application'),
+    getMyLiveProfile: () => request('GET', '/candidate/profile'),
     updateMyProfile: (body) => request('PUT', '/candidate/profile', body),
     getMyInterviews: () => request('GET', '/candidate/interviews'),
 

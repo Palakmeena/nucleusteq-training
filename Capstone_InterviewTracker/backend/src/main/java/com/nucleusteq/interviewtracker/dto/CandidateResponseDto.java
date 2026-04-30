@@ -89,6 +89,11 @@ public class CandidateResponseDto {
     private String source;
 
     /**
+     * Gender of the candidate.
+     */
+    private String gender;
+
+    /**
      * Current stage of the candidate in the interview process.
      * Starts at PROFILING and moves forward manually by HR.
      */
@@ -234,6 +239,14 @@ public class CandidateResponseDto {
 
     public void setSource(final String source) {
         this.source = source;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(final String gender) {
+        this.gender = gender;
     }
 
     public InterviewStage getCurrentStage() {

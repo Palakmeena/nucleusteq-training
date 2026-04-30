@@ -36,6 +36,7 @@ public class CandidateRequestDto {
      * Cannot be blank.
      */
     @NotBlank(message = "Mobile code is required")
+    @Size(max = 5, message = "Mobile code must not exceed 5 characters")
     private String mobileCode;
 
     /**
@@ -112,6 +113,9 @@ public class CandidateRequestDto {
      */
     @NotBlank(message = "Source is required")
     private String source;
+
+    @NotBlank(message = "Gender is required")
+    private String gender;
 
     /**
      * ID of the job description the candidate is applying for.
@@ -228,6 +232,14 @@ public class CandidateRequestDto {
 
     public void setSource(final String source) {
         this.source = source;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(final String gender) {
+        this.gender = gender;
     }
 
     public Long getJobDescriptionId() {

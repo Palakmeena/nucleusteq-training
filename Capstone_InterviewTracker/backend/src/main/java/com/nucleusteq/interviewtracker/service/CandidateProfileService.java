@@ -26,11 +26,13 @@ public class CandidateProfileService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
         
-        return profileRepository.findByUser(user)
+        CandidateProfile profile = profileRepository.findByUser(user)
                 .orElseGet(() -> {
                     CandidateProfile newProfile = new CandidateProfile(user);
                     return profileRepository.save(newProfile);
                 });
+        profile.setEmail(user.getEmail());
+        return profile;
     }
 
     @Transactional

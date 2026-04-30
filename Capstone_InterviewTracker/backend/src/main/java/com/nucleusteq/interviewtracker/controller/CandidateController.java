@@ -2,6 +2,7 @@ package com.nucleusteq.interviewtracker.controller;
 
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
+import com.nucleusteq.interviewtracker.entity.CandidateProfile;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
@@ -181,11 +182,35 @@ public class CandidateController {
      * @return 200 OK with the candidate's own profile
      */
     @GetMapping("/candidate/profile")
-    public ResponseEntity<ApiResponse<CandidateResponseDto>> getCandidateProfile(
+    public ResponseEntity<ApiResponse<CandidateProfile>> getCandidateProfile(
             final Authentication authentication) {
         try {
+            if (authentication == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Unauthorized request. Please login first."));
+            }
+
             String email = authentication.getName();
-            return ResponseEntity.ok(ApiResponse.success("Profile fetched", candidateService.getCandidateProfile(email)));
+            return ResponseEntity.ok(ApiResponse.success("Profile fetched", profileService.getProfileByEmail(email)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
+     * Returns the candidate's applied application snapshot for dashboard and locking logic.
+     */
+    @GetMapping("/candidate/application")
+    public ResponseEntity<ApiResponse<CandidateResponseDto>> getCandidateApplication(
+            final Authentication authentication) {
+        try {
+            if (authentication == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Unauthorized request. Please login first."));
+            }
+
+            String email = authentication.getName();
+            return ResponseEntity.ok(ApiResponse.success("Application fetched", candidateService.getCandidateProfile(email)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }
@@ -275,6 +300,18 @@ public class CandidateController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Something went wrong. Please try again later."));
+        }
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/hr/candidate/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCandidate(@PathVariable final Long id) {
+        try {
+            candidateService.deleteCandidate(id);
+            return ResponseEntity.ok(ApiResponse.success("Candidate deleted successfully", null));
+        } catch (jakarta.persistence.EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }
     }
 }

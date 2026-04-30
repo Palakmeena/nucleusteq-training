@@ -27,61 +27,25 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc;">
-
-    <div class="verify-card" id="statusCard">
-        <div class="loader" id="loader"></div>
-        <h2 id="statusTitle">Verifying your email...</h2>
-        <p id="statusText" style="color: #64748b; margin-top: 12px; line-height: 1.6;">
-            Please wait while we confirm your account.
-        </p>
-    </div>
-
-    <script src="../../js/services/api.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const params = new URLSearchParams(window.location.search);
-            const token = params.get('token');
-            const card = document.getElementById('statusCard');
-            const loader = document.getElementById('loader');
-            const title = document.getElementById('statusTitle');
-            const text = document.getElementById('statusText');
-
-            if (!token) {
-                showStatus('error', 'Invalid Link', 'The verification token is missing. Please check your email and try again.');
-                return;
-            }
-
-            try {
-                const res = await api.verifyCandidate(token);
-                if (res.success) {
-                    showStatus('success', 'Email Verified!', 'Your account has been successfully activated. You can now sign in to your dashboard.');
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>HireTrack | Redirecting</title>
+            </head>
+            <body>
+            <script>
+                const params = new URLSearchParams(window.location.search);
+                const token = params.get('token');
+                if (token) {
+                    window.location.replace(`activate.html?token=${encodeURIComponent(token)}`);
                 } else {
-                    throw new Error(res.message || 'Verification failed');
+                    window.location.replace('activate.html');
                 }
-            } catch (err) {
-                showStatus('error', 'Verification Failed', err.message || 'Something went wrong during verification.');
-            }
-
-            function showStatus(type, titleText, descText) {
-                loader.style.display = 'none';
-                title.textContent = titleText;
-                text.textContent = descText;
-                
-                const icon = document.createElement('div');
-                icon.className = 'status-icon';
-                icon.textContent = type === 'success' ? '✅' : '❌';
-                card.insertBefore(icon, title);
-
-                if (type === 'success') {
-                    const btn = document.createElement('a');
-                    btn.href = 'login.html';
-                    btn.className = 'primary-btn';
+            </script>
+            </body>
+            </html>
                     btn.style.textDecoration = 'none';
                     btn.style.marginTop = '24px';
                     btn.style.display = 'inline-block';
