@@ -1,0 +1,99 @@
+.form-section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+.form-section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4f46e5;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.panel-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+}
+
+.panel-option:hover {
+    border-color: #4f46e5;
+    background: #f8faff;
+}
+
+.panel-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+
+.panel-option input[type="checkbox"] {
+    accent-color: #4f46e5;
+    width: 16px;
+    height: 16px;
+}
+
+.interview-list-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.interview-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.interview-item:last-child {
+    border-bottom: none;
+}
+
+.modal-overlay.active {
+    display: flex !important;
+}

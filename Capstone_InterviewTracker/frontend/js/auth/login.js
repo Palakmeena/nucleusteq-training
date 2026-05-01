@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (role === 'CANDIDATE') window.location.href = base + 'pages/candidate/dashboard.html';
     }
 
+    // Setup signup link with redirect parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectJobId = urlParams.get('redirectJobId');
+    const signupLink = document.getElementById("signupLink");
+    if (signupLink) {
+        if (redirectJobId) {
+            signupLink.href = `signup.html?redirectJobId=${redirectJobId}`;
+        } else {
+            signupLink.href = "signup.html";
+        }
+    }
+
     const form = document.getElementById('loginForm');
     const errorDiv = document.getElementById('loginError');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;

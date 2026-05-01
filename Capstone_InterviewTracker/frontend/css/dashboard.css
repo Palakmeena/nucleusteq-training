@@ -344,3 +344,333 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
     .sidebar { display: none; }
     .main-area { margin-left: 0; }
 }
+
+/* ===== CANDIDATE DASHBOARD: STEPPEr & INTERVIEW WIDGET ===== */
+.stage-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 24px 0 8px;
+}
+
+.stage-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.stage-step::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #e2e8f0;
+    z-index: 0;
+}
+
+.stage-step:last-child::after {
+    display: none;
+}
+
+.stage-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 1;
+    position: relative;
+    border: 2px solid #e2e8f0;
+    background: #fff;
+    color: #94a3b8;
+}
+
+.stage-dot.done {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.stage-dot.active {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+.stage-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.stage-label.active {
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+.interview-card {
+    background: linear-gradient(135deg, #4f46e5, #3730a3);
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.interview-card h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.interview-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.interview-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+@media (max-width: 980px) {
+    .single-col {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ===== CANDIDATE PROFILE ===== */
+.profile-shell {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.profile-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.hero-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.hero-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.hero-email {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.section {
+    padding: 32px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-left: 4px solid #4f46e5;
+    padding-left: 12px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+}
+
+.info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Candidate profile modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    width: 95%;
+    max-width: 800px;
+    border-radius: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.modal-body {
+    padding: 32px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    outline: none;
+}
+
+/* ===== CANDIDATE JOBS ===== */
+.job-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.job-row-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.job-title { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+.job-meta { font-size:12px; color:#64748b; margin-bottom:8px; }
+.job-desc { font-size:13px; color:#475569; line-height:1.5; margin-bottom:10px; }
+
+.tag-wrap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    color: #475569;
+    font-weight: 600;
+}
+
+.apply-btn { background:#4f46e5; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; }
+.apply-btn:disabled { background:#cbd5e1; cursor:not-allowed; }
+
+@media (max-width: 900px) {
+    .job-row-card {
+        flex-direction: column;
+    }
+}

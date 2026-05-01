@@ -150,40 +150,10 @@
     </div>
 </main>
 
-<script>
-    function selectCandidate(el) {
-        document.querySelectorAll('.schedule-item').forEach(s => s.classList.remove('active'));
-        el.classList.add('active');
-    }
-    function selectRating(btn, val) {
-        document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-    }
-    function selectDecision(btn, type) {
-        document.querySelectorAll('.decision-btn').forEach(b => { b.classList.remove('selected-yes'); b.classList.remove('selected-no'); });
-        btn.classList.add(type === 'yes' ? 'selected-yes' : 'selected-no');
-    }
-    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Feedback submitted successfully!');
-    });
-</script>
-
 <script src="../../js/core/appConfig.js"></script>
 <script src="../../js/core/sessionManager.js"></script>
 <script src="../../js/core/roleGuard.js"></script>
 <script src="../../js/features/dashboard/dashboardBootstrap.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const session = window.HireTrackDashboard.bootstrapDashboard('PANEL', {
-            roleLabel: 'Panel',
-            defaultTitle: 'Panel Member',
-            avatarFallback: 'PM'
-        });
-        if (!session) {
-            return;
-        }
-    });
-</script>
+<script src="../../js/features/panel/interview-dashboard.js"></script>
 </body>
 </html>

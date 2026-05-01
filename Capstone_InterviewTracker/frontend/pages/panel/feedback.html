@@ -5,32 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Submit Feedback</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
-    <style>
-        .feedback-form { background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px; }
-        .candidate-card { padding:12px; border:1.5px solid #e2e8f0; border-radius:8px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
-        .candidate-card:hover { border-color:#4f46e5; background:#f8faff; }
-        .candidate-card.active { border-color:#4f46e5; background:#eef2ff; }
-        
-        .rating-group { display:flex; gap:12px; margin:8px 0 20px; }
-        .rating-btn { width:40px; height:40px; border-radius:8px; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:600; transition:0.2s; }
-        .rating-btn:hover { background:#f3f4f6; }
-        .rating-btn.selected { background:#4f46e5; color:white; border-color:#4f46e5; }
-        
-        .form-label { display:block; font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; margin-bottom:6px; }
-        textarea { width:100%; padding:12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:14px; margin-bottom:20px; resize:vertical; }
-        .empty-state-icon {
-            width: 56px; height: 56px; margin: 0 auto 16px; border: 2px solid #cbd5e1;
-            border-radius: 10px; position: relative; background: #f8fafc;
-        }
-        .empty-state-icon::before {
-            content: ''; position: absolute; top: 10px; left: 10px; right: 10px; height: 2px;
-            background: #cbd5e1; box-shadow: 0 8px 0 #cbd5e1, 0 16px 0 #cbd5e1;
-        }
-        .empty-state-icon::after {
-            content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%;
-            border: 2px solid #94a3b8; right: -6px; bottom: -6px; background: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/panel/feedback.css">
 </head>
 <body>
 <aside class="sidebar" id="sidebar"></aside>
@@ -96,94 +71,6 @@
 <script src="../../js/services/api.js"></script>
 <script src="../../js/services/authService.js"></script>
 <script src="../../js/utils.js"></script>
-<script>
-    auth.requireRole('PANEL');
-    document.getElementById('sidebar').innerHTML = buildSidebar('PANEL', 'feedback');
-
-    let currentInterview = null;
-    let selectedRating = 0;
-
-    async function loadCandidates() {
-        try {
-            const res = await api.getMyAssignedInterviews();
-            const pending = (res.data || []).filter(i => !i.completed);
-            const container = document.getElementById('candidateList');
-            
-            if (!pending.length) {
-                container.innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8;">No pending evaluations.</div>';
-                return;
-            }
-
-            container.innerHTML = pending.map(i => `
-                <div class="candidate-card" id="card-${i.id}" onclick="selectCandidate(${JSON.stringify(i).replace(/"/g, '&quot;')})">
-                    <div style="font-weight:600; font-size:14px;">${i.candidateName}</div>
-                    <div style="font-size:12px; color:#64748b; margin-top:2px;">${stageBadge(i.interviewStage)}</div>
-                    <div style="font-size:11px; color:#94a3b8; margin-top:6px;">Scheduled: ${formatDate(i.interviewDate)}</div>
-                </div>
-            `).join('');
-        } catch(e) { showToast('Failed to load candidates', 'error'); }
-    }
-
-    function selectCandidate(interview) {
-        currentInterview = interview;
-        document.getElementById('emptyState').style.display = 'none';
-        document.getElementById('feedbackFormArea').style.display = 'block';
-        document.getElementById('formTitle').textContent = `Evaluate: ${interview.candidateName}`;
-        
-        // Clear active states
-        document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('active'));
-        document.getElementById(`card-${interview.id}`).classList.add('active');
-        
-        // Reset form
-        resetForm();
-    }
-
-    function setRating(val) {
-        selectedRating = val;
-        document.querySelectorAll('.rating-btn').forEach((btn, i) => {
-            btn.classList.toggle('selected', (i + 1) === val);
-        });
-    }
-
-    function resetForm() {
-        selectedRating = 0;
-        document.querySelectorAll('.rating-btn').forEach(btn => btn.classList.remove('selected'));
-        document.getElementById('comments').value = '';
-        document.getElementById('strengths').value = '';
-        document.getElementById('weaknesses').value = '';
-        document.getElementById('status').value = 'PASSED';
-    }
-
-    async function submitFeedback() {
-        const comments = document.getElementById('comments').value;
-        const status = document.getElementById('status').value;
-        
-        if (!selectedRating || !comments) {
-            showToast('Rating and Comments are mandatory', 'error');
-            return;
-        }
-
-        try {
-            const body = {
-                interviewId: currentInterview.id,
-                rating: selectedRating,
-                comments: comments,
-                strengths: document.getElementById('strengths').value,
-                weaknesses: document.getElementById('weaknesses').value,
-                status: status
-            };
-            
-            // Note: Assuming api.submitFeedback exists or using general update endpoint
-            await api.updateInterviewFeedback(currentInterview.id, body);
-            
-            showToast('Feedback submitted successfully', 'success');
-            document.getElementById('feedbackFormArea').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'block';
-            loadCandidates();
-        } catch(e) { showToast('Failed to submit: ' + e.message, 'error'); }
-    }
-
-    loadCandidates();
-</script>
+<script src="../../js/features/panel/feedback.js"></script>
 </body>
 </html>

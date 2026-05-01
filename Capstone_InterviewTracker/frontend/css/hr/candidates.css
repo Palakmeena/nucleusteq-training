@@ -1,0 +1,31 @@
+.panel-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+}
+
+.panel-option:hover {
+    border-color: #4f46e5;
+    background: #f8faff;
+}
+
+.panel-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+
+.panel-option input[type="checkbox"] {
+    accent-color: #4f46e5;
+    width: 16px;
+    height: 16px;
+}
+
+.modal-view.active {
+    display: flex !important;
+}

@@ -86,64 +86,7 @@
 </div>
 
 <script src="../../js/services/api.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('activateForm');
-        const errorBox = document.getElementById('activateError');
-        const successBox = document.getElementById('activateSuccess');
-        const btn = document.getElementById('activateBtn');
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-
-        if (!token) {
-            errorBox.textContent = 'Invalid activation link. Token is missing.';
-            errorBox.style.display = 'block';
-            btn.disabled = true;
-            return;
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorBox.style.display = 'none';
-            successBox.style.display = 'none';
-
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password.length < 6) {
-                errorBox.textContent = 'Password must be at least 6 characters.';
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                errorBox.textContent = 'Password and Confirm Password do not match.';
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'Activating...';
-
-            try {
-                const res = await api.activate(token, password);
-                if (!res.success) throw new Error(res.message || 'Activation failed');
-
-                successBox.textContent = 'Account activated successfully. Redirecting to login...';
-                successBox.style.display = 'block';
-
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-            } catch (err) {
-                errorBox.textContent = err.message || 'Activation failed';
-                errorBox.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Activate Account';
-            }
-        });
-    });
-</script>
+<script src="../../js/services/authService.js"></script>
+<script src="../../js/auth/activate.js"></script>
 </body>
 </html>

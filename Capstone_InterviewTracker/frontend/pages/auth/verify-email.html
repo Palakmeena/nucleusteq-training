@@ -6,54 +6,17 @@
     <title>HireTrack | Verify Email</title>
     <link rel="stylesheet" href="../../css/global.css">
     <link rel="stylesheet" href="../../css/auth.css">
-    <style>
-        .verify-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-        .status-icon {
-            font-size: 64px;
-            margin-bottom: 24px;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>HireTrack | Redirecting</title>
-            </head>
-            <body>
-            <script>
-                const params = new URLSearchParams(window.location.search);
-                const token = params.get('token');
-                if (token) {
-                    window.location.replace(`activate.html?token=${encodeURIComponent(token)}`);
-                } else {
-                    window.location.replace('activate.html');
-                }
-            </script>
-            </body>
-            </html>
-                    btn.style.textDecoration = 'none';
-                    btn.style.marginTop = '24px';
-                    btn.style.display = 'inline-block';
-                    btn.textContent = 'Login Now';
-                    card.appendChild(btn);
-                }
-            }
-        });
-    </script>
+    <link rel="stylesheet" href="../../css/auth/verify-email.css">
+</head>
+<body>
+    <div class="verify-card" id="verifyCard">
+        <div class="loader"></div>
+        <h2>Verifying your email...</h2>
+        <p>Please wait while we redirect you to activate your account.</p>
+    </div>
+
+    <script src="../../js/services/api.js"></script>
+    <script src="../../js/services/authService.js"></script>
+    <script src="../../js/auth/verify-email.js"></script>
 </body>
 </html>

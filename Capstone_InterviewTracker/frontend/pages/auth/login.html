@@ -97,19 +97,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectJobId = urlParams.get('redirectJobId');
-        const signupLink = document.getElementById("signupLink");
-        
-        if (redirectJobId) {
-            signupLink.href = `signup.html?redirectJobId=${redirectJobId}`;
-        } else {
-            signupLink.href = "signup.html";
-        }
-    });
-</script>
 <script src="../../js/services/api.js"></script>
 <script src="../../js/services/authService.js"></script>
 <script src="../../js/auth/login.js"></script>

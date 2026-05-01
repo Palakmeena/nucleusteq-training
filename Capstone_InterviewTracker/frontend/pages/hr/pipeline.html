@@ -127,17 +127,6 @@
 <script src="../../js/core/sessionManager.js"></script>
 <script src="../../js/core/roleGuard.js"></script>
 <script src="../../js/features/dashboard/dashboardBootstrap.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const session = window.HireTrackDashboard.bootstrapDashboard('HR', {
-            roleLabel: 'HR',
-            defaultTitle: 'HR Manager',
-            avatarFallback: 'HR'
-        });
-        if (!session) {
-            return;
-        }
-    });
-</script>
+<script src="../../js/features/hr/pipeline.js"></script>
 </body>
 </html>

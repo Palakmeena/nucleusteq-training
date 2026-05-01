@@ -118,19 +118,7 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectJobId = urlParams.get('redirectJobId');
-        const loginLink = document.getElementById("loginLink");
-        
-        if (redirectJobId) {
-            loginLink.href = `login.html?redirectJobId=${redirectJobId}`;
-        } else {
-            loginLink.href = "login.html";
-        }
-    });
-</script>
+
 
 <script src="../../js/services/api.js"></script>
 <script src="../../js/services/authService.js"></script>

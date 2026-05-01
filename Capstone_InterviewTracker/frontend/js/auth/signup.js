@@ -3,6 +3,18 @@
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Setup login link with redirect parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectJobId = urlParams.get('redirectJobId');
+    const loginLink = document.getElementById("loginLink");
+    if (loginLink) {
+        if (redirectJobId) {
+            loginLink.href = `login.html?redirectJobId=${redirectJobId}`;
+        } else {
+            loginLink.href = "login.html";
+        }
+    }
+
     const form = document.getElementById('signupForm');
     const errorDiv = document.getElementById('signupError');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;

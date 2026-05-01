@@ -4,7 +4,7 @@
 // handled in one place so nothing is repeated across pages.
 // ============================================================
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = 'http://localhost:5503/api';
 
 function getToken() {
     return localStorage.getItem('token');
