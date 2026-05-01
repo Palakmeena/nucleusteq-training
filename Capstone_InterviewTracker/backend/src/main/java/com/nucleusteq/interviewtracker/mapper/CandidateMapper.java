@@ -61,27 +61,27 @@ public class CandidateMapper {
      * @return the mapped response DTO
      */
     public CandidateResponseDto mapToResponseDto(final Candidate candidate) {
-        CandidateResponseDto dto = new CandidateResponseDto();
-        dto.setId(candidate.getId());
-        dto.setFullName(candidate.getFullName());
-        dto.setEmail(candidate.getEmail());
-        dto.setMobileCode(candidate.getMobileCode());
-        dto.setMobileNumber(candidate.getMobileNumber());
-        dto.setDateOfBirth(candidate.getDateOfBirth());
-        dto.setResumePath(candidate.getResumePath());
-        dto.setCurrentOrganization(candidate.getCurrentOrganization());
-        dto.setTotalExperience(candidate.getTotalExperience());
-        dto.setRelevantExperience(candidate.getRelevantExperience());
-        dto.setCurrentCtc(candidate.getCurrentCtc());
-        dto.setExpectedCtc(candidate.getExpectedCtc());
-        dto.setNoticePeriod(candidate.getNoticePeriod());
-        dto.setPreferredLocation(candidate.getPreferredLocation());
-        dto.setSource(candidate.getSource());
-        dto.setGender(candidate.getGender());
-        dto.setCurrentStage(candidate.getCurrentStage());
-        dto.setCreatedAt(candidate.getCreatedAt());
-        dto.setJobDescriptionId(candidate.getJobDescription().getId());
-        dto.setJobTitle(candidate.getJobDescription().getJobTitle());
-        return dto;
+        CandidateResponseDto candidateResponseDto = new CandidateResponseDto();
+        candidateResponseDto.setId(candidate.getId());
+        candidateResponseDto.setFullName(candidate.getFullName());
+        candidateResponseDto.setEmail(candidate.getEmail());
+        candidateResponseDto.setMobileCode(candidate.getMobileCode());
+        candidateResponseDto.setMobileNumber(candidate.getMobileNumber());
+        candidateResponseDto.setDateOfBirth(candidate.getDateOfBirth());
+        candidateResponseDto.setResumePath(candidate.getResumePath());
+        candidateResponseDto.setCurrentOrganization(candidate.getCurrentOrganization());
+        candidateResponseDto.setTotalExperience(candidate.getTotalExperience());
+        candidateResponseDto.setRelevantExperience(candidate.getRelevantExperience());
+        candidateResponseDto.setCurrentCtc(candidate.getCurrentCtc());
+        candidateResponseDto.setExpectedCtc(candidate.getExpectedCtc());
+        candidateResponseDto.setNoticePeriod(candidate.getNoticePeriod());
+        candidateResponseDto.setPreferredLocation(candidate.getPreferredLocation());
+        candidateResponseDto.setSource(candidate.getSource());
+        candidateResponseDto.setGender(candidate.getGender());
+        candidateResponseDto.setCurrentStage(candidate.getCurrentStage());
+        candidateResponseDto.setCreatedAt(candidate.getCreatedAt());
+        candidateResponseDto.setJobDescriptionId(candidate.getJobDescription().getId());
+        candidateResponseDto.setJobTitle(candidate.getJobDescription().getJobTitle());
+        return candidateResponseDto;
     }
 }

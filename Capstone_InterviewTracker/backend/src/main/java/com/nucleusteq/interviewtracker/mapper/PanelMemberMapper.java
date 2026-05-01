@@ -37,15 +37,15 @@ public class PanelMemberMapper {
      * @return the mapped response DTO
      */
     public PanelMemberResponseDto mapToResponseDto(final PanelMember panelMember) {
-        PanelMemberResponseDto dto = new PanelMemberResponseDto();
-        dto.setId(panelMember.getId());
-        dto.setFullName(panelMember.getFullName());
-        dto.setEmail(panelMember.getEmail());
-        dto.setMobileNumber(panelMember.getMobileNumber());
-        dto.setOrganization(panelMember.getOrganization());
-        dto.setDesignation(panelMember.getDesignation());
-        dto.setActive(panelMember.isActive());
-        dto.setCreatedAt(panelMember.getCreatedAt());
-        return dto;
+        PanelMemberResponseDto panelMemberResponseDto = new PanelMemberResponseDto();
+        panelMemberResponseDto.setId(panelMember.getId());
+        panelMemberResponseDto.setFullName(panelMember.getFullName());
+        panelMemberResponseDto.setEmail(panelMember.getEmail());
+        panelMemberResponseDto.setMobileNumber(panelMember.getMobileNumber());
+        panelMemberResponseDto.setOrganization(panelMember.getOrganization());
+        panelMemberResponseDto.setDesignation(panelMember.getDesignation());
+        panelMemberResponseDto.setActive(panelMember.isActive());
+        panelMemberResponseDto.setCreatedAt(panelMember.getCreatedAt());
+        return panelMemberResponseDto;
     }
 }

@@ -23,17 +23,17 @@ public class InterviewMapper {
      * @return the mapped response DTO
      */
     public InterviewResponseDto mapToResponseDto(final Interview interview) {
-        InterviewResponseDto dto = new InterviewResponseDto();
-        dto.setId(interview.getId());
-        dto.setCandidateId(interview.getCandidate().getId());
-        dto.setCandidateName(interview.getCandidate().getFullName());
-        dto.setInterviewStage(interview.getInterviewStage());
-        dto.setInterviewDate(interview.getInterviewDate());
-        dto.setInterviewTime(interview.getInterviewTime());
-        dto.setFocusAreas(interview.getFocusAreas());
-        dto.setHrComments(interview.getHrComments());
-        dto.setCompleted(interview.isCompleted());
-        dto.setCreatedAt(interview.getCreatedAt());
+        InterviewResponseDto interviewResponseDto = new InterviewResponseDto();
+        interviewResponseDto.setId(interview.getId());
+        interviewResponseDto.setCandidateId(interview.getCandidate().getId());
+        interviewResponseDto.setCandidateName(interview.getCandidate().getFullName());
+        interviewResponseDto.setInterviewStage(interview.getInterviewStage());
+        interviewResponseDto.setInterviewDate(interview.getInterviewDate());
+        interviewResponseDto.setInterviewTime(interview.getInterviewTime());
+        interviewResponseDto.setFocusAreas(interview.getFocusAreas());
+        interviewResponseDto.setHrComments(interview.getHrComments());
+        interviewResponseDto.setCompleted(interview.isCompleted());
+        interviewResponseDto.setCreatedAt(interview.getCreatedAt());
 
         /*
          * Extract panel member names and IDs from the InterviewPanel
@@ -50,24 +50,24 @@ public class InterviewMapper {
                 .map(ip -> ip.getPanelMember().getId())
                 .collect(Collectors.toList());
 
-        dto.setPanelMemberNames(panelNames);
-        dto.setPanelMemberIds(panelIds);
+        interviewResponseDto.setPanelMemberNames(panelNames);
+        interviewResponseDto.setPanelMemberIds(panelIds);
 
         // Map new fields for Panel/Candidate dashboards
-        dto.setMeetingLink(interview.getMeetingLink());
-        dto.setResumeUrl(interview.getCandidate().getResumePath());
+        interviewResponseDto.setMeetingLink(interview.getMeetingLink());
+        interviewResponseDto.setResumeUrl(interview.getCandidate().getResumePath());
         
         if (interview.getCandidate().getJobDescription() != null) {
-            dto.setJdId(interview.getCandidate().getJobDescription().getId());
-            dto.setJdTitle(interview.getCandidate().getJobDescription().getJobTitle());
-            dto.setJdDetails(interview.getCandidate().getJobDescription().getJobDescription());
+            interviewResponseDto.setJdId(interview.getCandidate().getJobDescription().getId());
+            interviewResponseDto.setJdTitle(interview.getCandidate().getJobDescription().getJobTitle());
+            interviewResponseDto.setJdDetails(interview.getCandidate().getJobDescription().getJobDescription());
         }
 
         /*
          * Map panel feedbacks so HR can view evaluations.
          */
         if (interview.getFeedbacks() != null) {
-            dto.setFeedbacks(interview.getFeedbacks().stream().map(f -> {
+            interviewResponseDto.setFeedbacks(interview.getFeedbacks().stream().map(f -> {
                 com.nucleusteq.interviewtracker.dto.FeedbackResponseDto fr = new com.nucleusteq.interviewtracker.dto.FeedbackResponseDto();
                 fr.setPanelMemberName(f.getPanelMember() != null ? f.getPanelMember().getFullName() : "HR Admin");
                 fr.setRating(f.getRating());
@@ -80,6 +80,6 @@ public class InterviewMapper {
             }).collect(Collectors.toList()));
         }
 
-        return dto;
+        return interviewResponseDto;
     }
 }
