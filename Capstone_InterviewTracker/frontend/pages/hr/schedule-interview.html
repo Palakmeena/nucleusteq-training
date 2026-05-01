@@ -140,98 +140,93 @@
     <!-- INTERVIEW INFO MODAL -->
     <div class="modal-overlay" id="infoModal"
         style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:16px;width:95%;max-width:520px;padding:32px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h3 style="font-size:18px;">Interview Details</h3>
+        <div style="background:#fff;border-radius:16px;width:95%;max-width:520px;padding:32px;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;border-bottom:1px solid #f1f5f9;padding-bottom:16px;">
+                <div>
+                    <h3 style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 4px 0;">Interview Details</h3>
+                    <p style="font-size:13px;color:#64748b;margin:0;">Comprehensive view of the scheduled interview</p>
+                </div>
                 <button onclick="document.getElementById('infoModal').classList.remove('active')"
-                    style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                    style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom:20px;">
-                <div>
-                    <label
-                        style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Candidate</label>
-                    <div id="infoCandidate" style="font-size:15px;font-weight:500;"></div>
+            
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:24px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom:20px; border-bottom:1px solid #e2e8f0; padding-bottom:20px;">
+                    <div>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Candidate</label>
+                        <div id="infoCandidate" style="font-size:16px;font-weight:600;color:#1e293b;"></div>
+                    </div>
+                    <div>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Stage</label>
+                        <div id="infoStage" style="display:inline-block;font-size:13px;font-weight:600;color:#4f46e5;background:#eef2ff;padding:4px 10px;border-radius:6px;border:1px solid #c7d2fe;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Date & Time</label>
+                    <div id="infoDateTime" style="font-size:15px;font-weight:500;color:#334155;display:flex;align-items:center;gap:8px;"></div>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Panel Members</label>
+                    <div id="infoPanels" style="font-size:14px;font-weight:500;color:#334155;background:#fff;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;box-shadow:inset 0 1px 2px rgba(0,0,0,0.02);line-height:1.5;"></div>
                 </div>
                 <div>
-                    <label
-                        style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Stage</label>
-                    <div id="infoStage" style="font-size:14px;color:#1e293b;"></div>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Meeting Link</label>
+                    <div id="infoLink" style="font-size:14px;background:#fff;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;box-shadow:inset 0 1px 2px rgba(0,0,0,0.02);"></div>
                 </div>
             </div>
-            <div style="margin-bottom:20px;">
-                <label
-                    style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Date
-                    & Time</label>
-                <div id="infoDateTime" style="font-size:14px;color:#1e293b;"></div>
-            </div>
-            <div style="margin-bottom:20px;">
-                <label
-                    style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Panel
-                    Members</label>
-                <div id="infoPanels"
-                    style="font-size:14px;color:#1e293b;background:#f8faff;padding:10px;border-radius:8px;border:1px solid #e2e8f0;">
-                </div>
-            </div>
-            <div style="margin-bottom:20px;">
-                <label
-                    style="display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:4px;">Meeting
-                    Link</label>
-                <div id="infoLink" style="font-size:14px;"></div>
-            </div>
+            
             <div style="display:flex;justify-content:flex-end;">
-                <button class="secondary-btn"
-                    onclick="document.getElementById('infoModal').classList.remove('active')">Close</button>
+                <button class="secondary-btn" style="padding:10px 24px;font-weight:600;" onclick="document.getElementById('infoModal').classList.remove('active')">Close Window</button>
             </div>
         </div>
     </div>
 
     <!-- FEEDBACK VIEW MODAL -->
     <div class="modal-overlay" id="feedbackModal"
-        style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
-        <div
-            style="background:#fff;border-radius:16px;width:95%;max-width:600px;padding:32px;max-height:90vh;overflow-y:auto;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h3 style="font-size:18px;">Feedback</h3>
+        style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;text-align:left;">
+        <div style="background:#fff;border-radius:16px;width:95%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+            
+            <div style="padding:24px 32px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:flex-start; background:#fff; z-index:1;">
+                <div>
+                    <h3 style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 4px 0;">Interview Feedback</h3>
+                    <p style="font-size:13px;color:#64748b;margin:0;">Review evaluations from panel members</p>
+                </div>
                 <button onclick="document.getElementById('feedbackModal').classList.remove('active')"
-                    style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                    style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
 
-            <div
-                style="background:#f8faff;padding:16px;border-radius:12px;margin-bottom:24px;border:1px solid #e2e8f0;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                    <div>
-                        <label
-                            style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;">Candidate</label>
-                        <div id="fCandidate" style="font-size:15px;font-weight:600;color:#1e293b;"></div>
+            <div style="padding:32px; overflow-y:auto; flex:1; background:#f8fafc;">
+                <div style="background:#fff;padding:20px;border-radius:12px;margin-bottom:24px;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                        <div>
+                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Candidate</label>
+                            <div id="fCandidate" style="font-size:16px;font-weight:600;color:#1e293b;"></div>
+                        </div>
+                        <div>
+                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;">Interview Stage</label>
+                            <div id="fStage" style="display:inline-block;font-size:13px;font-weight:600;color:#4f46e5;background:#eef2ff;padding:4px 10px;border-radius:6px;border:1px solid #c7d2fe;"></div>
+                        </div>
                     </div>
-                    <div>
-                        <label
-                            style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;">Interview
-                            Stage</label>
-                        <div id="fStage" style="font-size:14px;color:#475569;"></div>
-                    </div>
+                </div>
+
+                <div id="feedbackList">
+                    <!-- Individual panel feedback will be injected here -->
                 </div>
             </div>
 
-            <div id="feedbackList">
-                <!-- Individual panel feedback will be injected here -->
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;margin-top:20px;">
-                <button class="secondary-btn"
-                    onclick="document.getElementById('feedbackModal').classList.remove('active')">Close</button>
+            <div style="padding:20px 32px; border-top:1px solid #f1f5f9; background:#fff; display:flex; justify-content:flex-end;">
+                <button class="secondary-btn" style="padding:10px 24px;font-weight:600;"
+                    onclick="document.getElementById('feedbackModal').classList.remove('active')">Close Window</button>
             </div>
         </div>
     </div>
@@ -509,93 +504,118 @@
                     const isToday = new Date().toDateString() === new Date(i.interviewDate).toDateString();
                     const isPast = new Date() > new Date(i.interviewDate) && !isToday;
 
-                    let statusBadge = '<span class="jd-badge" style="background:#eef2ff;color:#4f46e5;font-size:10px;">Upcoming</span>';
-                    if (i.completed) statusBadge = '<span class="jd-badge" style="background:#dcfce7;color:#16a34a;font-size:10px;">Completed</span>';
-                    else if (isToday) statusBadge = '<span class="jd-badge" style="background:#fef3c7;color:#d97706;font-size:10px;">Today</span>';
-                    else if (isPast) statusBadge = '<span class="jd-badge" style="background:#fee2e2;color:#991b1b;font-size:10px;">Overdue</span>';
+                    let statusBadge = '<span style="font-size:12px;font-weight:600;background:#eef2ff;color:#4f46e5;padding:4px 12px;border-radius:100px;">Upcoming</span>';
+                    if (i.completed) statusBadge = '<span style="font-size:12px;font-weight:600;background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:100px;">Completed</span>';
+                    else if (isToday) statusBadge = '<span style="font-size:12px;font-weight:600;background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;">Today</span>';
+                    else if (isPast) statusBadge = '<span style="font-size:12px;font-weight:600;background:#fee2e2;color:#991b1b;padding:4px 12px;border-radius:100px;">Overdue</span>';
 
                     return `
-                <div class="interview-item">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.2s;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
                         <div>
-                            <div style="font-weight:500;font-size:14px;">${i.candidateName}</div>
-                            <div style="font-size:12px;color:#64748b;margin-top:2px;">${stageLabels[i.interviewStage] || i.interviewStage}</div>
-                            <div style="margin-top:4px;">${statusBadge}</div>
+                            <div style="font-weight:700;font-size:18px;color:#1e293b;margin-bottom:8px;">${i.candidateName}</div>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="font-size:13px;font-weight:600;color:#64748b;background:#f1f5f9;padding:4px 12px;border-radius:100px;border:1px solid #e2e8f0;">${stageLabels[i.interviewStage] || i.interviewStage}</div>
+                                ${statusBadge}
+                            </div>
                         </div>
-                        <div style="text-align:right;">
-                            <div style="font-size:13px;font-weight:500;">${formatDate(i.interviewDate)}</div>
-                            <div style="font-size:12px;color:#64748b;">${i.interviewTime || '—'}</div>
-                            <div style="margin-top:8px; display:flex; gap:4px; justify-content:flex-end;">
-                                <button onclick="viewInterviewInfo(${JSON.stringify(i).replace(/"/g, '&quot;')})" style="background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;">Info</button>
-                                ${i.completed ? `
-                                    <button onclick="viewFeedback(${JSON.stringify(i).replace(/"/g, '&quot;')})" style="background:#4f46e5;color:white;border:none;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
-                                        Feedback
-                                    </button>
-                                ` : ''}
-                                ${(!i.completed && i.interviewStage === 'HR_ROUND') ? `<button onclick="openHrFeedbackModal(${JSON.stringify(i).replace(/"/g, '&quot;')})" style="background:#16a34a;color:white;border:none;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;">Give Feedback</button>` : ''}
+                        <div style="text-align:right;background:#f8fafc;padding:10px 16px;border-radius:10px;border:1px solid #e2e8f0;">
+                            <div style="font-size:14px;font-weight:700;color:#334155;margin-bottom:4px;">
+                                ${formatDate(i.interviewDate)}
+                            </div>
+                            <div style="font-size:13px;color:#64748b;font-weight:600;">
+                                ${i.interviewTime || 'TBD'}
                             </div>
                         </div>
                     </div>
+                    
+                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid #f1f5f9; display:flex; justify-content:flex-end; gap:12px;">
+                        <button onclick="viewInterviewInfo(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="secondary-btn" style="padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                            View Details
+                        </button>
+                        ${i.completed ? `
+                            <button onclick="viewFeedback(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn" style="padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                                See Feedback
+                            </button>
+                        ` : ''}
+                        ${(!i.completed && i.interviewStage === 'HR_ROUND') ? `
+                            <button onclick="openHrFeedbackModal(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn" style="background:#16a34a;border-color:#16a34a;padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                                Give Feedback
+                            </button>
+                        ` : ''}
+                    </div>
                 </div>
-            `}).join('') : '<div style="text-align:center;padding:40px;color:#94a3b8;">No interviews scheduled</div>';
+            `}).join('') : '<div style="text-align:center;padding:60px 40px;color:#94a3b8;font-size:15px;background:#f8fafc;border-radius:12px;border:2px dashed #e2e8f0;">No interviews scheduled</div>';
             } catch (e) { console.error(e); }
         }
 
         function viewInterviewInfo(i) {
             document.getElementById('infoModal').classList.add('active');
+            
+            const stageLabels = { L1_TECHNICAL: 'L1 Technical', L2_TECHNICAL: 'L2 Technical', HR_ROUND: 'HR Round' };
+            
             document.getElementById('infoCandidate').textContent = i.candidateName;
-            document.getElementById('infoStage').textContent = i.interviewStage;
-            document.getElementById('infoDateTime').textContent = formatDate(i.interviewDate) + ' at ' + (i.interviewTime || '—');
+            document.getElementById('infoStage').textContent = stageLabels[i.interviewStage] || i.interviewStage;
+            document.getElementById('infoDateTime').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#64748b;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <span>${formatDate(i.interviewDate)} &nbsp;&bull;&nbsp; ${i.interviewTime || 'TBD'}</span>`;
 
             // Map panel names - Corrected field name to panelMemberNames
-            const panelNames = (i.panelMemberNames && i.panelMemberNames.length > 0) ? i.panelMemberNames.join(', ') : (i.interviewStage === 'HR_ROUND' ? 'HR (Self)' : 'No panels assigned');
-            document.getElementById('infoPanels').textContent = panelNames;
+            const panelNames = (i.panelMemberNames && i.panelMemberNames.length > 0) ? i.panelMemberNames.join(' &nbsp;&bull;&nbsp; ') : (i.interviewStage === 'HR_ROUND' ? 'HR (Self)' : 'No panels assigned');
+            document.getElementById('infoPanels').innerHTML = panelNames;
+            
             document.getElementById('infoLink').innerHTML = i.meetingLink
-                ? `<a href="${i.meetingLink}" target="_blank" style="color:#4f46e5;">Join Meeting</a>`
-                : 'No link provided';
+                ? `<a href="${i.meetingLink}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:#4f46e5;font-weight:600;text-decoration:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Join Meeting Online</a>`
+                : '<span style="color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> No link provided</span>';
         }
 
         function viewFeedback(i) {
             document.getElementById('feedbackModal').classList.add('active');
+            
+            const stageLabels = { L1_TECHNICAL: 'L1 Technical', L2_TECHNICAL: 'L2 Technical', HR_ROUND: 'HR Round' };
+            
             document.getElementById('fCandidate').textContent = i.candidateName;
-            document.getElementById('fStage').textContent = i.interviewStage;
+            document.getElementById('fStage').textContent = stageLabels[i.interviewStage] || i.interviewStage;
 
             const container = document.getElementById('feedbackList');
             if (!i.feedbacks || i.feedbacks.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No detailed evaluations submitted yet.</div>';
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;background:#fff;border-radius:12px;border:1px dashed #e2e8f0;">No detailed evaluations submitted yet.</div>';
                 return;
             }
 
-            container.innerHTML = i.feedbacks.map(f => `
-            <div style="border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #f1f5f9;padding-bottom:12px;">
+            container.innerHTML = i.feedbacks.map(f => {
+                const isSelected = f.decision === 'SELECTED';
+                const decisionColor = isSelected ? '#16a34a' : '#ef4444';
+                const decisionBg = isSelected ? '#dcfce7' : '#fee2e2';
+                
+                return `
+            <div style="border:1px solid #e2e8f0;border-radius:8px;padding:24px;margin-bottom:20px;text-align:left;background:#fff;">
+                
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9;padding-bottom:16px;margin-bottom:20px;">
                     <div>
-                        <div style="font-size:14px;font-weight:600;color:#1e293b;">${f.panelMemberName}</div>
-                        <div style="font-size:12px;color:#64748b;">${new Date(f.submittedAt).toLocaleString()}</div>
+                        <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:4px;">${f.panelMemberName}</div>
+                        <div style="font-size:13px;color:#64748b;">${new Date(f.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:20px;font-weight:700;color:#4f46e5;">${f.rating}/5</div>
-                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:${f.decision === 'SELECTED' ? '#16a34a' : '#ef4444'}">${f.decision}</div>
+                        <div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:6px;">${f.rating}/5</div>
+                        <div style="display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;color:${decisionColor};background:${decisionBg};padding:4px 10px;border-radius:4px;">${f.decision}</div>
                     </div>
-                </div>
-                
-                <div style="margin-bottom:12px;">
-                    <label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Main Comments</label>
-                    <div style="font-size:14px;color:#1e293b;">${f.comments}</div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div style="display:flex;flex-direction:column;gap:20px;">
                     <div>
-                        <label style="display:block;font-size:11px;font-weight:600;color:#16a34a;text-transform:uppercase;margin-bottom:4px;"> Strengths</label>
-                        <div style="font-size:13px;color:#1e293b;">${f.strengths || '—'}</div>
+                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Main Comments</label>
+                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.comments}</div>
                     </div>
                     <div>
-                        <label style="display:block;font-size:11px;font-weight:600;color:#ef4444;text-transform:uppercase;margin-bottom:4px;"> Weaknesses</label>
-                        <div style="font-size:13px;color:#1e293b;">${f.weaknesses || '—'}</div>
+                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Key Strengths</label>
+                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.strengths || '<span style="color:#94a3b8;font-style:italic;">—</span>'}</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Areas of Improvement</label>
+                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.weaknesses || '<span style="color:#94a3b8;font-style:italic;">—</span>'}</div>
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
         }
 
         let currentHrFeedbackInterviewId = null;

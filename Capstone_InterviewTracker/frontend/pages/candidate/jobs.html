@@ -80,7 +80,12 @@
         <div class="modal-content" style="background:#fff; border-radius:16px; width:90%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
             <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; padding:20px 24px; border-bottom:1px solid #e2e8f0;">
                 <h2 style="font-size:18px; font-weight:700;">Apply for <span id="modalJobTitle"></span></h2>
-                <button onclick="closeApplyModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#94a3b8;">&times;</button>
+                <button type="button" onclick="closeApplyModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <div class="modal-body" style="padding:24px;">
                 <div id="applyErrorMsg" style="color:#ef4444; font-size:14px; margin-bottom:16px; display:none;"></div>

@@ -8,6 +8,7 @@
 
 /* LEFT SIDE */
 .left {
+    position: relative;
     width: 50%;
     background: linear-gradient(rgba(67, 56, 202, 0.8), rgba(79, 70, 229, 0.9)),
                 url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1920&q=80');
@@ -96,9 +97,9 @@
     max-width: 440px;
     background: white;
     padding: 40px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
 .card-header-row {
@@ -109,26 +110,30 @@
     margin-bottom: 8px;
 }
 
-.home-btn {
-    display: inline-flex;
+.left-back-btn {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    background: #f8fafc;
-    color: #1e293b;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    white-space: nowrap;
     transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 16px;
+    border-radius: 99px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.home-btn:hover {
-    background: #eef2ff;
-    border-color: #c7d2fe;
-    color: #4338ca;
+.left-back-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .login-card h2 {

@@ -543,6 +543,21 @@
             border-top: 1px solid #e2e8f0;
             padding: 60px 40px 20px 40px;
         }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 
@@ -644,8 +659,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
-                <button class="close-btn" onclick="closeApplyModal()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button type="button" class="close-btn" onclick="closeApplyModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>

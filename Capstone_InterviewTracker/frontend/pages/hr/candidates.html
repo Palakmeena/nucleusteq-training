@@ -114,11 +114,16 @@
     <div id="addCandidateModal" class="modal-view"
         style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
         <div
-            style="background:white;border-radius:16px;width:95%;max-width:800px;max-height:90vh;overflow-y:auto;padding:32px;">
+            style="background:white;border-radius:16px;width:95%;max-width:800px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:32px;overflow-y:auto;flex:1;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
                 <h2 style="margin:0;font-size:20px;font-weight:700;">Add New Candidate</h2>
-                <button onclick="closeAddModal()"
-                    style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;">×</button>
+                <button type="button" onclick="closeAddModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <form id="addCandidateForm">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
@@ -129,9 +134,7 @@
                         <label>Mobile Number</label>
                         <div
                             style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                            <input type="text" id="addMobileCode" value="+91" required maxlength="5"
-                                oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
-                                style="width:70px; border:none; border-right:1px solid #e2e8f0; border-radius:0; background:#f8fafc; text-align:center; padding:10px 5px;">
+                            <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
                             <input type="text" id="addMobile" placeholder="Enter 10-digit number" required
                                 maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 style="flex:1; border:none; border-radius:0; padding:10px 14px;">
@@ -149,15 +152,15 @@
                         </select>
                     </div>
                     <div class="form-group"><label>Total Experience (Yrs)</label><input type="number" step="0.1"
-                            id="addTotalExp" required></div>
+                            id="addTotalExp" required min="0"></div>
                     <div class="form-group"><label>Relevant Experience (Yrs)</label><input type="number" step="0.1"
-                            id="addRelExp" required></div>
+                            id="addRelExp" required min="0"></div>
                     <div class="form-group"><label>Current CTC (LPA)</label><input type="number" step="0.1"
-                            id="addCurrentCtc" required></div>
+                            id="addCurrentCtc" required min="0"></div>
                     <div class="form-group"><label>Expected CTC (LPA)</label><input type="number" step="0.1"
-                            id="addExpectedCtc" required></div>
+                            id="addExpectedCtc" required min="0"></div>
                     <div class="form-group"><label>Notice Period (Days)</label><input type="number" id="addNotice"
-                            required></div>
+                            required min="0"></div>
                     <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required></div>
                     <div class="form-group"><label>Date of Birth</label><input type="date" id="addDob" required></div>
                     <div class="form-group" style="grid-column: span 2;"><label>Resume (PDF)</label><input type="file"
@@ -170,6 +173,7 @@
                     <button type="submit" class="primary-btn">Create Candidate</button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -177,18 +181,20 @@
     <div id="viewCandidateModal"
         style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;"
         class="modal-view">
-        <div
-            style="background:white;border-radius:16px;width:90%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+        <div style="background:white;border-radius:16px;width:90%;max-width:720px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
             <!-- Modal Header -->
-            <div
-                style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #e2e8f0;">
-                <h2 style="margin:0;font-size:18px;font-weight:600;">Candidate Profile</h2>
-                <button onclick="closeViewModal()"
-                    style="background:none;border:none;cursor:pointer;color:#64748b;font-size:20px;padding:0;">×</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:24px 32px;border-bottom:1px solid #f1f5f9;background:#fff;z-index:1;">
+                <h2 style="margin:0;font-size:20px;font-weight:700;">Candidate Profile</h2>
+                <button onclick="closeViewModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
             <!-- Modal Body -->
-            <div style="padding:24px;">
+            <div style="padding:32px;overflow-y:auto;flex:1;background:#f8fafc;">
                 <div style="margin-bottom:30px;">
                     <h3
                         style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
@@ -344,16 +350,12 @@
     <div id="scheduleModal" class="modal-view"
         style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
         <div
-            style="background:white;border-radius:16px;width:95%;max-width:550px;max-height:90vh;overflow-y:auto;padding:32px;">
+            style="background:white;border-radius:16px;width:95%;max-width:550px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:32px;overflow-y:auto;flex:1;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
                 <h2 style="margin:0;font-size:18px;font-weight:700;">Schedule Interview</h2>
                 <button onclick="closeScheduleModal()"
                     style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;">×</button>
-            </div>
-            <div
-                style="background:#eef2ff;padding:12px 16px;border-radius:10px;margin-bottom:24px;border:1px solid #c7d2fe;">
-                <div style="font-size:11px;font-weight:700;color:#4f46e5;text-transform:uppercase;">Candidate</div>
-                <div id="schedCandidateName" style="font-size:16px;font-weight:700;color:#1e293b;"></div>
             </div>
             <div id="schedError"
                 style="display:none;background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;">
@@ -372,8 +374,26 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
                     <div class="form-group"><label>Date *</label><input type="date" id="schedDate"
                             style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
-                    <div class="form-group"><label>Time *</label><input type="time" id="schedTime"
-                            style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
+                    <div class="form-group">
+                        <label>Time *</label>
+                        <div style="display:flex; gap:8px;">
+                            <select id="schedHour" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                                <option value="">HH</option>
+                                <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
+                                <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option>
+                                <option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <span style="display:flex;align-items:center;font-weight:bold;">:</span>
+                            <select id="schedMinute" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                                <option value="">MM</option>
+                                <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
+                            </select>
+                            <select id="schedAmPm" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group" style="margin-top:16px;"><label>Meeting Link</label><input type="url"
                         id="schedLink" placeholder="https://meet.google.com/..."
@@ -400,6 +420,7 @@
                         Now</button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -575,7 +596,7 @@
             const body = {
                 fullName: document.getElementById('addFullName').value,
                 email: document.getElementById('addEmail').value,
-                mobileCode: document.getElementById('addMobileCode').value,
+                mobileCode: "+91",
                 mobileNumber: document.getElementById('addMobile').value,
                 jobDescriptionId: parseInt(document.getElementById('jdSelect').value),
                 totalExperience: parseFloat(document.getElementById('addTotalExp').value),
@@ -591,6 +612,13 @@
             };
 
             // Strict Validation
+            if (body.totalExperience < 0 || body.relevantExperience < 0 || body.currentCtc < 0 || body.expectedCtc < 0 || body.noticePeriod < 0) {
+                showToast("Experience, CTC, and Notice Period cannot be negative.", "error");
+                btn.disabled = false;
+                btn.textContent = 'Create Candidate';
+                return;
+            }
+
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(body.email)) {
                 showToast("Please provide a valid email (e.g. name@example.com).", "error");
@@ -665,7 +693,6 @@
 
         function openScheduleModal(id, name) {
             currentSchedulingCandidateId = id;
-            document.getElementById('schedCandidateName').textContent = name;
             document.getElementById('scheduleModal').classList.add('active');
             selectedPanels = [];
             updateSelectedPanelsDisplay();
@@ -706,7 +733,11 @@
             const idx = selectedPanels.indexOf(id);
             if (idx > -1) selectedPanels.splice(idx, 1);
             else {
-                if (selectedPanels.length >= 2) { showToast('Max 2 panels allowed', 'error'); return; }
+                if (selectedPanels.length >= 2) { 
+                    showToast('Max 2 panels allowed', 'error'); 
+                    filterPanels(); // Re-render to clear the native checkbox check
+                    return; 
+                }
                 selectedPanels.push(id);
             }
             updateSelectedPanelsDisplay();
@@ -730,11 +761,27 @@
         async function scheduleInterview() {
             const errDiv = document.getElementById('schedError');
             errDiv.style.display = 'none';
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Scheduling...';
+
+            const h = document.getElementById('schedHour').value;
+            const m = document.getElementById('schedMinute').value;
+            const ap = document.getElementById('schedAmPm').value;
+            let time24 = '';
+            if (h && m) {
+                let hourNum = parseInt(h, 10);
+                if (ap === 'PM' && hourNum !== 12) hourNum += 12;
+                if (ap === 'AM' && hourNum === 12) hourNum = 0;
+                time24 = `${hourNum.toString().padStart(2, '0')}:${m}`;
+            }
+
             const body = {
                 candidateId: currentSchedulingCandidateId,
                 interviewStage: document.getElementById('schedStage').value,
                 interviewDate: document.getElementById('schedDate').value,
-                interviewTime: document.getElementById('schedTime').value,
+                interviewTime: time24,
                 meetingLink: document.getElementById('schedLink').value,
                 focusAreas: document.getElementById('schedFocus').value,
                 panelMemberIds: selectedPanels
@@ -743,6 +790,8 @@
             if (!body.interviewStage || !body.interviewDate || !body.interviewTime || (!isHrRound && !selectedPanels.length)) {
                 errDiv.textContent = isHrRound ? 'Please fill all required fields' : 'Please fill all required fields and select at least one panel member';
                 errDiv.style.display = 'block';
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Schedule Now';
                 return;
             }
             try {
@@ -753,6 +802,9 @@
             } catch (e) {
                 errDiv.textContent = e.message;
                 errDiv.style.display = 'block';
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Schedule Now';
             }
         }
 

@@ -100,15 +100,14 @@ public class JobDescriptionService {
     }
 
     /**
-     * Soft deletes a job description by marking it as inactive.
+     * Hard deletes a job description from the database.
      *
      * @param id the JD ID
      */
     @Transactional
-    public void deactivateJobDescription(Long id) {
+    public void deleteJobDescription(Long id) {
         JobDescription jd = findJdByIdOrThrow(id);
-        jd.setActive(false);
-        jobDescriptionRepository.save(jd);
+        jobDescriptionRepository.delete(jd);
     }
 
     /**

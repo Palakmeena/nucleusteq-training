@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -159,22 +160,26 @@ public class JobDescriptionController {
     }
 
     /**
-     * Soft deletes a job description by marking it as inactive.
+     * Hard deletes a job description from the database.
      */
     @DeleteMapping("/hr/jd/{id}")
-    public ResponseEntity<ApiResponse<Void>> deactivateJobDescription(
+    public ResponseEntity<ApiResponse<Void>> deleteJobDescription(
             @PathVariable final Long id) {
 
         try {
-            jobDescriptionService.deactivateJobDescription(id);
+            jobDescriptionService.deleteJobDescription(id);
 
             return ResponseEntity.ok(
-                    ApiResponse.success("Job description deactivated successfully", null)
+                    ApiResponse.success("Job description deleted successfully", null)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(e.getMessage()));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(ApiResponse.error("Cannot delete job description because candidates have applied for it."));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

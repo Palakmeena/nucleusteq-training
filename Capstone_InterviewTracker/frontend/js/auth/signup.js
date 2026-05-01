@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (mobileNumber.length < 10 || mobileNumber.length > 15 || isNaN(mobileNumber)) {
+        if (mobileNumber.length !== 10 || isNaN(mobileNumber)) {
             if (errorDiv) {
-                errorDiv.textContent = 'Please enter a valid phone number.';
+                errorDiv.textContent = 'Please enter a valid 10-digit phone number.';
                 errorDiv.style.display = 'block';
             }
             return;

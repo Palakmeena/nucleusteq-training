@@ -41,7 +41,7 @@ const api = {
     getAllJdsForHr: () => request('GET', '/hr/jd/all'),
     createJd: (body) => request('POST', '/hr/jd', body),
     updateJd: (id, body) => request('PUT', `/hr/jd/${id}`, body),
-    deactivateJd: (id) => request('DELETE', `/hr/jd/${id}`),
+    deleteJd: (id) => request('DELETE', `/hr/jd/${id}`),
 
     // CANDIDATES - public
     registerCandidate: (body) => request('POST', '/candidate/register', body),

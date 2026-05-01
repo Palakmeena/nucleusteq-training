@@ -65,7 +65,12 @@
             <div class="form-group"><label>Email *</label><input type="email" id="pEmail" placeholder="john@company.com"></div>
         </div>
         <div class="form-row">
-            <div class="form-group"><label>Mobile Number *</label><input type="text" id="pMobile" placeholder="9876543210"></div>
+            <div class="form-group"><label>Mobile Number *</label>
+                <div style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                    <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
+                    <input type="text" id="pMobile" placeholder="9876543210" style="flex:1; border:none; border-radius:0; padding:10px 14px;" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
             <div class="form-group"><label>Organization *</label><input type="text" id="pOrg" placeholder="TechCorp"></div>
         </div>
         <div class="form-group"><label>Designation *</label><input type="text" id="pDesignation" placeholder="Senior Developer"></div>
@@ -89,7 +94,12 @@
             <div class="form-group"><label>Email (Account ID)</label><input type="text" id="eEmail" disabled style="background:#f8fafc;cursor:not-allowed;"></div>
         </div>
         <div class="form-row">
-            <div class="form-group"><label>Mobile Number *</label><input type="text" id="eMobile"></div>
+            <div class="form-group"><label>Mobile Number *</label>
+                <div style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                    <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
+                    <input type="text" id="eMobile" style="flex:1; border:none; border-radius:0; padding:10px 14px;" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
             <div class="form-group"><label>Organization *</label><input type="text" id="eOrg"></div>
         </div>
         <div class="form-group"><label>Designation *</label><input type="text" id="eDesignation"></div>
@@ -146,7 +156,19 @@
         document.getElementById('editPanelModal').classList.add('active');
         document.getElementById('eFullName').value = p.fullName;
         document.getElementById('eEmail').value = p.email;
-        document.getElementById('eMobile').value = p.mobileNumber;
+        
+        // Extract country code if present
+        let mob = p.mobileNumber || '';
+        if (mob.startsWith('+91')) {
+            mob = mob.substring(3);
+        } else if (mob.startsWith('+')) {
+            const match = mob.match(/^(\+\d{1,3})(.*)$/);
+            if (match) {
+                mob = match[2];
+            }
+        }
+        document.getElementById('eMobile').value = mob;
+        
         document.getElementById('eOrg').value = p.organization;
         document.getElementById('eDesignation').value = p.designation;
     }
@@ -154,7 +176,7 @@
     async function updatePanel() {
         const body = {
             fullName: document.getElementById('eFullName').value,
-            mobileNumber: document.getElementById('eMobile').value,
+            mobileNumber: '+91' + document.getElementById('eMobile').value,
             organization: document.getElementById('eOrg').value,
             designation: document.getElementById('eDesignation').value
         };
@@ -180,10 +202,11 @@
     }
 
     async function createPanel() {
+        const pMobileVal = document.getElementById('pMobile').value;
         const body = {
             fullName: document.getElementById('pFullName').value,
             email: document.getElementById('pEmail').value,
-            mobileNumber: document.getElementById('pMobile').value,
+            mobileNumber: pMobileVal ? '+91' + pMobileVal : '',
             organization: document.getElementById('pOrg').value,
             designation: document.getElementById('pDesignation').value
         };

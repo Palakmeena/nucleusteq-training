@@ -141,8 +141,13 @@ function showModal(title, contentHtml, footerHtml = '') {
     modal.innerHTML = `
         <div class="modal-content">
             <div class="modal-header">
-                <h3>${title}</h3>
-                <button class="close-modal" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <h3 style="margin:0;">${title}</h3>
+                <button class="close-modal" onclick="this.closest('.modal-overlay').remove()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;padding:0;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <div class="modal-body">
                 ${contentHtml}
