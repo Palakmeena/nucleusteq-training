@@ -1,29 +1,18 @@
 package com.nucleusteq.interviewtracker.dto;
 
+import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * DTO for creating a new panel member by HR.
- * Panel members cannot self-register — only HR can create them.
- */
 public class PanelMemberRequestDto {
 
-    /**
-     * Full name of the panel member.
-     * Cannot be blank.
-     */
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name cannot exceed 100 characters")
     private String fullName;
 
-    /**
-     * Email address — used for login and sending activation link.
-     * Must be valid format and unique.
-     */
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = AppConstants.EMAIL_REQUIRED)
+    @Email(message = AppConstants.INVALID_EMAIL)
     private String email;
 
     /**

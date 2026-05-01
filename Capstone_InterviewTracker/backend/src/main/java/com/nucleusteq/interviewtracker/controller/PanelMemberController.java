@@ -8,6 +8,9 @@ import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
+import com.nucleusteq.interviewtracker.util.AppConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,6 +37,7 @@ public class PanelMemberController {
     private final PanelMemberService panelMemberService;
         private final CandidateService candidateService;
         private final UserRepository userRepository;
+        private static final Logger logger = LoggerFactory.getLogger(PanelMemberController.class);
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -57,7 +61,7 @@ public class PanelMemberController {
      * @param request the panel member details from HR
      * @return 201 Created with saved panel member details
      */
-    @PostMapping("/hr/panel")
+        @PostMapping("/hr/panel")
     public ResponseEntity<ApiResponse<PanelMemberResponseDto>> createPanelMember(
             @Valid @RequestBody final PanelMemberRequestDto request) {
 
@@ -75,15 +79,13 @@ public class PanelMemberController {
                             message,
                             response
                     ));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (IllegalArgumentException e) {
+                        logger.warn("Invalid panel member create request: {}", e.getMessage());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error creating panel member", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -101,11 +103,10 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Panel members fetched successfully", response)
             );
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (Exception e) {
+                        logger.error("Unexpected error fetching panel members", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -125,15 +126,13 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Panel member fetched successfully", response)
             );
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (jakarta.persistence.EntityNotFoundException e) {
+                        logger.warn("Panel member not found: {}", id);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error fetching panel member {}", id, e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -145,12 +144,12 @@ public class PanelMemberController {
          * @param password the new password chosen by the user
      * @return 200 OK on success, or 400 if token is invalid or expired
      */
-    @PostMapping("/auth/activate")
-        public ResponseEntity<ApiResponse<Void>> activateAccount(
-            @RequestParam final String token,
-            @RequestParam @NotBlank(message = "Password is required")
-            @Size(min = 6, message = "Password must be at least 6 characters")
-            final String password) {
+        @PostMapping(AppConstants.AUTH_BASE + AppConstants.ACTIVATE)
+                public ResponseEntity<ApiResponse<Void>> activateAccount(
+                        @RequestParam final String token,
+                        @RequestParam @NotBlank(message = AppConstants.PASSWORD_REQUIRED)
+                        @Size(min = 6, message = "Password must be at least 6 characters")
+                        final String password) {
 
         try {
                         // Find the user by token to determine their role
@@ -172,15 +171,13 @@ public class PanelMemberController {
                             null
                     )
             );
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (IllegalArgumentException e) {
+                        logger.warn("Activation failed: {}", e.getMessage());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error during activation", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -202,15 +199,13 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Profile fetched successfully", response)
             );
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (jakarta.persistence.EntityNotFoundException e) {
+                        logger.warn("Panel profile not found for: {}", authentication != null ? authentication.getName() : "unknown");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error fetching panel profile", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -231,15 +226,13 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Panel member updated successfully", response)
             );
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (jakarta.persistence.EntityNotFoundException e) {
+                        logger.warn("Panel member update failed - not found: {}", id);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error updating panel member {}", id, e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 
     /**
@@ -258,14 +251,12 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Panel member removed successfully", null)
             );
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
-        }
+                } catch (jakarta.persistence.EntityNotFoundException e) {
+                        logger.warn("Panel member delete failed - not found: {}", id);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+                } catch (Exception e) {
+                        logger.error("Unexpected error deleting panel member {}", id, e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
+                }
     }
 }

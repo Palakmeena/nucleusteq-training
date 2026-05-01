@@ -1,36 +1,20 @@
 package com.nucleusteq.interviewtracker.dto;
 
+import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-/**
- * DTO (Data Transfer Object) for the login request body.
- */
 public class LoginRequestDto {
 
-    /**
-     * The user's email address used as their login username.
-     */
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = AppConstants.EMAIL_REQUIRED)
+    @Email(message = AppConstants.INVALID_EMAIL)
     private String email;
 
-    /**
-     * The user's password in plain text.
-     * Will be matched against the BCrypt hash stored in the database.
-     */
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = AppConstants.PASSWORD_REQUIRED)
     private String password;
 
-    /**
-     * Default constructor required for JSON deserialization.
-\     */
-    public LoginRequestDto() {
-    }
+    public LoginRequestDto() {}
 
-    /**
-     * All-args constructor for convenience in tests.
-     */
     public LoginRequestDto(String email, String password) {
         this.email = email;
         this.password = password;

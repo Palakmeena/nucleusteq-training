@@ -1,5 +1,6 @@
 package com.nucleusteq.interviewtracker.dto;
 
+import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,8 +14,8 @@ public class SignupRequestDto {
     @Size(max = 100, message = "Full name cannot exceed 100 characters")
     private String fullName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = AppConstants.EMAIL_REQUIRED)
+    @Email(message = AppConstants.INVALID_EMAIL)
     private String email;
 
     @NotBlank(message = "Mobile code is required")

@@ -5,7 +5,10 @@ import com.nucleusteq.interviewtracker.dto.LoginResponseDto;
 import com.nucleusteq.interviewtracker.dto.SignupRequestDto;
 import com.nucleusteq.interviewtracker.service.AuthService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
+import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,88 +20,76 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller that handles all authentication-related endpoints.
- */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(AppConstants.AUTH_BASE)
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthService authService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * Constructor injection — keeps this testable and explicit.
-     */
     @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
-    /**
-     * Handles user login requests.
-     * Accepts email and password, verifies them, and returns a JWT token
-     * along with user details — all wrapped in a standard ApiResponse.
-     */
-    @PostMapping("/login")
+    @PostMapping(AppConstants.LOGIN)
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(
             @Valid @RequestBody LoginRequestDto request) {
 
         try {
             LoginResponseDto loginResponse = authService.login(request);
-
-            return ResponseEntity.ok(
-                    ApiResponse.success("Login successful", loginResponse)
-            );
+            logger.info("User logged in: {}", request.getEmail());
+            return ResponseEntity.ok(ApiResponse.success(AppConstants.LOGIN_SUCCESS, loginResponse));
 
         } catch (DisabledException e) {
-           
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Login attempt for disabled account: {} - {}", request.getEmail(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error(e.getMessage()));
 
         } catch (BadCredentialsException e) {
-           
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Bad credentials for user: {}", request.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(e.getMessage()));
 
         } catch (Exception e) {
-            
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error(
-                            "Something went wrong. Please try again later."
-                    ));
+            logger.error("Unexpected error during login for {}", request.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
-    @PostMapping("/signup")
+    @PostMapping(AppConstants.SIGNUP)
     public ResponseEntity<ApiResponse<LoginResponseDto>> signup(
             @Valid @RequestBody SignupRequestDto request) {
         try {
             LoginResponseDto response = authService.signup(request, passwordEncoder);
+            logger.info("New account created: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Account created successfully. Please check your email for the activation link.", response));
+                    .body(ApiResponse.success(AppConstants.ACCOUNT_CREATED, response));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Signup validation failed for {}: {}", request.getEmail(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
+            logger.error("Unexpected error during signup for {}", request.getEmail(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong."));
+                    .body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
-    @PostMapping("/verify-candidate")
+    @PostMapping(AppConstants.VERIFY_CANDIDATE)
     public ResponseEntity<ApiResponse<Void>> verifyCandidate(@org.springframework.web.bind.annotation.RequestParam String token) {
         try {
             authService.verifyCandidate(token);
-            return ResponseEntity.ok(ApiResponse.success("Email verified successfully. You can now login.", null));
+            logger.info("Candidate verified via token");
+            return ResponseEntity.ok(ApiResponse.success(AppConstants.EMAIL_VERIFIED, null));
         } catch (IllegalArgumentException e) {
+            logger.warn("Candidate verification failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Something went wrong."));
+            logger.error("Unexpected error during candidate verification", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 }

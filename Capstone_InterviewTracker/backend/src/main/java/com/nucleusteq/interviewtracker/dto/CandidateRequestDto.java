@@ -1,5 +1,6 @@
 package com.nucleusteq.interviewtracker.dto;
 
+import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -9,26 +10,14 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-/**
- * DTO for creating a candidate profile.
- * Used by both HR and candidate to submit profiling form.
- */
 public class CandidateRequestDto {
 
-    /**
-     * Full name of the candidate.
-     * Cannot be blank.
-     */
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name cannot exceed 100 characters")
     private String fullName;
 
-    /**
-     * Email address of the candidate.
-     * Must be valid format and unique across all candidates.
-     */
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = AppConstants.EMAIL_REQUIRED)
+    @Email(message = AppConstants.INVALID_EMAIL)
     private String email;
 
     /**

@@ -104,17 +104,10 @@ public class SecurityConfig {
                         // Allow CORS preflight requests
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // login is public — no token needed to log in
-                        .requestMatchers("/auth/login").permitAll()
-                        
-                        // signup is public
-                        .requestMatchers("/auth/signup").permitAll()
-
-                        // panel activation link sent via email — must be public
-                        .requestMatchers("/auth/activate").permitAll()
-
-                        // candidate verification link sent via email — must be public
-                        .requestMatchers("/auth/verify-candidate").permitAll()
+                        .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.LOGIN).permitAll()
+                        .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.SIGNUP).permitAll()
+                        .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.ACTIVATE).permitAll()
+                        .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.VERIFY_CANDIDATE).permitAll()
                         
                         // Allow Spring Boot error endpoint so validation errors
                         // don't get transformed into security 401/403 responses.

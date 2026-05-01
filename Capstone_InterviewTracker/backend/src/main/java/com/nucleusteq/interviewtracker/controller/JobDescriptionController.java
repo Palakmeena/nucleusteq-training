@@ -4,6 +4,9 @@ import com.nucleusteq.interviewtracker.dto.JobDescriptionRequestDto;
 import com.nucleusteq.interviewtracker.dto.JobDescriptionResponseDto;
 import com.nucleusteq.interviewtracker.service.JobDescriptionService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
+import com.nucleusteq.interviewtracker.util.AppConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +30,7 @@ import java.util.List;
 public class JobDescriptionController {
 
     private final JobDescriptionService jobDescriptionService;
+    private static final Logger logger = LoggerFactory.getLogger(JobDescriptionController.class);
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -55,13 +59,11 @@ public class JobDescriptionController {
                     .body(ApiResponse.success("Job description created successfully", response));
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Invalid job description create request: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error creating job description", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -78,9 +80,8 @@ public class JobDescriptionController {
                     ApiResponse.success("Job descriptions fetched successfully", response)
             );
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching active JDs", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -98,9 +99,8 @@ public class JobDescriptionController {
                     ApiResponse.success("All job descriptions fetched successfully", response)
             );
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching all JDs for HR", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -119,13 +119,11 @@ public class JobDescriptionController {
                     ApiResponse.success("Job description fetched successfully", response)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("JD not found: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching JD {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -145,17 +143,14 @@ public class JobDescriptionController {
                     ApiResponse.success("Job description updated successfully", response)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("JD update failed - not found: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Invalid JD update for {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error updating JD {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -173,17 +168,14 @@ public class JobDescriptionController {
                     ApiResponse.success("Job description deleted successfully", null)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("JD delete failed - not found: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.error("Cannot delete job description because candidates have applied for it."));
+            logger.warn("JD delete conflict for {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("Cannot delete job description because candidates have applied for it."));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error deleting JD {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 }

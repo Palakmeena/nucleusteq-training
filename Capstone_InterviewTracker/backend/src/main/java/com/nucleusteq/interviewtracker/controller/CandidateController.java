@@ -7,6 +7,9 @@ import com.nucleusteq.interviewtracker.service.CandidateProfileService;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
+import com.nucleusteq.interviewtracker.util.AppConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +36,7 @@ public class CandidateController {
     private final CandidateService candidateService;
     private final GoogleDriveService googleDriveService;
     private final CandidateProfileService profileService;
+    private static final Logger logger = LoggerFactory.getLogger(CandidateController.class);
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -63,8 +67,9 @@ public class CandidateController {
             Authentication authentication) {
 
         if (Objects.isNull(authentication)) {
+            logger.warn("Unauthorized attempt to register candidate");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error("You must be logged in to apply for a job."));
+                .body(ApiResponse.error("You must be logged in to apply for a job."));
         }
 
         try {
@@ -75,17 +80,14 @@ public class CandidateController {
                     .body(ApiResponse.success("Profile created successfully", response));
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Invalid candidate registration request: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Entity not found during candidate registration: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error during candidate registration", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -117,9 +119,8 @@ public class CandidateController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching candidates", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -139,9 +140,8 @@ public class CandidateController {
                     ApiResponse.success("Candidates fetched successfully", response)
             );
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching all candidates", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -164,13 +164,11 @@ public class CandidateController {
                     ApiResponse.success("Candidate fetched successfully", response)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Candidate not found: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error fetching candidate {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -294,13 +292,11 @@ public class CandidateController {
                     ApiResponse.success("Candidate stage updated successfully", response)
             );
         } catch (jakarta.persistence.EntityNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
+            logger.warn("Candidate stage update failed - not found: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Something went wrong. Please try again later."));
+            logger.error("Unexpected error updating candidate stage {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 
@@ -310,9 +306,11 @@ public class CandidateController {
             candidateService.deleteCandidate(id);
             return ResponseEntity.ok(ApiResponse.success("Candidate deleted successfully", null));
         } catch (jakarta.persistence.EntityNotFoundException e) {
+            logger.warn("Candidate delete failed - not found: {}", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+            logger.error("Unexpected error deleting candidate {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(com.nucleusteq.interviewtracker.util.AppConstants.SOMETHING_WENT_WRONG));
         }
     }
 }
