@@ -3,6 +3,7 @@ package com.nucleusteq.interviewtracker.controller;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
 import com.nucleusteq.interviewtracker.entity.CandidateProfile;
+import com.nucleusteq.interviewtracker.service.CandidateProfileService;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
  * REST controller for candidate profiling operations.
@@ -31,7 +32,7 @@ public class CandidateController {
 
     private final CandidateService candidateService;
     private final GoogleDriveService googleDriveService;
-    private final com.nucleusteq.interviewtracker.service.CandidateProfileService profileService;
+    private final CandidateProfileService profileService;
 
     /**
      * Constructor injection — keeps dependencies explicit and testable.
@@ -42,7 +43,7 @@ public class CandidateController {
     @Autowired
     public CandidateController(final CandidateService candidateService, 
                                final GoogleDriveService googleDriveService,
-                               final com.nucleusteq.interviewtracker.service.CandidateProfileService profileService) {
+                               final CandidateProfileService profileService) {
         this.candidateService = candidateService;
         this.googleDriveService = googleDriveService;
         this.profileService = profileService;
@@ -61,7 +62,7 @@ public class CandidateController {
             @Valid @RequestBody final CandidateRequestDto request,
             Authentication authentication) {
 
-        if (authentication == null) {
+        if (Objects.isNull(authentication)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("You must be logged in to apply for a job."));
         }
@@ -185,7 +186,7 @@ public class CandidateController {
     public ResponseEntity<ApiResponse<CandidateProfile>> getCandidateProfile(
             final Authentication authentication) {
         try {
-            if (authentication == null) {
+            if (Objects.isNull(authentication)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("Unauthorized request. Please login first."));
             }
@@ -204,7 +205,7 @@ public class CandidateController {
     public ResponseEntity<ApiResponse<CandidateResponseDto>> getCandidateApplication(
             final Authentication authentication) {
         try {
-            if (authentication == null) {
+            if (Objects.isNull(authentication)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("Unauthorized request. Please login first."));
             }

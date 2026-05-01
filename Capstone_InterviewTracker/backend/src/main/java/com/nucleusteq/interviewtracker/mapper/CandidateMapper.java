@@ -8,6 +8,8 @@ import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.InterviewStage;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Mapper for converting between Candidate entity and DTOs.
  * Keeps mapping logic out of the service layer.
@@ -44,7 +46,7 @@ public class CandidateMapper {
                 savedUser
         );
 
-        if (request.getDateOfBirth() != null) {
+        if (Objects.nonNull(request.getDateOfBirth())) {
             candidate.setDateOfBirth(request.getDateOfBirth());
         }
 
