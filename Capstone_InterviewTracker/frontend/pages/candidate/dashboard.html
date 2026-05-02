@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | My Progress</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/candidate-dashboard.css">
 </head>
 
 <body>
@@ -23,14 +24,12 @@
             </div>
 
             <!-- APPLICATION STATUS CARD -->
-            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;margin-bottom:20px;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+            <div class="dash-status-card">
+                <div class="dash-status-header">
                     <div>
-                        <div
-                            style="font-size:12px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:6px;">
-                            Applied For</div>
-                        <div style="font-size:20px;font-weight:700;color:#0f172a;" id="jobTitle">Loading...</div>
-                        <div style="font-size:13px;color:#64748b;margin-top:4px;" id="appliedDate">—</div>
+                        <div class="dash-job-info-label">Applied For</div>
+                        <div class="dash-job-title" id="jobTitle">Loading...</div>
+                        <div class="dash-applied-date" id="appliedDate">—</div>
                     </div>
                     <div id="currentStageBadge"></div>
                 </div>
@@ -39,48 +38,47 @@
                 <div class="stage-stepper" id="stageStepper">
                     <!-- built by JS -->
                 </div>
-                <div id="stageLabelsRow" style="display:flex;justify-content:space-between;">
-                    <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">Profiling</span>
-                    <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">Screening</span>
-                    <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">L1 Interview</span>
-                    <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">L2 Interview</span>
-                    <span class="stage-label" style="font-size:12px;flex:1;text-align:center;">HR Round</span>
+                <div id="stageLabelsRow" class="dash-stage-labels-row">
+                    <span class="dash-stage-label">Profiling</span>
+                    <span class="dash-stage-label">Screening</span>
+                    <span class="dash-stage-label">L1 Interview</span>
+                    <span class="dash-stage-label">L2 Interview</span>
+                    <span class="dash-stage-label">HR Round</span>
                 </div>
-                <div id="stageNote" style="margin-top:20px;font-size:15px;font-weight:500;color:#1e293b;text-align:center;"></div>
+                <div id="stageNote" class="dash-stage-note"></div>
             </div>
 
             <!-- INTERVIEW SECTION -->
-            <div class="single-col" style="display:grid;grid-template-columns:1fr;">
+            <div class="dash-interview-container">
                 <div>
                     <div id="interviewSection" style="display:none;" class="interview-card">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
-                            <h3 style="display:flex; align-items:center; gap:12px; margin:0; font-size:18px; font-weight:600;">
-                                <div style="background:rgba(255,255,255,0.2); padding:10px; border-radius:10px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+                        <div class="dash-interview-header">
+                            <h3 class="dash-interview-title">
+                                <div class="dash-interview-icon">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
                                 </div>
                                 Upcoming Interview
                             </h3>
-                            <div style="background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; letter-spacing:0.5px; border:1px solid rgba(255,255,255,0.2);" id="iStage">—</div>
+                            <div class="dash-interview-stage-label" id="iStage">—</div>
                         </div>
 
-                        <div style="display:flex; gap:40px; margin-bottom:8px;">
-                            <div>
-                                <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px; text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Date</div>
-                                <div style="font-size:16px; font-weight:500;" id="iDate">—</div>
+                        <div class="dash-interview-details">
+                            <div class="dash-interview-detail">
+                                <div class="dash-interview-detail-label">Date</div>
+                                <div class="dash-interview-detail-value" id="iDate">—</div>
                             </div>
-                            <div>
-                                <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px; text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Time</div>
-                                <div style="font-size:16px; font-weight:500;" id="iTime">—</div>
+                            <div class="dash-interview-detail">
+                                <div class="dash-interview-detail-label">Time</div>
+                                <div class="dash-interview-detail-value" id="iTime">—</div>
                             </div>
                         </div>
                     </div>
-                    <div id="noInterviewSection"
-                        style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;text-align:center;color:#94a3b8;">
-                        <div style="font-size:36px;margin-bottom:12px;color:#e2e8f0;display:flex;justify-content:center;">
+                    <div id="noInterviewSection" class="dash-no-interview">
+                        <div class="dash-no-interview-icon">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                         </div>
-                        <div style="font-size:15px;font-weight:500;color:#64748b;">No interview scheduled yet</div>
-                        <div style="font-size:13px;margin-top:6px;">HR will schedule your next interview soon</div>
+                        <div class="dash-no-interview-title">No interview scheduled yet</div>
+                        <div class="dash-no-interview-subtitle">HR will schedule your next interview soon</div>
                     </div>
                 </div>
             </div>

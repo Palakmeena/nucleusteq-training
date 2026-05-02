@@ -65,14 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Success state - Show verification message
             form.innerHTML = `
-                <div style="text-align:center; padding: 20px;">
-                    <div style="font-size: 48px; margin-bottom: 16px;">✉️</div>
-                    <h2 style="margin-bottom: 12px;">Check your email</h2>
-                    <p style="color: #64748b; line-height: 1.6; margin-bottom: 24px;">
+                <div class="auth-success-state">
+                    <div class="auth-success-icon">✉️</div>
+                    <h2 class="auth-success-title">Check your email</h2>
+                    <p class="auth-success-copy">
                         We've sent an activation link to <strong>${email}</strong>.<br>
                         Open the link, set your password, and then sign in.
                     </p>
-                    <a href="login.html" class="primary-btn" style="text-decoration:none; display:inline-block;">Go to Login</a>
+                    <a href="login.html" class="primary-btn auth-success-link">Go to Login</a>
                 </div>
             `;
         } catch (err) {

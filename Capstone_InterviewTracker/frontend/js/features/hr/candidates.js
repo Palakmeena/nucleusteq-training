@@ -163,6 +163,7 @@ document.getElementById('addCandidateForm').addEventListener('submit', async (e)
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.textContent = 'Creating...';
+    const resumeFile = document.getElementById('addResume').files[0];
     const body = {
         fullName: document.getElementById('addFullName').value,
         email: document.getElementById('addEmail').value,
@@ -232,11 +233,16 @@ document.getElementById('addCandidateForm').addEventListener('submit', async (e)
         btn.textContent = 'Create Candidate';
         return;
     }
+    if (!resumeFile) {
+        showToast('Resume is required.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Create Candidate';
+        return;
+    }
     try {
         const created = await api.createCandidateByHr(body);
-        const resumeFile = document.getElementById('addResume').files[0];
         const candidateId = created?.data?.id;
-        if (resumeFile && candidateId) {
+        if (candidateId) {
             await api.uploadResume(candidateId, resumeFile);
         }
         showToast('Candidate created successfully', 'success');

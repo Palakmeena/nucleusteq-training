@@ -132,6 +132,13 @@ async function submitApplication() {
         return;
     }
 
+    const resumeFile = document.getElementById('applyResume').files[0];
+    if (!resumeFile) {
+        errorMsg.textContent = 'Resume is required.';
+        errorMsg.style.display = 'block';
+        return;
+    }
+
     const emailValue = getApplyFieldValue('applyEmail').trim();
     const mobileValue = getApplyFieldValue('applyMobile').trim();
     const dobValue = getApplyFieldValue('applyDob');
@@ -208,11 +215,7 @@ async function submitApplication() {
     try {
         const res = await api.registerCandidate(payload);
         const candidateId = res.data.id;
-        const resumeFile = document.getElementById('applyResume').files[0];
-        
-        if (resumeFile) {
-            await api.uploadResume(candidateId, resumeFile);
-        }
+        await api.uploadResume(candidateId, resumeFile);
 
         successMsg.style.display = 'block';
         setTimeout(() => {

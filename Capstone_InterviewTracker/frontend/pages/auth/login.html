@@ -60,7 +60,7 @@
     <div class="right">
         <div class="login-card">
             <div class="card-header-row">
-                <h2 style="margin-bottom:0;">Sign In</h2>
+                <h2 class="auth-card-title">Sign In</h2>
             </div>
             <p class="subtitle">Enter your credentials to access HireTrack.</p>
 
@@ -75,17 +75,13 @@
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
 
-                <div id="loginError" style="color:#ef4444;font-size:14px;margin-bottom:10px;display:none;"></div>
-
-
+                <div id="loginError" class="auth-error"></div>
 
                 <button type="submit" class="primary-btn">
                     Access Account
                 </button>
 
-
-
-                <p class="signup-text" style="margin-top: 15px;">
+                <p class="signup-text auth-link-spaced">
                     Don't have an account? <a href="#" id="signupLink">Sign Up</a>
                 </p>
             </form>

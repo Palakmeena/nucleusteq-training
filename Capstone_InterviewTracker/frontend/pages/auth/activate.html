@@ -52,13 +52,15 @@
     <!-- RIGHT SIDE -->
     <div class="right">
         <div class="login-card">
-            <h2>Activate Account</h2>
+            <div class="card-header-row">
+                <h2 class="auth-card-title">Activate Account</h2>
+            </div>
             <p class="subtitle">Set your password to complete account activation.</p>
 
             <form id="activateForm">
                 <div class="form-group">
                     <label>New Password</label>
-                    <div style="position: relative;">
+                    <div class="auth-relative">
                         <input type="password" id="password" placeholder="Minimum 6 characters" required>
                     </div>
                 </div>
@@ -68,14 +70,14 @@
                     <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
                 </div>
 
-                <div id="activateError" style="display:none;background:#FEE2E2;color:#991B1B;padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px;"></div>
-                <div id="activateSuccess" style="display:none;background:#DCFCE7;color:#166534;padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px;"></div>
+                <div id="activateError" class="auth-box-msg auth-box-msg-error"></div>
+                <div id="activateSuccess" class="auth-box-msg auth-box-msg-success"></div>
 
                 <button type="submit" class="primary-btn" id="activateBtn">Activate Account</button>
             </form>
 
-            <p class="signup-text" style="margin-top:20px;">
-                Already activated? <a href="login.html">Sign In</a>
+            <p class="signup-text auth-link-spaced">
+                Already activated? <a href="./login.html">Sign In</a>
             </p>
         </div>
         

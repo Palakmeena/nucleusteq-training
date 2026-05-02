@@ -17,7 +17,7 @@
         <header class="topbar">
             <div class="topbar-nav">Job Descriptions</div>
             <div class="topbar-actions">
-                <button class="primary-btn" style="padding:8px 16px;" onclick="openModal()">+ Create JD</button>
+            <button class="primary-btn jd-create-btn" onclick="openModal()">+ Create JD</button>
             </div>
         </header>
 
@@ -32,16 +32,16 @@
 
     <div class="jd-modal-overlay" id="jdModal">
         <div class="modal-box">
-            <div style="padding: 24px 32px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                <h2 id="modalTitle" style="margin: 0; font-size: 20px;">Create Job Description</h2>
-                <button type="button" onclick="closeModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+            <div class="jd-modal-header">
+                <h2 id="modalTitle" class="jd-modal-title">Create Job Description</h2>
+                <button type="button" onclick="closeModal()" class="jd-modal-close">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
-            <div style="padding: 32px; overflow-y: auto; flex: 1;">
+            <div class="jd-modal-body">
                 <form id="createJdForm">
                 <div class="form-grid">
                     <div class="form-group"><label>Job Title</label><input type="text" id="jobTitle" required></div>
@@ -59,7 +59,7 @@
 
                     <div class="form-group">
                         <label>Experience Range (Years)</label>
-                        <div style="display:flex; gap:10px;">
+                        <div class="jd-exp-salary-row">
                             <input type="number" id="minExp" placeholder="Min" required min="0">
                             <input type="number" id="maxExp" placeholder="Max" required min="0">
                         </div>
@@ -67,7 +67,7 @@
 
                     <div class="form-group">
                         <label>Salary Range (LPA)</label>
-                        <div style="display:flex; gap:10px;">
+                        <div class="jd-exp-salary-row">
                             <input type="number" id="minSalary" placeholder="Min" required min="0">
                             <input type="number" id="maxSalary" placeholder="Max" required min="0">
                         </div>
@@ -76,7 +76,7 @@
                     <div class="form-group">
                         <label>Skills (Press Enter to add)</label>
                         <input type="text" id="skillInput" placeholder="Java, Spring Boot...">
-                        <div id="skillsList" style="margin-top: 8px;"></div>
+                        <div id="skillsList" class="jd-skills-list"></div>
                     </div>
 
                     <div class="form-group full-width">
@@ -85,7 +85,7 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+                <div class="jd-form-footer">
                     <button type="button" class="secondary-btn" onclick="closeModal()">Cancel</button>
                     <button type="submit" class="primary-btn">Publish Position</button>
                 </div>

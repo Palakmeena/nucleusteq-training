@@ -279,6 +279,143 @@ input:focus {
     font-weight: 500;
 }
 
+.auth-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.auth-card-title {
+    margin-bottom: 0;
+}
+
+.auth-subtitle-tight {
+    margin-bottom: 20px;
+}
+
+.auth-form-group-tight {
+    margin-bottom: 15px;
+}
+
+.auth-form-group-zero {
+    margin-bottom: 0;
+}
+
+.auth-grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 15px;
+}
+
+.auth-code-group {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.auth-code-prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.auth-input-compact {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 0;
+}
+
+.auth-input-noborder {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 10px 14px;
+    margin-bottom: 0;
+}
+
+.auth-input-outline {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #1e293b;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.auth-error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+.auth-submit-spaced {
+    margin-top: 10px;
+}
+
+.auth-link-spaced {
+    margin-top: 15px;
+}
+
+.auth-relative {
+    position: relative;
+}
+
+.auth-box-msg {
+    display: none;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.auth-box-msg-error {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.auth-box-msg-success {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.auth-success-state {
+    text-align: center;
+    padding: 20px;
+}
+
+.auth-success-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.auth-success-title {
+    margin-bottom: 12px;
+}
+
+.auth-success-copy {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.auth-success-link {
+    text-decoration: none;
+    display: inline-block;
+}
+
 /* FOOTER */
 .footer-text {
     position: absolute;

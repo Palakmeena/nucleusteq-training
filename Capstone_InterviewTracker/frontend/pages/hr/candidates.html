@@ -18,7 +18,7 @@
         <header class="topbar">
             <div class="topbar-nav">Candidates</div>
             <div class="topbar-actions">
-                <button class="primary-btn" style="padding:8px 16px;" onclick="openAddModal()">+ Add Candidate</button>
+                <button class="primary-btn cand-add-btn" onclick="openAddModal()">+ Add Candidate</button>
             </div>
         </header>
 
@@ -31,18 +31,17 @@
             </div>
 
             <!-- FILTERS -->
-            <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-                <div class="search-container" style="flex:1;max-width:320px;margin-bottom:0;">
+            <div class="cand-filter-row">
+                <div class="search-container cand-search-box">
                     <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;">
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                     <input type="text" id="searchInput" placeholder="Search by name or email..."
-                        oninput="filterCandidates()" style="padding-left:40px;">
+                        oninput="filterCandidates()" class="cand-search-input">
                 </div>
-                <select id="stageFilter" class="filter-btn" onchange="filterCandidates()" style="padding:10px 14px;">
+                <select id="stageFilter" class="filter-btn" onchange="filterCandidates()">
                     <option value="">All Stages</option>
                     <option value="PROFILING">Profiling</option>
                     <option value="SCREENING">Screening</option>
@@ -52,7 +51,7 @@
                     <option value="SELECTED">Selected</option>
                     <option value="REJECTED">Rejected</option>
                 </select>
-                <span id="countLabel" style="line-height:42px;font-size:13px;color:#64748b;"></span>
+                <span id="countLabel" class="cand-count-label"></span>
             </div>
 
             <!-- TABLE -->
@@ -70,7 +69,7 @@
                     </thead>
                     <tbody id="candidateTableBody">
                         <tr>
-                            <td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">Loading...</td>
+                            <td colspan="6" class="cand-loading-td">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -79,14 +78,12 @@
     </main>
 
     <!-- ADD CANDIDATE MODAL -->
-    <div id="addCandidateModal" class="modal-view"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
-        <div
-            style="background:white;border-radius:16px;width:95%;max-width:800px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
-            <div style="padding:32px;overflow-y:auto;flex:1;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-                <h2 style="margin:0;font-size:20px;font-weight:700;">Add New Candidate</h2>
-                <button type="button" onclick="closeAddModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+    <div id="addCandidateModal" class="cand-modal-add">
+        <div class="cand-modal-card">
+            <div class="cand-modal-scroll">
+            <div class="cand-modal-header">
+                <h2 class="cand-modal-title">Add New Candidate</h2>
+                <button type="button" onclick="closeAddModal()" class="cand-modal-close-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -94,25 +91,23 @@
                 </button>
             </div>
             <form id="addCandidateForm">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="cand-form-grid-2col">
                     <div class="form-group"><label>Full Name</label><input type="text" id="addFullName" required></div>
                     <div class="form-group"><label>Email Address</label><input type="email" id="addEmail" required>
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group cand-form-span2">
                         <label>Mobile Number</label>
-                        <div
-                            style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                            <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
+                        <div class="cand-phone-group">
+                            <div class="cand-phone-prefix">+91</div>
                             <input type="text" id="addMobile" placeholder="Enter 10-digit number" required
                                 maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                style="flex:1; border:none; border-radius:0; padding:10px 14px;">
+                                class="cand-phone-input">
                         </div>
                     </div>
                     <div class="form-group"><label>Job Role</label><select id="jdSelect" required></select></div>
                     <div class="form-group">
                         <label>Gender</label>
-                        <select id="addGender" required
-                            style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                        <select id="addGender" required class="cand-select-skill">
                             <option value="" disabled selected>Select Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -131,12 +126,12 @@
                             required min="0"></div>
                     <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required></div>
                     <div class="form-group"><label>Date of Birth</label><input type="date" id="addDob" required></div>
-                    <div class="form-group" style="grid-column: span 2;"><label>Resume (PDF)</label><input type="file"
+                    <div class="form-group cand-form-span2"><label>Resume (PDF)</label><input type="file"
                             id="addResume" accept=".pdf,application/pdf"></div>
-                    <div class="form-group" style="grid-column: span 2;"><label>Preferred Location</label><input
+                    <div class="form-group cand-form-span2"><label>Preferred Location</label><input
                             type="text" id="addLocation" required></div>
                 </div>
-                <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px;">
+                <div class="cand-modal-footer">
                     <button type="button" class="secondary-btn" onclick="closeAddModal()">Cancel</button>
                     <button type="submit" class="primary-btn">Create Candidate</button>
                 </div>
@@ -146,14 +141,12 @@
     </div>
 
     <!-- CANDIDATE VIEW MODAL -->
-    <div id="viewCandidateModal"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;"
-        class="modal-view">
-        <div style="background:white;border-radius:16px;width:90%;max-width:720px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+    <div id="viewCandidateModal" class="cand-modal-view">
+        <div class="cand-view-card">
             <!-- Modal Header -->
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:24px 32px;border-bottom:1px solid #f1f5f9;background:#fff;z-index:1;">
-                <h2 style="margin:0;font-size:20px;font-weight:700;">Candidate Profile</h2>
-                <button onclick="closeViewModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+            <div class="cand-view-header">
+                <h2 class="cand-view-title">Candidate Profile</h2>
+                <button onclick="closeViewModal()" class="cand-modal-close-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -162,227 +155,174 @@
             </div>
 
             <!-- Modal Body -->
-            <div style="padding:32px;overflow-y:auto;flex:1;background:#f8fafc;">
-                <div style="margin-bottom:30px;">
-                    <h3
-                        style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
-                        Personal Information</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+            <div class="cand-view-scroll">
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Personal Information</h3>
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Full
-                                Name</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateName">—</div>
+                            <label class="cand-view-label">Full Name</label>
+                            <div class="cand-view-value" id="candidateName">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Email</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateEmail">—</div>
+                            <label class="cand-view-label">Email</label>
+                            <div class="cand-view-value" id="candidateEmail">—</div>
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Mobile</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateMobile">—</div>
+                            <label class="cand-view-label">Mobile</label>
+                            <div class="cand-view-value" id="candidateMobile">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Date
-                                of Birth</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateDob">—</div>
+                            <label class="cand-view-label">Date of Birth</label>
+                            <div class="cand-view-value" id="candidateDob">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Gender</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateGender">—</div>
+                            <label class="cand-view-label">Gender</label>
+                            <div class="cand-view-value" id="candidateGender">—</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-bottom:30px;">
-                    <h3
-                        style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
-                        Professional Information</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Professional Information</h3>
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current
-                                Organization</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateOrg">—</div>
+                            <label class="cand-view-label">Current Organization</label>
+                            <div class="cand-view-value" id="candidateOrg">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Preferred
-                                Location</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateLocation">—</div>
+                            <label class="cand-view-label">Preferred Location</label>
+                            <div class="cand-view-value" id="candidateLocation">—</div>
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Total
-                                Experience</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateTotalExp">—</div>
+                            <label class="cand-view-label">Total Experience</label>
+                            <div class="cand-view-value" id="candidateTotalExp">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Relevant
-                                Experience</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateRelExp">—</div>
+                            <label class="cand-view-label">Relevant Experience</label>
+                            <div class="cand-view-value" id="candidateRelExp">—</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-bottom:30px;">
-                    <h3
-                        style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
-                        Compensation & Availability</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Compensation & Availability</h3>
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current
-                                CTC</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateCurrentCtc">—</div>
+                            <label class="cand-view-label">Current CTC</label>
+                            <div class="cand-view-value" id="candidateCurrentCtc">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Expected
-                                CTC</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateExpectedCtc">—</div>
+                            <label class="cand-view-label">Expected CTC</label>
+                            <div class="cand-view-value" id="candidateExpectedCtc">—</div>
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Notice
-                                Period</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateNotice">—</div>
+                            <label class="cand-view-label">Notice Period</label>
+                            <div class="cand-view-value" id="candidateNotice">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Source</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateSource">—</div>
+                            <label class="cand-view-label">Source</label>
+                            <div class="cand-view-value" id="candidateSource">—</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-bottom:20px;">
-                    <h3
-                        style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">
-                        Application Information</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Application Information</h3>
+                    <div class="cand-view-grid">
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Job
-                                Title Applied</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateJobTitle">—</div>
+                            <label class="cand-view-label">Job Title Applied</label>
+                            <div class="cand-view-value" id="candidateJobTitle">—</div>
                         </div>
                         <div>
-                            <label
-                                style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Applied
-                                On</label>
-                            <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateAppliedOn">—</div>
+                            <label class="cand-view-label">Applied On</label>
+                            <div class="cand-view-value" id="candidateAppliedOn">—</div>
                         </div>
                     </div>
                     <div>
-                        <label
-                            style="display:block;font-size:12px;font-weight:500;color:#64748b;margin-bottom:4px;">Current
-                            Stage</label>
-                        <div style="font-size:14px;font-weight:500;color:#1e293b;" id="candidateStage">—</div>
+                        <label class="cand-view-label">Current Stage</label>
+                        <div class="cand-view-value" id="candidateStage">—</div>
                     </div>
-                    <div
-                        style="margin-top:20px; padding:16px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
-                        <label
-                            style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Attachments</label>
+                    <div class="cand-view-attachments">
+                        <label class="cand-view-attachments-label">Attachments</label>
                         <div id="resumeSection">
-                            <a id="candidateResumeLink" href="#" target="_blank"
-                                style="display:inline-flex;align-items:center;gap:8px;background:#4f46e5;color:white;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:all 0.2s;">
+                            <a id="candidateResumeLink" href="#" target="_blank" class="cand-view-resume-link">
                                 View Resume
                             </a>
-                            <p id="noResumeMsg" style="margin:0;font-size:14px;color:#94a3b8;display:none;">No resume
+                            <p id="noResumeMsg" class="cand-view-no-resume">No resume
                                 uploaded yet.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div style="display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid #e2e8f0;">
-                <button onclick="closeViewModal()"
-                    style="background:white;border:1px solid #e2e8f0;color:#475569;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;font-size:14px;">Close</button>
+            <div class="cand-view-footer">
+                <button onclick="closeViewModal()" class="cand-view-close-btn">Close</button>
             </div>
         </div>
     </div>
 
     <!-- SCHEDULE INTERVIEW MODAL -->
-    <div id="scheduleModal" class="modal-view"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:100;align-items:center;justify-content:center;">
-        <div
-            style="background:white;border-radius:16px;width:95%;max-width:550px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
-            <div style="padding:32px;overflow-y:auto;flex:1;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-                <h2 style="margin:0;font-size:18px;font-weight:700;">Schedule Interview</h2>
-                <button onclick="closeScheduleModal()"
-                    style="background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;">×</button>
+    <div id="scheduleModal" class="cand-modal-schedule">
+        <div class="cand-sched-card">
+            <div class="cand-sched-header">
+            <div class="cand-sched-top">
+                <h2 class="cand-sched-title">Schedule Interview</h2>
+                <button type="button" onclick="closeScheduleModal()" class="cand-sched-close">×</button>
             </div>
-            <div id="schedError"
-                style="display:none;background:#fee2e2;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;">
+            <div id="scheduleError" class="cand-sched-error"></div>
             </div>
             <form id="scheduleForm">
                 <div class="form-group">
                     <label>Interview Stage *</label>
-                    <select id="schedStage"
-                        style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                    <select id="schedStage" class="cand-sched-input">
                         <option value="">Select stage</option>
                         <option value="L1_TECHNICAL">L1 Technical</option>
                         <option value="L2_TECHNICAL">L2 Technical</option>
                         <option value="HR_ROUND">HR Round</option>
                     </select>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-                    <div class="form-group"><label>Date *</label><input type="date" id="schedDate"
-                            style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
+                <div class="cand-sched-row">
+                    <div class="form-group"><label>Date *</label><input type="date" id="schedDate" class="cand-sched-input"></div>
                     <div class="form-group">
                         <label>Time *</label>
-                        <div style="display:flex; gap:8px;">
-                            <select id="schedHour" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                        <div class="cand-sched-time-inputs">
+                            <select id="schedHour" class="cand-sched-time-select">
                                 <option value="">HH</option>
                                 <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
                                 <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option>
                                 <option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
                             </select>
-                            <span style="display:flex;align-items:center;font-weight:bold;">:</span>
-                            <select id="schedMinute" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                            <span class="cand-sched-time-sep">:</span>
+                            <select id="schedMinute" class="cand-sched-time-select">
                                 <option value="">MM</option>
                                 <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
                             </select>
-                            <select id="schedAmPm" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;">
+                            <select id="schedAmPm" class="cand-sched-time-select">
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="form-group" style="margin-top:16px;"><label>Meeting Link</label><input type="url"
-                        id="schedLink" placeholder="https://meet.google.com/..."
-                        style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"></div>
-                <div class="form-group" style="margin-top:16px;"><label>Focus Areas</label><textarea id="schedFocus"
-                        rows="2" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"
-                        placeholder="Specific topics for the panel..."></textarea></div>
+                <div class="form-group cand-sched-row"><label>Meeting Link</label><input type="url" id="schedLink" placeholder="https://meet.google.com/..." class="cand-sched-input"></div>
+                <div class="form-group cand-sched-row"><label>Focus Areas</label><textarea id="schedFocus" rows="2" class="cand-sched-input" placeholder="Specific topics for the panel..."></textarea></div>
 
-                <div class="form-group" id="panelGroup" style="margin-top:16px;">
+                <div class="form-group cand-panel-group" id="panelGroup">
                     <label>Assign Panel Members * (Max 2)</label>
-                    <div id="selectedPanelsDisplay"
-                        style="display:none;background:#f8faff;padding:10px;border-radius:8px;margin-bottom:12px;border:1px solid #e2e8f0;">
+                    <div id="selectedPanelsDisplay" class="cand-sched-panel-box">
                         <div id="selectedList"></div>
                     </div>
-                    <input type="text" id="panelSearchInput" placeholder="Search panel by name..."
-                        style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;"
-                        oninput="filterPanels()">
-                    <div id="panelOptions" style="margin-top:8px;max-height:150px;overflow-y:auto;"></div>
+                    <input type="text" id="panelSearchInput" placeholder="Search panel by name..." class="cand-sched-input" oninput="filterPanels()">
+                    <div id="panelOptions" class="cand-sched-panel-list"></div>
                 </div>
 
-                <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px;">
+                <div class="cand-sched-footer">
                     <button type="button" class="secondary-btn" onclick="closeScheduleModal()">Cancel</button>
                     <button type="button" class="primary-btn" onclick="scheduleInterview()" id="saveBtn">Schedule
                         Now</button>

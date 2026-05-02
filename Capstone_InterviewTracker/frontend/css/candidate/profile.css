@@ -1,0 +1,91 @@
+/* Candidate Profile Page Styles */
+
+.profile-wrapper {
+    max-width: 1000px;
+}
+
+.profile-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.profile-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.profile-form-span2 {
+    grid-column: span 2;
+}
+
+.profile-phone-group {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.profile-phone-code {
+    width: 70px;
+    border: none;
+    border-right: 1px solid #e2e8f0;
+    border-radius: 0;
+    background: #f8fafc;
+    text-align: center;
+    padding: 10px 5px;
+}
+
+.profile-phone-input {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 10px 14px;
+}
+
+.profile-gender-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.profile-resume-box {
+    margin-top: 24px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.profile-resume-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.profile-resume-input {
+    display: none;
+}
+
+.profile-resume-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-resume-status {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.profile-form-footer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}

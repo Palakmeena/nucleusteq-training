@@ -58,40 +58,40 @@
 
     <!-- RIGHT SIDE -->
     <div class="right">
-        <div class="login-card" style="padding: 30px;">
+        <div class="login-card">
             <div class="card-header-row">
-                <h2 style="margin-bottom:0;">Create Account</h2>
+                <h2 class="auth-card-title">Create Account</h2>
             </div>
-            <p class="subtitle" style="margin-bottom: 20px;">Create your candidate profile. We'll email you a link to set your password.</p>
+            <p class="subtitle auth-subtitle-tight">Create your candidate profile. We'll email you a link to set your password.</p>
 
             <form id="signupForm">
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group auth-form-group-tight">
                     <label>Full Name</label>
-                    <input type="text" id="fullName" placeholder="John Doe" required style="padding: 10px 14px; margin-bottom: 0;">
+                    <input type="text" id="fullName" placeholder="John Doe" required class="auth-input-compact">
                 </div>
                 
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group auth-form-group-tight">
                     <label>Email Address</label>
-                    <input type="email" id="email" placeholder="name@company.com" required style="padding: 10px 14px; margin-bottom: 0;">
+                    <input type="email" id="email" placeholder="name@company.com" required class="auth-input-compact">
                 </div>
 
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group auth-form-group-tight">
                     <label>Phone Number</label>
-                    <div style="display:flex; gap:0; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                        <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
-                        <input type="text" id="mobileNumber" placeholder="Enter 10-digit number" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="flex:1; border:none; border-radius:0; padding:10px 14px; margin-bottom:0;">
+                    <div class="auth-code-group">
+                        <div class="auth-code-prefix">+91</div>
+                        <input type="text" id="mobileNumber" placeholder="Enter 10-digit number" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="auth-input-noborder">
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:15px;">
-                    <div class="form-group" style="margin-bottom: 0;">
+                <div class="auth-grid-two">
+                    <div class="form-group auth-form-group-zero">
                         <label>Date of Birth</label>
-                        <input type="date" id="dateOfBirth" required style="width:100%; padding: 10px 14px; margin-bottom: 0; border:1px solid #e2e8f0; border-radius:8px; color:#1e293b; background:#fff; box-sizing: border-box;">
+                        <input type="date" id="dateOfBirth" required class="auth-input-outline">
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-group auth-form-group-zero">
                         <label>Gender</label>
-                        <select id="gender" required style="width:100%; padding: 10px 14px; margin-bottom: 0; border:1px solid #e2e8f0; border-radius:8px; color:#1e293b; background:#fff; box-sizing: border-box;">
+                        <select id="gender" required class="auth-input-outline">
                             <option value="" disabled selected>Select gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -100,13 +100,13 @@
                     </div>
                 </div>
 
-                <div id="signupError" style="color: #ef4444; font-size: 14px; margin-bottom: 10px; display: none;"></div>
+                <div id="signupError" class="auth-error"></div>
 
-                <button type="submit" class="primary-btn" style="margin-top: 10px;">
+                <button type="submit" class="primary-btn auth-submit-spaced">
                     Create Account
                 </button>
 
-                <p class="signup-text" style="margin-top: 15px;">
+                <p class="signup-text auth-link-spaced">
                     Already have an account? <a href="#" id="loginLink">Sign In</a>
                 </p>
             </form>

@@ -449,6 +449,34 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
     }
 }
 
+/* Table Header Styles */
+.table-header-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.table-header-link {
+    font-size: 13px;
+    color: #4f46e5;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.table-header-link:hover {
+    color: #4338ca;
+}
+
+.table-loading-cell {
+    text-align: center;
+    padding: 32px;
+    color: #94a3b8;
+}
+
+/* Panel Overview Metrics */
+.metrics-grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 /* ===== CANDIDATE PROFILE ===== */
 .profile-shell {
     background: #fff;
