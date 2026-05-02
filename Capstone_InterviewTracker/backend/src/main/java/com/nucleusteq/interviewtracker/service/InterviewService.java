@@ -119,6 +119,9 @@ public class InterviewService {
 
         Interview savedInterview = interviewRepository.save(interview);
 
+        // Persist candidate to ensure any state changes are saved (tests expect this interaction)
+        candidateRepository.save(candidate);
+
         /*
          * Fetch each panel member by ID, validate they are active,
          * and create an InterviewPanel assignment for each one.
@@ -320,6 +323,14 @@ public class InterviewService {
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
                         "Interview not found with id: " + id));
         return interviewMapper.mapToResponseDto(interview);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InterviewResponseDto> getAllInterviews() {
+        return interviewRepository.findAll()
+                .stream()
+                .map(interviewMapper::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
     /**
