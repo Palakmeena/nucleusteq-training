@@ -28,9 +28,17 @@ async function request(method, path, body = null) {
 
 const api = {
     // AUTH
-    login: (email, password) => request('POST', '/auth/login', { email, password }),
+    // Encode password with Base64 on the wire (obfuscation only)
+    login: (email, password) => {
+        const encoded = typeof btoa === 'function' ? btoa(password) : Buffer.from(password, 'utf8').toString('base64');
+        return request('POST', '/auth/login', { email, password: encoded });
+    },
     signup: (body) => request('POST', '/auth/signup', body),
-    activate: (token, password) => request('POST', `/auth/activate?token=${token}&password=${encodeURIComponent(password)}`),
+    // Activation: send token as query param (legacy) and Base64-encode password
+    activate: (token, password) => {
+        const encoded = typeof btoa === 'function' ? btoa(password) : Buffer.from(password, 'utf8').toString('base64');
+        return request('POST', `/auth/activate?token=${encodeURIComponent(token)}&password=${encodeURIComponent(encoded)}`);
+    },
     verifyCandidate: (token) => request('POST', `/auth/verify-candidate?token=${token}`),
 
     // JD - public

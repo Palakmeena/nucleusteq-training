@@ -152,15 +152,25 @@ public class PanelMemberController {
                         final String password) {
 
         try {
+                        // If password was Base64-obfuscated by frontend, decode it here (backwards-compatible)
+                        String decodedPassword = password;
+                        try {
+                            if (password != null && password.matches("^[A-Za-z0-9+/=]+$")) {
+                                decodedPassword = new String(java.util.Base64.getDecoder().decode(password), java.nio.charset.StandardCharsets.UTF_8);
+                            }
+                        } catch (IllegalArgumentException ignored) {
+                            // leave password as-is
+                        }
+
                         // Find the user by token to determine their role
                         User user = userRepository.findByActivationToken(token)
                                         .orElseThrow(() -> new IllegalArgumentException("Invalid activation token"));
 
                         // Route to appropriate activation method based on role
                         if (user.getRole() == UserRole.PANEL) {
-                                panelMemberService.activatePanelMember(token, password);
+                                panelMemberService.activatePanelMember(token, decodedPassword);
                         } else if (user.getRole() == UserRole.CANDIDATE) {
-                                candidateService.activateCandidateAccount(token, password);
+                                candidateService.activateCandidateAccount(token, decodedPassword);
                         } else {
                                 throw new IllegalArgumentException("Invalid user role for activation");
                         }

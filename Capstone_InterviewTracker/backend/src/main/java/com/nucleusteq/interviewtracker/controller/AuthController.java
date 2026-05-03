@@ -9,6 +9,8 @@ import com.nucleusteq.interviewtracker.util.AppConstants;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,19 @@ public class AuthController {
             @Valid @RequestBody LoginRequestDto request) {
 
         try {
+            // If frontend sent Base64-encoded password, decode it here (backwards-compatible)
+            String pw = request.getPassword();
+            if (pw != null && pw.matches("^[A-Za-z0-9+/=]+$") ) {
+                try {
+                    byte[] decoded = Base64.getDecoder().decode(pw);
+                    String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+                    if (decodedStr.length() >= 6) {
+                        request.setPassword(decodedStr);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                    // not valid base64, keep original
+                }
+            }
             LoginResponseDto loginResponse = authService.login(request);
             logger.info("User logged in: {}", request.getEmail());
             return ResponseEntity.ok(ApiResponse.success(AppConstants.LOGIN_SUCCESS, loginResponse));
