@@ -251,6 +251,9 @@ public class PanelMemberController {
             return ResponseEntity.ok(
                     ApiResponse.success("Panel member removed successfully", null)
             );
+                } catch (IllegalStateException e) {
+                        logger.warn("Panel member delete blocked for {}: {}", id, e.getMessage());
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(e.getMessage()));
                 } catch (jakarta.persistence.EntityNotFoundException e) {
                         logger.warn("Panel member delete failed - not found: {}", id);
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));

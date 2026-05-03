@@ -56,26 +56,26 @@ async function loadAvailableJobs() {
         allOpenJobs = jobs;
 
         if (!jobs.length) {
-            jobsEl.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:28px;">No open roles from HR right now.</div>';
+            jobsEl.innerHTML = '<div class="job-empty-msg">No open roles from HR right now.</div>';
             return;
         }
 
         jobsEl.innerHTML = jobs.map(j => `
             <div class="job-row-card">
-                <div style="flex:1;min-width:0;">
+                <div class="job-main">
                     <div class="job-title">${j.jobTitle || 'Untitled Role'}</div>
                     <div class="job-meta"> ${j.location || 'N/A'} &nbsp;|&nbsp;  ${j.jobType || 'N/A'} &nbsp;|&nbsp;  ${j.minExperience ?? 0}-${j.maxExperience ?? 0} yrs &nbsp;|&nbsp;  ${j.minSalary ?? 0}-${j.maxSalary ?? 0} LPA</div>
                     <div class="job-desc">${shortText(j.jobDescription)}</div>
                     <div class="tag-wrap">${(j.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
                 </div>
-                <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
-                    <button class="secondary-btn" style="padding:8px 14px;font-size:13px;" onclick="openJobDetails(${j.id})">View Job</button>
+                <div class="job-actions">
+                    <button class="secondary-btn btn-compact" onclick="openJobDetails(${j.id})">View Job</button>
                     <button class="apply-btn" onclick="openApplyModal(${j.id}, '${j.jobTitle.replace(/'/g, "\\'")}')" ${locked ? 'disabled' : ''}>${locked ? 'Application Locked' : 'Apply Now'}</button>
                 </div>
             </div>
         `).join('');
     } catch (e) {
-        jobsEl.innerHTML = '<div style="text-align:center;color:#ef4444;padding:28px;">Failed to load open roles.</div>';
+        jobsEl.innerHTML = '<div class="job-error-msg">Failed to load open roles.</div>';
     }
 }
 

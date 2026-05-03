@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Create Job Description</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/hr/create-jd.css">
 </head>
 
 <body>
@@ -75,11 +76,9 @@
     <main class="main-area">
         <header class="topbar">
             <div class="topbar-nav"><a href="../../index.html">Job Descriptions</a><span
-                    style="color:#cbd5e1">/</span><a href="#" class="active">Create New</a></div>
+                    class="create-jd-breadcrumb-separator">/</span><a href="#" class="active">Create New</a></div>
             <div class="topbar-actions">
-                <div
-                    style="width:32px;height:32px;background:#eef2ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;color:#4f46e5;">
-                    HR</div>
+                <div class="create-jd-avatar-badge">HR</div>
             </div>
         </header>
 
@@ -112,7 +111,7 @@
                             </select>
                         </div>
                         <div class="form-group"><label>Experience Range</label>
-                            <div style="display:flex;gap:8px;"><input type="number" id="minExp" placeholder="Min"
+                            <div class="create-jd-inline-row"><input type="number" id="minExp" placeholder="Min"
                                     min="0" required><input type="number" id="maxExp" placeholder="Max" min="0"
                                     required></div>
                         </div>
@@ -125,15 +124,15 @@
                     </div>
                     <div class="form-group">
                         <label>Skills Required</label>
-                        <div style="display:flex;gap:8px;"><input type="text" id="skillInput"
-                                placeholder="Type a skill and press Add"><button type="button" class="secondary-btn"
-                                onclick="addSkill()" style="white-space:nowrap;">+ Add</button></div>
+                        <div class="create-jd-inline-row"><input type="text" id="skillInput"
+                            placeholder="Type a skill and press Add"><button type="button" class="secondary-btn create-jd-skill-add-btn"
+                            onclick="addSkill()">+ Add</button></div>
                         <div class="skills-container" id="skillsList"></div>
                     </div>
-                    <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;">
+                    <div class="create-jd-form-actions">
                         <button type="button" class="secondary-btn"
                             onclick="window.location.href='../../index.html'">Cancel</button>
-                        <button type="submit" class="primary-btn" style="width:auto;">Publish Job</button>
+                        <button type="submit" class="primary-btn create-jd-primary-auto">Publish Job</button>
                     </div>
                 </form>
             </div>

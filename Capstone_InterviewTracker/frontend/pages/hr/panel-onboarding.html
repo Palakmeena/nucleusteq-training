@@ -15,7 +15,7 @@
     <header class="topbar">
         <div class="topbar-nav">Panel Members</div>
         <div class="topbar-actions">
-            <button class="primary-btn" style="padding:8px 16px; display:flex; align-items:center; gap:8px;" onclick="document.getElementById('addPanelModal').classList.add('active')">
+            <button class="primary-btn panel-topbar-btn" onclick="document.getElementById('addPanelModal').classList.add('active')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Add Panel Member
             </button>
@@ -30,66 +30,66 @@
             </div>
         </div>
 
-        <div id="panelList"><div style="text-align:center;padding:40px;color:#94a3b8;">Loading...</div></div>
+        <div id="panelList"><div class="panel-loading-state">Loading...</div></div>
     </div>
 </main>
 
 <!-- ADD PANEL MODAL -->
 <div class="modal-overlay" id="addPanelModal">
     <div class="modal-box">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-            <h3 style="font-size:18px;">Add Panel Member</h3>
-            <button onclick="document.getElementById('addPanelModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">
+        <div class="panel-modal-header-row">
+            <h3 class="panel-modal-title">Add Panel Member</h3>
+            <button onclick="document.getElementById('addPanelModal').classList.remove('active')" class="panel-close-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
-        <div id="panelFormError" style="display:none;background:#FEE2E2;color:#991B1B;padding:10px;border-radius:8px;margin-bottom:12px;font-size:14px;"></div>
+        <div id="panelFormError" class="panel-form-error"></div>
         <div class="form-row">
             <div class="form-group"><label>Full Name *</label><input type="text" id="pFullName" placeholder="John Rao"></div>
             <div class="form-group"><label>Email *</label><input type="email" id="pEmail" placeholder="john@company.com"></div>
         </div>
         <div class="form-row">
             <div class="form-group"><label>Mobile Number *</label>
-                <div style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                    <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
-                    <input type="text" id="pMobile" placeholder="9876543210" style="flex:1; border:none; border-radius:0; padding:10px 14px;" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <div class="panel-phone-group">
+                    <div class="panel-phone-prefix">+91</div>
+                    <input type="text" id="pMobile" placeholder="9876543210" class="panel-phone-input" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
             </div>
             <div class="form-group"><label>Organization *</label><input type="text" id="pOrg" placeholder="TechCorp"></div>
         </div>
         <div class="form-group"><label>Designation *</label><input type="text" id="pDesignation" placeholder="Senior Developer"></div>
-        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+        <div class="panel-action-row">
             <button class="secondary-btn" onclick="document.getElementById('addPanelModal').classList.remove('active')">Cancel</button>
-            <button class="primary-btn" style="width:auto;" onclick="createPanel()">Create & Send Activation Link</button>
+            <button class="primary-btn panel-primary-auto" onclick="createPanel()">Create & Send Activation Link</button>
         </div>
     </div>
 </div>
 <!-- EDIT PANEL MODAL -->
 <div class="modal-overlay" id="editPanelModal">
     <div class="modal-box">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-            <h3 style="font-size:18px;">Edit Panel Member</h3>
-            <button onclick="document.getElementById('editPanelModal').classList.remove('active')" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;">
+        <div class="panel-modal-header-row">
+            <h3 class="panel-modal-title">Edit Panel Member</h3>
+            <button onclick="document.getElementById('editPanelModal').classList.remove('active')" class="panel-close-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
         <div class="form-row">
             <div class="form-group"><label>Full Name *</label><input type="text" id="eFullName"></div>
-            <div class="form-group"><label>Email (Account ID)</label><input type="text" id="eEmail" disabled style="background:#f8fafc;cursor:not-allowed;"></div>
+            <div class="form-group"><label>Email (Account ID)</label><input type="text" id="eEmail" disabled class="panel-disabled-input"></div>
         </div>
         <div class="form-row">
             <div class="form-group"><label>Mobile Number *</label>
-                <div style="display:flex; gap:0; border:1.5px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                    <div style="display:flex;align-items:center;padding:0 14px;background:#f8fafc;border-right:1px solid #e2e8f0;color:#64748b;font-weight:600;font-size:14px;">+91</div>
-                    <input type="text" id="eMobile" style="flex:1; border:none; border-radius:0; padding:10px 14px;" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <div class="panel-phone-group">
+                    <div class="panel-phone-prefix">+91</div>
+                    <input type="text" id="eMobile" class="panel-phone-input" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
             </div>
             <div class="form-group"><label>Organization *</label><input type="text" id="eOrg"></div>
         </div>
         <div class="form-group"><label>Designation *</label><input type="text" id="eDesignation"></div>
-        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+        <div class="panel-action-row">
             <button class="secondary-btn" onclick="document.getElementById('editPanelModal').classList.remove('active')">Cancel</button>
-            <button class="primary-btn" style="width:auto;" onclick="updatePanel()">Save Changes</button>
+            <button class="primary-btn panel-primary-auto" onclick="updatePanel()">Save Changes</button>
         </div>
     </div>
 </div>

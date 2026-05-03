@@ -1,10 +1,8 @@
-/* HR Create Job Description Styles */
-
-.jd-breadcrumb-sep {
+.create-jd-breadcrumb-separator {
     color: #cbd5e1;
 }
 
-.jd-avatar {
+.create-jd-avatar-badge {
     width: 32px;
     height: 32px;
     background: #eef2ff;
@@ -16,27 +14,22 @@
     color: #4f46e5;
 }
 
-.jd-exp-inputs {
+.create-jd-inline-row {
     display: flex;
     gap: 8px;
 }
 
-.jd-skill-inputs {
-    display: flex;
-    gap: 8px;
-}
-
-.jd-skill-add-btn {
+.create-jd-skill-add-btn {
     white-space: nowrap;
 }
 
-.jd-form-footer {
+.create-jd-form-actions {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
     margin-top: 24px;
 }
 
-.jd-submit-btn {
+.create-jd-primary-auto {
     width: auto;
 }

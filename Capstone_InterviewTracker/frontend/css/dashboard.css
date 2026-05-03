@@ -2,6 +2,7 @@
 /* Used by all dashboard pages (HR, Candidate, Panel) */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('utils.css');
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
@@ -678,6 +679,11 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
 .job-title { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px; }
 .job-meta { font-size:12px; color:#64748b; margin-bottom:8px; }
 .job-desc { font-size:13px; color:#475569; line-height:1.5; margin-bottom:10px; }
+.job-main { flex:1; min-width:0; }
+.job-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+.job-empty-msg { text-align:center; padding:28px; color:#94a3b8; }
+.job-error-msg { text-align:center; padding:28px; color:#ef4444; }
+.btn-compact { padding:8px 14px; font-size:13px; }
 
 .tag-wrap {
     display: flex;

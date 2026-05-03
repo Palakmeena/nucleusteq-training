@@ -173,3 +173,6 @@
     font-size: 13px;
     margin-top: 6px;
 }
+
+/* Utility hidden class for toggling visibility */
+.hidden { display: none; }

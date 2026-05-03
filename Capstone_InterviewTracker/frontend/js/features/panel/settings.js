@@ -6,12 +6,12 @@ async function load() {
         const res = await api.getMyPanelProfile();
         const p = res.data;
         document.getElementById('profileDetails').innerHTML = `
-            <div style="display:grid;gap:16px;">
-                <div><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Full Name</div><div style="font-size:14px;font-weight:500;">${p.fullName}</div></div>
-                <div><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Email</div><div style="font-size:14px;">${p.email}</div></div>
-                <div><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Organization</div><div style="font-size:14px;">${p.organization}</div></div>
-                <div><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Designation</div><div style="font-size:14px;">${p.designation}</div></div>
-                <div><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Status</div><div style="font-size:14px;">${p.active ? '<span style="color:#10b981;"> Active</span>' : '<span style="color:#f59e0b;"> Pending</span>'}</div></div>
+            <div class="panel-details-grid">
+                <div class="panel-details-row"><div class="panel-details-label">Full Name</div><div class="panel-details-value">${p.fullName}</div></div>
+                <div class="panel-details-row"><div class="panel-details-label">Email</div><div class="panel-details-value-plain">${p.email}</div></div>
+                <div class="panel-details-row"><div class="panel-details-label">Organization</div><div class="panel-details-value-plain">${p.organization}</div></div>
+                <div class="panel-details-row"><div class="panel-details-label">Designation</div><div class="panel-details-value-plain">${p.designation}</div></div>
+                <div class="panel-details-row"><div class="panel-details-label">Status</div><div class="panel-details-value-plain">${p.active ? '<span class="panel-status-active"> Active</span>' : '<span class="panel-status-pending"> Pending</span>'}</div></div>
             </div>
         `;
     } catch (e) {

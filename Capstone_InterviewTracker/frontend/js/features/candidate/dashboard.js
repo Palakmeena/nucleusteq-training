@@ -26,7 +26,7 @@
     function setNoApplicationState() {
         document.getElementById('jobTitle').textContent = "You haven't applied to any job yet";
         document.getElementById('appliedDate').textContent = 'Go to Jobs tab from sidebar to apply.';
-        document.getElementById('currentStageBadge').innerHTML = '<span class="jd-badge badge-gray" style="text-transform:none;">Not Applied</span>';
+        document.getElementById('currentStageBadge').innerHTML = '<span class="jd-badge badge-gray dashboard-not-applied-badge">Not Applied</span>';
         document.getElementById('stageNote').textContent = 'Your progress will appear here once you submit an application.';
         document.getElementById('stageStepper').innerHTML = '';
         document.getElementById('stageLabelsRow').style.display = 'none';
@@ -86,8 +86,8 @@
 
                     if (next.meetingLink) {
                         const btnHtml = `
-                            <div id="joinBtnContainer" style="margin-top:28px;">
-                                <a href="${next.meetingLink}" target="_blank" style="display:flex; align-items:center; gap:10px; padding:14px 24px; text-decoration:none; background:white; color:#4f46e5; border-radius:12px; font-weight:600; font-size:15px; width:100%; justify-content:center; transition:0.2s; box-shadow:0 8px 16px rgba(0,0,0,0.1); border:1px solid rgba(255,255,255,0.5);">
+                            <div class="dashboard-join-btn-container">
+                                <a href="${next.meetingLink}" target="_blank" class="dashboard-join-btn">
                                     Join Online Interview
                                 </a>
                             </div>

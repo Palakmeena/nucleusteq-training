@@ -12,13 +12,13 @@ async function load() {
         const tbody = document.getElementById('interviewBody');
         tbody.innerHTML = interviews.length ? interviews.slice(0, 5).map(i => `
             <tr>
-                <td style="font-weight:500;">${i.candidateName}</td>
+                <td class="panel-overview-candidate-name">${i.candidateName}</td>
                 <td>${stageBadge(i.interviewStage)}</td>
-                <td style="font-size:13px;">${formatDate(i.interviewDate)}</td>
-                <td style="font-size:13px;">${i.interviewTime || '—'}</td>
-                <td style="font-size:13px;color:#64748b;">${i.focusAreas || '—'}</td>
+                <td class="panel-overview-interview-date">${formatDate(i.interviewDate)}</td>
+                <td class="panel-overview-interview-time">${i.interviewTime || '—'}</td>
+                <td class="panel-overview-focus-areas">${i.focusAreas || '—'}</td>
             </tr>
-        `).join('') : '<tr><td colspan="5" style="text-align:center;padding:40px;color:#94a3b8;">No interviews assigned yet</td></tr>';
+        `).join('') : '<tr><td colspan="5" class="panel-overview-empty">No interviews assigned yet</td></tr>';
     } catch (e) {
         showToast('Failed to load: ' + e.message, 'error');
     }

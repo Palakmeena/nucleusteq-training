@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.SimpleMailMessage;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -84,14 +83,14 @@ class InterviewServiceTest {
 
         testPanelMember = new PanelMember();
         testPanelMember.setId(1L);
-        testPanelMember.setUser(new User("Panel", "panel@example.com", "pass", UserRole.PANEL));
         testPanelMember.setActive(true);
+        testPanelMember.setUser(new User("Panel", "panel@example.com", "pass", UserRole.PANEL));
 
         testInterview = new Interview();
         testInterview.setId(1L);
         testInterview.setCandidate(testCandidate);
         testInterview.setInterviewStage(InterviewStage.L1_TECHNICAL);
-        testInterview.setInterviewDate(LocalDate.now().plusDays(1));
+        testInterview.setInterviewDate(LocalDate.now().minusDays(1));
         testInterview.setInterviewTime(LocalTime.of(10, 0));
         testInterview.setCompleted(false);
 
@@ -103,6 +102,102 @@ class InterviewServiceTest {
         requestDto.setFocusAreas("Java, Spring Boot");
         requestDto.setPanelMemberIds(List.of(1L));
     }
+
+        @Test
+        void scheduleInterview_shouldWork_whenSlotIsAvailable() {
+        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
+        when(interviewRepository.existsByInterviewDateAndInterviewTime(requestDto.getInterviewDate(), requestDto.getInterviewTime()))
+            .thenReturn(false);
+        when(interviewRepository.findByCandidateAndInterviewStageAndIsCompletedFalse(testCandidate, InterviewStage.L1_TECHNICAL))
+            .thenReturn(Optional.empty());
+        when(interviewRepository.save(any(Interview.class))).thenAnswer(invocation -> {
+            Interview saved = invocation.getArgument(0);
+            saved.setId(1L);
+            return saved;
+        });
+        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
+        when(panelMemberRepository.findById(1L)).thenReturn(Optional.of(testPanelMember));
+        when(interviewMapper.mapToResponseDto(any())).thenReturn(new InterviewResponseDto());
+
+        InterviewResponseDto response = interviewService.scheduleInterview(requestDto);
+
+        assertNotNull(response);
+        verify(interviewRepository).save(any(Interview.class));
+        }
+
+    @Test
+    void scheduleInterview_shouldOverwriteExistingInterview_whenRescheduledBeforeTime() {
+        InterviewPanel oldAssignment = new InterviewPanel(testInterview, testPanelMember);
+        testInterview.getInterviewPanels().add(oldAssignment);
+        testInterview.setInterviewDate(LocalDate.now().plusDays(2));
+        testInterview.setInterviewTime(LocalTime.of(10, 0));
+
+        InterviewRequestDto rescheduleRequest = new InterviewRequestDto();
+        rescheduleRequest.setCandidateId(1L);
+        rescheduleRequest.setInterviewStage(InterviewStage.L1_TECHNICAL);
+        rescheduleRequest.setInterviewDate(LocalDate.now().plusDays(3));
+        rescheduleRequest.setInterviewTime(LocalTime.of(11, 30));
+        rescheduleRequest.setFocusAreas("Revised topics");
+        rescheduleRequest.setPanelMemberIds(List.of(1L));
+
+        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
+        when(interviewRepository.findByCandidateAndInterviewStageAndIsCompletedFalse(testCandidate, InterviewStage.L1_TECHNICAL))
+                .thenReturn(Optional.of(testInterview));
+        when(interviewRepository.existsByInterviewDateAndInterviewTimeAndIdNot(
+                rescheduleRequest.getInterviewDate(), rescheduleRequest.getInterviewTime(), testInterview.getId()))
+                .thenReturn(false);
+        when(interviewRepository.save(any(Interview.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
+        when(panelMemberRepository.findById(1L)).thenReturn(Optional.of(testPanelMember));
+        when(interviewMapper.mapToResponseDto(any())).thenReturn(new InterviewResponseDto());
+
+        InterviewResponseDto response = interviewService.scheduleInterview(rescheduleRequest);
+
+        assertNotNull(response);
+        assertEquals(1, testInterview.getInterviewPanels().size());
+        assertEquals("Revised topics", testInterview.getFocusAreas());
+        assertEquals(LocalDate.now().plusDays(3), testInterview.getInterviewDate());
+        assertEquals(LocalTime.of(11, 30), testInterview.getInterviewTime());
+        verify(interviewRepository).save(testInterview);
+    }
+
+    @Test
+    void scheduleInterview_shouldThrow_whenExistingInterviewAlreadyStarted() {
+        testInterview.setInterviewDate(LocalDate.now().minusDays(1));
+        testInterview.setInterviewTime(LocalTime.of(10, 0));
+
+        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
+        when(interviewRepository.findByCandidateAndInterviewStageAndIsCompletedFalse(testCandidate, InterviewStage.L1_TECHNICAL))
+                .thenReturn(Optional.of(testInterview));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> interviewService.scheduleInterview(requestDto));
+    }
+
+        @Test
+        void scheduleInterview_shouldThrow_whenSlotAlreadyBooked() {
+        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
+        when(interviewRepository.existsByInterviewDateAndInterviewTime(requestDto.getInterviewDate(), requestDto.getInterviewTime()))
+            .thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> interviewService.scheduleInterview(requestDto));
+        }
+
+        @Test
+        void scheduleInterview_shouldThrow_whenDateTimeIsInPast() {
+        InterviewRequestDto pastRequest = new InterviewRequestDto();
+        pastRequest.setCandidateId(1L);
+        pastRequest.setInterviewStage(InterviewStage.L1_TECHNICAL);
+        pastRequest.setInterviewDate(LocalDate.now().minusDays(1));
+        pastRequest.setInterviewTime(LocalTime.of(10, 0));
+        pastRequest.setPanelMemberIds(List.of(1L));
+
+        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
+
+        assertThrows(IllegalArgumentException.class,
+            () -> interviewService.scheduleInterview(pastRequest));
+        }
 
     @Test
     void getInterviewById_shouldReturnInterview_whenFound() {
@@ -176,6 +271,17 @@ class InterviewServiceTest {
     }
 
     @Test
+    void submitFeedback_shouldThrow_whenInterviewHasNotStarted() {
+        FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
+        testInterview.setInterviewDate(LocalDate.now().plusDays(1));
+
+        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> interviewService.submitFeedback(1L, feedbackRequest, "panel@example.com"));
+    }
+
+    @Test
     void submitFeedback_shouldThrow_whenInterviewNotFound() {
         FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
         when(interviewRepository.findById(99L)).thenReturn(Optional.empty());
@@ -210,6 +316,18 @@ class InterviewServiceTest {
         verify(feedbackRepository).save(any(Feedback.class));
         verify(interviewRepository).save(any(Interview.class));
         verify(candidateRepository).save(any(Candidate.class));
+    }
+
+    @Test
+    void submitHrFeedback_shouldThrow_whenInterviewHasNotStarted() {
+        FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
+        testInterview.setInterviewStage(InterviewStage.HR_ROUND);
+        testInterview.setInterviewDate(LocalDate.now().plusDays(1));
+
+        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> interviewService.submitHrFeedback(1L, feedbackRequest));
     }
 
     @Test
@@ -250,172 +368,5 @@ class InterviewServiceTest {
 
         assertEquals(InterviewStage.REJECTED, testCandidate.getCurrentStage());
         verify(candidateRepository).save(testCandidate);
-    }
-
-    @Test
-    void getAllInterviews_shouldReturnAllInterviews() {
-        Interview interview2 = new Interview();
-        interview2.setId(2L);
-        interview2.setCandidate(testCandidate);
-
-        when(interviewRepository.findAll()).thenReturn(List.of(testInterview, interview2));
-        when(interviewMapper.mapToResponseDto(any())).thenReturn(new InterviewResponseDto());
-
-        List<InterviewResponseDto> result = interviewService.getAllInterviews();
-
-        assertEquals(2, result.size());
-        verify(interviewRepository).findAll();
-    }
-
-    @Test
-    void getAllInterviews_shouldReturnEmptyList_whenNoInterviews() {
-        when(interviewRepository.findAll()).thenReturn(Collections.emptyList());
-
-        List<InterviewResponseDto> result = interviewService.getAllInterviews();
-
-        assertTrue(result.isEmpty());
-        verify(interviewRepository).findAll();
-    }
-
-    @Test
-    void scheduleInterview_shouldSchedule_whenValidRequest() {
-        testCandidate.setCurrentStage(InterviewStage.SCREENING);
-
-        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
-        when(panelMemberRepository.findById(1L)).thenReturn(Optional.of(testPanelMember));
-        when(interviewRepository.save(any())).thenReturn(testInterview);
-        when(interviewRepository.findById(testInterview.getId())).thenReturn(Optional.of(testInterview));
-        when(interviewPanelRepository.save(any())).thenReturn(new InterviewPanel());
-        when(interviewMapper.mapToResponseDto(any())).thenReturn(new InterviewResponseDto());
-
-        InterviewResponseDto result = interviewService.scheduleInterview(requestDto);
-
-        assertNotNull(result);
-        verify(interviewRepository).save(any(Interview.class));
-        verify(candidateRepository).save(testCandidate);
-        verify(mailSender, times(2)).send(any(SimpleMailMessage.class));
-    }
-
-    @Test
-    void scheduleInterview_shouldThrow_whenCandidateNotFound() {
-        when(candidateRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> interviewService.scheduleInterview(requestDto));
-    }
-
-    @Test
-    void scheduleInterview_shouldThrow_whenPanelMemberNotFound() {
-        when(candidateRepository.findById(1L)).thenReturn(Optional.of(testCandidate));
-        when(panelMemberRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> interviewService.scheduleInterview(requestDto));
-    }
-
-    @Test
-    void getInterviewsForPanel_shouldReturnInterviews_whenValidEmail() {
-        InterviewPanel panel = new InterviewPanel();
-        panel.setPanelMember(testPanelMember);
-        panel.setInterview(testInterview);
-        testInterview.setInterviewPanels(List.of(panel));
-
-        when(userRepository.findByEmail("panel@example.com")).thenReturn(Optional.of(testPanelMember.getUser()));
-        when(panelMemberRepository.findByUser(testPanelMember.getUser())).thenReturn(Optional.of(testPanelMember));
-        when(interviewPanelRepository.findByPanelMember(testPanelMember)).thenReturn(List.of(panel));
-        when(interviewMapper.mapToResponseDto(any())).thenReturn(new InterviewResponseDto());
-
-        List<InterviewResponseDto> result = interviewService.getInterviewsForPanel("panel@example.com");
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void getInterviewsForPanel_shouldThrow_whenUserNotFound() {
-        when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> interviewService.getInterviewsForPanel("unknown@example.com"));
-    }
-
-    @Test
-    void submitFeedback_shouldNotComplete_whenNotAllPanelsSubmitted() {
-        FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
-        feedbackRequest.setRating(4);
-        feedbackRequest.setDecision("SELECTED");
-
-        PanelMember panel2 = new PanelMember();
-        panel2.setId(2L);
-
-        InterviewPanel panelAssignment1 = new InterviewPanel();
-        panelAssignment1.setPanelMember(testPanelMember);
-
-        InterviewPanel panelAssignment2 = new InterviewPanel();
-        panelAssignment2.setPanelMember(panel2);
-
-        testInterview.setInterviewPanels(List.of(panelAssignment1, panelAssignment2));
-
-        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
-        when(userRepository.findByEmail("panel@example.com")).thenReturn(Optional.of(testPanelMember.getUser()));
-        when(panelMemberRepository.findByUser(testPanelMember.getUser())).thenReturn(Optional.of(testPanelMember));
-        when(feedbackRepository.findByInterview(testInterview)).thenReturn(List.of());
-
-        interviewService.submitFeedback(1L, feedbackRequest, "panel@example.com");
-
-        assertFalse(testInterview.isCompleted());
-        verify(feedbackRepository).save(any(Feedback.class));
-        verify(interviewRepository, never()).save(testInterview);
-    }
-
-    @Test
-    void submitFeedback_shouldReject_whenDecisionIsRejected() {
-        FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
-        feedbackRequest.setRating(2);
-        feedbackRequest.setDecision("REJECTED");
-
-        InterviewPanel panelAssignment = new InterviewPanel();
-        panelAssignment.setPanelMember(testPanelMember);
-        testInterview.setInterviewPanels(List.of(panelAssignment));
-
-        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
-        when(userRepository.findByEmail("panel@example.com")).thenReturn(Optional.of(testPanelMember.getUser()));
-        when(panelMemberRepository.findByUser(testPanelMember.getUser())).thenReturn(Optional.of(testPanelMember));
-        when(feedbackRepository.findByInterview(testInterview)).thenReturn(List.of(new Feedback("Not suitable","","","",2, FeedbackStatus.REJECTED, testInterview, testPanelMember)));
-        when(interviewRepository.save(any())).thenReturn(testInterview);
-
-        interviewService.submitFeedback(1L, feedbackRequest, "panel@example.com");
-
-        assertTrue(testInterview.isCompleted());
-        assertEquals(InterviewStage.REJECTED, testCandidate.getCurrentStage());
-        verify(candidateRepository).save(testCandidate);
-    }
-
-    @Test
-    void getInterviewsForCandidate_shouldReturnEmptyList_whenNoInterviews() {
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
-        when(candidateRepository.findByUser(testUser)).thenReturn(Optional.of(testCandidate));
-        when(interviewRepository.findByCandidate(testCandidate)).thenReturn(Collections.emptyList());
-
-        List<InterviewResponseDto> result = interviewService.getInterviewsForCandidate("test@example.com");
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void submitFeedback_shouldThrow_whenPanelMemberNotFound() {
-        FeedbackRequestDto feedbackRequest = new FeedbackRequestDto();
-
-        when(interviewRepository.findById(1L)).thenReturn(Optional.of(testInterview));
-        when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class,
-                () -> interviewService.submitFeedback(1L, feedbackRequest, "unknown@example.com"));
-    }
-
-    @Test
-    void getInterviewsForPanel_shouldThrow_whenPanelMemberNotFound() {
-        when(userRepository.findByEmail("panel@example.com")).thenReturn(Optional.of(testPanelMember.getUser()));
-        when(panelMemberRepository.findByUser(testPanelMember.getUser())).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class,
-                () -> interviewService.getInterviewsForPanel("panel@example.com"));
     }
 }

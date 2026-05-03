@@ -41,12 +41,12 @@ function updateSelectedPanelsDisplay() {
     const selectedItems = selectedPanels.map(panelId => {
         const panel = allPanels.find(p => p.id === panelId);
         return `
-            <div style="background:#fff;padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
-                <div>
-                    <div style="font-size:13px;font-weight:500;color:#1e293b;">${panel.fullName}</div>
-                    <div style="font-size:11px;color:#64748b;">${panel.designation}</div>
+            <div class="selected-panel-item">
+                <div class="selected-panel-info">
+                    <div class="name">${panel.fullName}</div>
+                    <div class="designation">${panel.designation}</div>
                 </div>
-                <button style="background:none;border:none;color:#dc2626;font-size:18px;cursor:pointer;padding:0;width:20px;height:20px; display:flex; align-items:center; justify-content:center;" onclick="togglePanel(${panelId})">
+                <button class="selected-panel-remove-btn" onclick="togglePanel(${panelId})">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
@@ -61,25 +61,25 @@ function filterPanels() {
     const container = document.getElementById('panelOptions');
 
     if (!searchTerm) {
-        container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+        container.innerHTML = '<div class="panel-empty-msg">Type to search for panel members...</div>';
         return;
     }
 
     const filtered = allPanels.filter(p => p.fullName.toLowerCase().startsWith(searchTerm));
 
     if (filtered.length === 0) {
-        container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">No panel members found</div>';
+        container.innerHTML = '<div class="panel-empty-msg">No panel members found</div>';
         return;
     }
 
     const topTwo = filtered.slice(0, 2);
 
     container.innerHTML = topTwo.map(p => `
-        <div class="panel-option" id="po-${p.id}" onclick="togglePanel(${p.id})" ${selectedPanels.includes(p.id) ? 'style="border-color:#4f46e5;background:#eef2ff;"' : ''}>
+        <div class="panel-option" id="po-${p.id}" onclick="togglePanel(${p.id})" ${selectedPanels.includes(p.id) ? 'class="panel-option panel-option-selected"' : ''}>
             <input type="checkbox" id="pc-${p.id}" ${selectedPanels.includes(p.id) ? 'checked' : ''}>
             <div>
-                <div style="font-size:14px;font-weight:500;">${p.fullName}</div>
-                <div style="font-size:12px;color:#64748b;">${p.designation} — ${p.organization} ${p.active ? '' : '(Pending Activation)'}</div>
+                <div class="panel-option-name">${p.fullName}</div>
+                <div class="panel-option-designation">${p.designation} — ${p.organization} ${p.active ? '' : '(Pending Activation)'}</div>
             </div>
         </div>
     `).join('');
@@ -161,48 +161,48 @@ async function loadUpcoming() {
             const isToday = new Date().toDateString() === new Date(i.interviewDate).toDateString();
             const isPast = new Date() > new Date(i.interviewDate) && !isToday;
 
-            let statusBadge = '<span style="font-size:12px;font-weight:600;background:#eef2ff;color:#4f46e5;padding:4px 12px;border-radius:100px;">Upcoming</span>';
-            if (i.completed) statusBadge = '<span style="font-size:12px;font-weight:600;background:#dcfce7;color:#16a34a;padding:4px 12px;border-radius:100px;">Completed</span>';
-            else if (isToday) statusBadge = '<span style="font-size:12px;font-weight:600;background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;">Today</span>';
-            else if (isPast) statusBadge = '<span style="font-size:12px;font-weight:600;background:#fee2e2;color:#991b1b;padding:4px 12px;border-radius:100px;">Overdue</span>';
+            let statusBadge = '<span class="status-badge status-upcoming">Upcoming</span>';
+            if (i.completed) statusBadge = '<span class="status-badge status-completed">Completed</span>';
+            else if (isToday) statusBadge = '<span class="status-badge status-today">Today</span>';
+            else if (isPast) statusBadge = '<span class="status-badge status-overdue">Overdue</span>';
 
             return `
-                <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.2s;">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+                <div class="interview-card">
+                    <div class="interview-card-header">
                         <div>
-                            <div style="font-weight:700;font-size:18px;color:#1e293b;margin-bottom:8px;">${i.candidateName}</div>
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <div style="font-size:13px;font-weight:600;color:#64748b;background:#f1f5f9;padding:4px 12px;border-radius:100px;border:1px solid #e2e8f0;">${stageLabels[i.interviewStage] || i.interviewStage}</div>
+                            <div class="interview-card-title-main">${i.candidateName}</div>
+                            <div class="interview-card-header-badges">
+                                <div class="stage-pill">${stageLabels[i.interviewStage] || i.interviewStage}</div>
                                 ${statusBadge}
                             </div>
                         </div>
-                        <div style="text-align:right;background:#f8fafc;padding:10px 16px;border-radius:10px;border:1px solid #e2e8f0;">
-                            <div style="font-size:14px;font-weight:700;color:#334155;margin-bottom:4px;">
+                        <div class="interview-card-datetime">
+                            <div class="interview-card-datetime-label">
                                 ${formatDate(i.interviewDate)}
                             </div>
-                            <div style="font-size:13px;color:#64748b;font-weight:600;">
+                            <div class="interview-card-datetime-time">
                                 ${formatInterviewTime(i.interviewTime)}
                             </div>
                         </div>
                     </div>
                     
-                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid #f1f5f9; display:flex; justify-content:flex-end; gap:12px;">
-                        <button onclick="viewInterviewInfo(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="secondary-btn" style="padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                    <div class="interview-card-actions">
+                        <button onclick="viewInterviewInfo(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="secondary-btn action-btn">
                             View Details
                         </button>
                         ${i.completed ? `
-                            <button onclick="viewFeedback(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn" style="padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                            <button onclick="viewFeedback(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn action-btn">
                                 See Feedback
                             </button>
                         ` : ''}
                         ${(!i.completed && i.interviewStage === 'HR_ROUND') ? `
-                            <button onclick="openHrFeedbackModal(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn" style="background:#16a34a;border-color:#16a34a;padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2;">
+                            <button onclick="openHrFeedbackModal(${JSON.stringify(i).replace(/"/g, '&quot;')})" class="primary-btn action-btn primary-strong">
                                 Give Feedback
                             </button>
                         ` : ''}
                     </div>
                 </div>
-            `}).join('') : '<div style="text-align:center;padding:60px 40px;color:#94a3b8;font-size:15px;background:#f8fafc;border-radius:12px;border:2px dashed #e2e8f0;">No interviews scheduled</div>';
+            `}).join('') : '<div class="no-interviews-empty">No interviews scheduled</div>';
     } catch (e) {
         console.error(e);
     }
@@ -215,14 +215,14 @@ function viewInterviewInfo(i) {
 
     document.getElementById('infoCandidate').textContent = i.candidateName;
     document.getElementById('infoStage').textContent = stageLabels[i.interviewStage] || i.interviewStage;
-    document.getElementById('infoDateTime').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#64748b;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <span>${formatDate(i.interviewDate)} &nbsp;&bull;&nbsp; ${formatInterviewTime(i.interviewTime)}</span>`;
+    document.getElementById('infoDateTime').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-gray"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <span>${formatDate(i.interviewDate)} &nbsp;&bull;&nbsp; ${formatInterviewTime(i.interviewTime)}</span>`;
 
     const panelNames = (i.panelMemberNames && i.panelMemberNames.length > 0) ? i.panelMemberNames.join(' &nbsp;&bull;&nbsp; ') : (i.interviewStage === 'HR_ROUND' ? 'HR (Self)' : 'No panels assigned');
     document.getElementById('infoPanels').innerHTML = panelNames;
 
     document.getElementById('infoLink').innerHTML = i.meetingLink
-        ? `<a href="${i.meetingLink}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:#4f46e5;font-weight:600;text-decoration:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Join Meeting Online</a>`
-        : '<span style="color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> No link provided</span>';
+        ? `<a href="${i.meetingLink}" target="_blank" class="interview-meeting-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Join Meeting Online</a>`
+        : '<span class="interview-no-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> No link provided</span>';
 }
 
 function viewFeedback(i) {
@@ -235,7 +235,7 @@ function viewFeedback(i) {
 
     const container = document.getElementById('feedbackList');
     if (!i.feedbacks || i.feedbacks.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;background:#fff;border-radius:12px;border:1px dashed #e2e8f0;">No detailed evaluations submitted yet.</div>';
+        container.innerHTML = '<div class="feedback-empty">No detailed evaluations submitted yet.</div>';
         return;
     }
 
@@ -245,33 +245,33 @@ function viewFeedback(i) {
         const decisionBg = isSelected ? '#dcfce7' : '#fee2e2';
 
         return `
-            <div style="border:1px solid #e2e8f0;border-radius:8px;padding:24px;margin-bottom:20px;text-align:left;background:#fff;">
-                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9;padding-bottom:16px;margin-bottom:20px;">
+            <div class="feedback-card">
+                <div class="feedback-card-header">
                     <div>
-                        <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:4px;">${f.panelMemberName}</div>
-                        <div style="font-size:13px;color:#64748b;">${new Date(f.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                        <div class="feedback-card-header name">${f.panelMemberName}</div>
+                        <div class="feedback-card-header date">${new Date(f.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:6px;">${f.rating}/5</div>
-                        <div style="display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;color:${decisionColor};background:${decisionBg};padding:4px 10px;border-radius:4px;">${f.decision}</div>
+                    <div>
+                        <div class="feedback-rating">${f.rating}/5</div>
+                        <div class="feedback-decision ${f.decision === 'SELECTED' ? 'selected' : 'rejected'}">${f.decision}</div>
                     </div>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:20px;">
+                <div class="feedback-section">
                     <div>
-                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Suggestion / Recommendation</label>
-                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.decision || '<span style="color:#94a3b8;font-style:italic;">—</span>'}</div>
+                        <label class="feedback-section label">Suggestion / Recommendation</label>
+                        <div class="feedback-section content">${f.panelSuggestion || '<span class="feedback-content-empty">—</span>'}</div>
                     </div>
                     <div>
-                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Main Comments</label>
-                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.comments}</div>
+                        <label class="feedback-section label">Main Comments</label>
+                        <div class="feedback-section content">${f.comments}</div>
                     </div>
                     <div>
-                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Key Strengths</label>
-                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.strengths || '<span style="color:#94a3b8;font-style:italic;">—</span>'}</div>
+                        <label class="feedback-section label">Key Strengths</label>
+                        <div class="feedback-section content">${f.strengths || '<span class="feedback-content-empty">—</span>'}</div>
                     </div>
                     <div>
-                        <label style="display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px;">Areas of Improvement</label>
-                        <div style="font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;">${f.weaknesses || '<span style="color:#94a3b8;font-style:italic;">—</span>'}</div>
+                        <label class="feedback-section label">Areas of Improvement</label>
+                        <div class="feedback-section content">${f.weaknesses || '<span class="feedback-content-empty">—</span>'}</div>
                     </div>
                 </div>
             </div>
@@ -296,7 +296,26 @@ function formatInterviewTime(timeValue) {
 
 let currentHrFeedbackInterviewId = null;
 
+function getInterviewDateTime(interview) {
+    if (!interview?.interviewDate || !interview?.interviewTime) {
+        return null;
+    }
+
+    const value = new Date(`${interview.interviewDate}T${interview.interviewTime}`);
+    return Number.isNaN(value.getTime()) ? null : value;
+}
+
+function canOpenHrFeedback(interview) {
+    const scheduledAt = getInterviewDateTime(interview);
+    return scheduledAt !== null && new Date() >= scheduledAt;
+}
+
 function openHrFeedbackModal(i) {
+    if (!canOpenHrFeedback(i)) {
+        showToast('You can give feedback only after the interview time', 'error');
+        return;
+    }
+
     currentHrFeedbackInterviewId = i.id;
     document.getElementById('hrfCandidate').textContent = i.candidateName;
     document.getElementById('hrFeedbackError').style.display = 'none';

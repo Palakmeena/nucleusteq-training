@@ -8,8 +8,8 @@ async function loadPanels() {
         const container = document.getElementById('panelList');
         container.innerHTML = panels.length ? panels.map(p => `
             <div class="panel-card">
-                <div style="display:flex;align-items:center;gap:14px;">
-                    <div style="width:44px;height:44px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;">
+                <div class="panel-user">
+                    <div class="panel-avatar">
                         ${p.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                     </div>
                     <div class="panel-info">
@@ -17,21 +17,23 @@ async function loadPanels() {
                         <p>${p.email} &nbsp;|&nbsp; ${p.organization} &nbsp;|&nbsp; ${p.designation}</p>
                     </div>
                 </div>
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <span class="jd-badge" style="${p.active ? 'background:#dcfce7;color:#16a34a;' : 'background:#fef3c7;color:#d97706;'}">${p.active ? ' Active' : ' Pending'}</span>
-                    <div style="display:flex;gap:8px;">
-                        <button onclick="openEditModal(${JSON.stringify(p).replace(/"/g, '&quot;')})" style="background:none;border:none;cursor:pointer;color:#4f46e5;font-size:16px;" title="Edit">
+                <div class="panel-actions">
+                    <span class="jd-badge ${p.active ? 'panel-badge-active' : 'panel-badge-pending'}">${p.active ? ' Active' : ' Pending'}</span>
+                    <div class="panel-action-group">
+                        <button class="panel-action-btn" onclick="openEditModal(${JSON.stringify(p).replace(/"/g, '&quot;')})" title="Edit">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </button>
-                        <button onclick="deletePanel(${p.id})" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:16px;" title="Delete">
+                        <button class="panel-action-trash" onclick="deletePanel(${p.id})" title="Delete">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                         </button>
                     </div>
                 </div>
             </div>
-        `).join('') : '<p style="text-align:center;padding:40px;color:#94a3b8;">No panel members yet. Add your first interviewer!</p>';
+        `).join('') : '<div class="panel-empty">No panel members yet. Add your first interviewer!</div>';
     } catch (e) {
         showToast('Failed to load panel members: ' + e.message, 'error');
+        const container = document.getElementById('panelList');
+        if (container) container.innerHTML = '<div class="panel-loading-state">Failed to load panel members.</div>';
     }
 }
 
@@ -111,11 +113,11 @@ async function createPanel() {
             showToast('Panel member created! Activation link sent.', 'success');
         } else if (panel.activationLink) {
             document.getElementById('panelFormError').innerHTML =
-                'Email delivery failed. Share this activation link manually:<br><a href="'
-                + panel.activationLink
-                + '" target="_blank" style="color:#1d4ed8;word-break:break-all;">'
-                + panel.activationLink
-                + '</a>';
+                'Email delivery failed. Share this activation link manually:<br><a href="' +
+                panel.activationLink +
+                '" target="_blank" class="panel-activation-link">' +
+                panel.activationLink +
+                '</a>';
             document.getElementById('panelFormError').style.display = 'block';
             showToast('Activation email failed. Manual link generated.', 'error');
             shouldCloseModal = false;

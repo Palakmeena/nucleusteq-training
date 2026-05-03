@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Profile</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/panel/settings.css">
 </head>
 <body>
 <aside class="sidebar" id="sidebar"></aside>
@@ -14,10 +15,10 @@
         <div class="page-header">
             <div><h1 class="page-title">My Profile</h1><p class="page-subtitle">Your panel member details.</p></div>
         </div>
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;max-width:480px;">
-            <div id="profileDetails"><div style="text-align:center;color:#94a3b8;padding:40px;">Loading...</div></div>
-            <div style="margin-top:24px;padding-top:24px;border-top:1px solid #e2e8f0;">
-                <button onclick="auth.logout()" style="background:#fee2e2;color:#dc2626;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;">Sign Out</button>
+        <div class="panel-profile-box">
+            <div id="profileDetails"><div class="panel-loading">Loading...</div></div>
+            <div class="panel-profile-footer">
+                <button onclick="auth.logout()" class="btn-signout">Sign Out</button>
             </div>
         </div>
     </div>

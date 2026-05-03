@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | Interview Dashboard</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/panel/interview-dashboard.css">
 </head>
 <body>
 <aside class="sidebar">
@@ -27,8 +28,8 @@
     <header class="topbar">
         <div class="topbar-nav"><a href="#" class="active">Interview Dashboard</a></div>
         <div class="topbar-actions">
-            <span style="font-size:13px;color:#64748b;background:#f1f5f9;padding:6px 12px;border-radius:6px;"> Oct 24, 2023</span>
-            <div style="width:32px;height:32px;background:#eef2ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;color:#4f46e5;">MC</div>
+            <span class="topbar-date-badge"> Oct 24, 2023</span>
+            <div class="topbar-avatar-badge">MC</div>
         </div>
     </header>
 
@@ -38,12 +39,12 @@
         <div class="two-col">
             <!-- LEFT: Today's Schedule -->
             <div>
-                <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Today's Schedule</h3>
+                <h3 class="section-title-small">Today's Schedule</h3>
                 <div class="schedule-list">
                     <div class="schedule-item active" onclick="selectCandidate(this)">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                            <div style="display:flex;gap:12px;align-items:center;">
-                                <div class="candidate-avatar" style="background:#dcfce7;color:#16a34a;">SM</div>
+                        <div class="schedule-flex">
+                            <div class="schedule-inner">
+                                <div class="candidate-avatar avatar-success">SM</div>
                                 <div><div class="schedule-item-name">Sarah Mitchell</div><div class="schedule-item-role">Senior UX Designer</div></div>
                             </div>
                             <span class="schedule-badge in-progress">In Progress</span>
@@ -51,8 +52,8 @@
                         <div class="schedule-item-time"> 10:00 AM - 11:00 AM &nbsp;  Zoom</div>
                     </div>
                     <div class="schedule-item" onclick="selectCandidate(this)">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                            <div style="display:flex;gap:12px;align-items:center;">
+                        <div class="schedule-flex">
+                            <div class="schedule-inner">
                                 <div class="candidate-avatar">JL</div>
                                 <div><div class="schedule-item-name">James Leung</div><div class="schedule-item-role">Frontend Engineer</div></div>
                             </div>
@@ -61,9 +62,9 @@
                         <div class="schedule-item-time"> 1:30 PM - 2:30 PM &nbsp;  Teams</div>
                     </div>
                     <div class="schedule-item" onclick="selectCandidate(this)">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                            <div style="display:flex;gap:12px;align-items:center;">
-                                <div class="candidate-avatar" style="background:#fef3c7;color:#d97706;">AR</div>
+                        <div class="schedule-flex">
+                            <div class="schedule-inner">
+                                <div class="candidate-avatar avatar-warning">AR</div>
                                 <div><div class="schedule-item-name">Anita Rao</div><div class="schedule-item-role">Product Manager</div></div>
                             </div>
                             <span class="schedule-badge upcoming">Upcoming</span>
@@ -76,28 +77,28 @@
             <!-- RIGHT: Candidate Detail + Feedback -->
             <div>
                 <!-- CANDIDATE PROFILE -->
-                <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px;">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
-                        <div><h2 style="font-size:22px;font-weight:700;">Sarah Mitchell</h2></div>
-                        <div style="display:flex;gap:8px;">
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <div><h2 class="title-22">Sarah Mitchell</h2></div>
+                        <div class="flex-gap-8">
                             <span class="stage-badge hr-round">Portfolio Verified</span>
                             <span class="stage-badge l1">Round 2</span>
-                            <button class="secondary-btn" style="padding:4px 12px;font-size:12px;">View LinkedIn</button>
-                            <button class="primary-btn" style="width:auto;padding:4px 12px;font-size:12px;">Full Profile</button>
+                            <button class="secondary-btn btn-small">View LinkedIn</button>
+                            <button class="primary-btn btn-small">Full Profile</button>
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                    <div class="grid-two-col-gap24">
                         <div>
-                            <div style="background:#f8fafc;border-radius:8px;height:160px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">Resume Preview Area</div>
+                            <div class="resume-preview">Resume Preview Area</div>
                         </div>
                         <div>
-                            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:#94a3b8;letter-spacing:0.05em;margin-bottom:8px;">Role Overview</div>
-                            <p style="font-size:13px;color:#475569;line-height:1.6;margin-bottom:16px;">Seeking a Senior UX Designer with 5+ years experience in B2B SaaS. Strong focus on design systems, user research, and cross-functional collaboration.</p>
-                            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:#94a3b8;letter-spacing:0.05em;margin-bottom:10px;">Interview Focus Areas</div>
-                            <div style="display:flex;flex-direction:column;gap:10px;">
-                                <div><span style="color:#16a34a;"></span> <strong style="font-size:13px;">Design System Maturity</strong><div style="font-size:12px;color:#64748b;margin-left:18px;">Evaluate experience scaling component libraries.</div></div>
-                                <div><span style="color:#16a34a;"></span> <strong style="font-size:13px;">Stakeholder Management</strong><div style="font-size:12px;color:#64748b;margin-left:18px;">Ability to justify design decisions to engineering.</div></div>
-                                <div><span style="color:#16a34a;"></span> <strong style="font-size:13px;">User Data Synthesis</strong><div style="font-size:12px;color:#64748b;margin-left:18px;">How they translate complex research into UI.</div></div>
+                            <div class="meta-title">Role Overview</div>
+                            <p class="role-paragraph">Seeking a Senior UX Designer with 5+ years experience in B2B SaaS. Strong focus on design systems, user research, and cross-functional collaboration.</p>
+                            <div class="meta-title meta-title-margin">Interview Focus Areas</div>
+                            <div class="focus-list">
+                                <div><span class="focus-dot"></span> <strong class="focus-strong">Design System Maturity</strong><div class="focus-desc">Evaluate experience scaling component libraries.</div></div>
+                                <div><span class="focus-dot"></span> <strong class="focus-strong">Stakeholder Management</strong><div class="focus-desc">Ability to justify design decisions to engineering.</div></div>
+                                <div><span class="focus-dot"></span> <strong class="focus-strong">User Data Synthesis</strong><div class="focus-desc">How they translate complex research into UI.</div></div>
                             </div>
                         </div>
                     </div>
@@ -105,12 +106,12 @@
 
                 <!-- FEEDBACK FORM -->
                 <div class="feedback-card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <h2 style="font-size:18px;font-weight:600;">Interview Feedback</h2>
-                        <span style="font-size:12px;color:#64748b;font-style:italic;">All responses are private to the hiring panel.</span>
+                    <div class="feedback-header">
+                        <h2 class="feedback-title">Interview Feedback</h2>
+                        <span class="feedback-note">All responses are private to the hiring panel.</span>
                     </div>
                     <form id="feedbackForm">
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <div class="grid-two-col-gap24">
                             <div>
                                 <div class="form-group">
                                     <label>Overall Performance Rating</label>
@@ -124,7 +125,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Detailed Comments</label>
-                                    <textarea placeholder="Describe the candidate's technical aptitude and cultural fit..." style="min-height:120px;"></textarea>
+                                    <textarea placeholder="Describe the candidate's technical aptitude and cultural fit..." class="textarea-min"></textarea>
                                 </div>
                             </div>
                             <div>
@@ -139,9 +140,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;">
+                        <div class="flex-end-gap12-margin-top20">
                             <button type="button" class="secondary-btn">Save Draft</button>
-                            <button type="submit" class="primary-btn" style="width:auto;background:#dc2626;">Submit Evaluation</button>
+                            <button type="submit" class="primary-btn primary-danger">Submit Evaluation</button>
                         </div>
                     </form>
                 </div>

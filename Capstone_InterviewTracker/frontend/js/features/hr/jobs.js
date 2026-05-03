@@ -132,13 +132,13 @@ async function loadJobs() {
         const jds = allJds.filter(jd => jd.active);
         const container = document.getElementById('hrJobsList');
         if (!jds.length) {
-            container.innerHTML = '<p style="color:#64748b;text-align:center;padding:40px;">No active job descriptions right now.</p>';
+            container.innerHTML = '<div class="job-empty">No active job descriptions right now.</div>';
             return;
         }
         const typeLabel = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
         container.innerHTML = jds.map(jd => `
             <div class="job-row-card">
-                <div style="flex:1;min-width:0;">
+                <div class="job-main">
                     <h3 class="job-title">${jd.jobTitle}</h3>
                     <div class="job-meta"> ${jd.location} &nbsp;|&nbsp;  ${typeLabel[jd.jobType] || jd.jobType} &nbsp;|&nbsp;  ${jd.minExperience}-${jd.maxExperience} yrs &nbsp;|&nbsp;  ${jd.minSalary}-${jd.maxSalary} LPA</div>
                     <div class="job-desc">${shortText(jd.jobDescription)}</div>
@@ -146,12 +146,12 @@ async function loadJobs() {
                         ${(jd.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}
                     </div>
                 </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:210px;">
-                    <span class="jd-badge" style="background:#dcfce7;color:#16a34a;">Active</span>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-                        <button class="secondary-btn" style="padding:6px 12px;font-size:13px;" onclick="openJobDetails(${jd.id})">View Job</button>
-                        <button class="secondary-btn" style="padding:6px 12px;font-size:13px;" onclick="editJd(${jd.id})">Edit</button>
-                        <button class="secondary-btn" style="padding:6px 12px;font-size:13px;color:#dc2626;" onclick="deleteJd(${jd.id})">Delete</button>
+                <div class="job-actions">
+                    <span class="job-badge">Active</span>
+                    <div class="job-action-row">
+                        <button class="secondary-btn btn-compact" onclick="openJobDetails(${jd.id})">View Job</button>
+                        <button class="secondary-btn btn-compact" onclick="editJd(${jd.id})">Edit</button>
+                        <button class="secondary-btn btn-compact job-delete-btn" onclick="deleteJd(${jd.id})">Delete</button>
                     </div>
                 </div>
             </div>

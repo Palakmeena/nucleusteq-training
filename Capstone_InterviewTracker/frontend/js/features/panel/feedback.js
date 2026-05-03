@@ -4,6 +4,35 @@ document.getElementById('sidebar').innerHTML = buildSidebar('PANEL', 'feedback')
 let currentInterview = null;
 let selectedRating = 0;
 
+function getInterviewDateTime(interview) {
+    if (!interview?.interviewDate || !interview?.interviewTime) {
+        return null;
+    }
+
+    const value = new Date(`${interview.interviewDate}T${interview.interviewTime}`);
+    return Number.isNaN(value.getTime()) ? null : value;
+}
+
+function canOpenFeedbackForm(interview) {
+    const scheduledAt = getInterviewDateTime(interview);
+    return scheduledAt !== null && new Date() >= scheduledAt;
+}
+
+// Format time to 12-hour format with AM/PM
+function formatTimeWithAmPm(timeStr) {
+    if (!timeStr) return '—';
+    try {
+        const [hours, minutes] = timeStr.split(':');
+        const h = parseInt(hours);
+        const m = minutes || '00';
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const displayHour = h % 12 || 12;
+        return `${displayHour}:${m} ${ampm}`;
+    } catch {
+        return timeStr;
+    }
+}
+
 async function loadCandidates() {
     try {
         const res = await api.getMyAssignedInterviews();
@@ -11,15 +40,15 @@ async function loadCandidates() {
         const container = document.getElementById('candidateList');
 
         if (!pending.length) {
-            container.innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8;">No pending evaluations.</div>';
+            container.innerHTML = '<div class="panel-feedback-loading">No pending evaluations.</div>';
             return;
         }
 
         container.innerHTML = pending.map(i => `
             <div class="candidate-card" id="card-${i.id}" onclick='selectCandidate(${JSON.stringify(i).replace(/"/g, "&quot;")})'>
-                <div style="font-weight:600; font-size:14px;">${i.candidateName}</div>
-                <div style="font-size:12px; color:#64748b; margin-top:2px;">${stageBadge(i.interviewStage)}</div>
-                <div style="font-size:11px; color:#94a3b8; margin-top:6px;">Scheduled: ${formatDate(i.interviewDate)}</div>
+                <div class="candidate-card-name">${i.candidateName}</div>
+                <div class="candidate-card-stage">${stageBadge(i.interviewStage)}</div>
+                <div class="candidate-card-date">Scheduled: ${formatDate(i.interviewDate)}</div>
             </div>
         `).join('');
     } catch (e) {
@@ -28,12 +57,28 @@ async function loadCandidates() {
 }
 
 function selectCandidate(interview) {
+    if (!canOpenFeedbackForm(interview)) {
+        showToast('You can submit feedback only after the interview time', 'error');
+        return;
+    }
+
     currentInterview = interview;
-    document.getElementById('emptyState').style.display = 'none';
-    document.getElementById('feedbackFormArea').style.display = 'block';
     document.getElementById('formTitle').textContent = `Evaluate: ${interview.candidateName}`;
+    document.getElementById('formSubtitle').textContent = `${interview.interviewStage} - ${formatDate(interview.interviewDate)} at ${formatTimeWithAmPm(interview.interviewTime)}`;
     document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('active'));
     document.getElementById(`card-${interview.id}`).classList.add('active');
+    resetForm();
+    openFeedbackModal();
+}
+
+function openFeedbackModal() {
+    document.getElementById('feedbackModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFeedbackModal() {
+    document.getElementById('feedbackModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
     resetForm();
 }
 
@@ -50,15 +95,15 @@ function resetForm() {
     document.getElementById('comments').value = '';
     document.getElementById('strengths').value = '';
     document.getElementById('weaknesses').value = '';
-    document.getElementById('status').value = 'PASSED';
+    document.getElementById('decision').value = '';
 }
 
 async function submitFeedback() {
     const comments = document.getElementById('comments').value;
-    const status = document.getElementById('status').value;
+    const decision = document.getElementById('decision').value;
 
-    if (!selectedRating || !comments) {
-        showToast('Rating and Comments are mandatory', 'error');
+    if (!selectedRating || !comments || !decision) {
+        showToast('Rating, Comments and Decision are mandatory', 'error');
         return;
     }
 
@@ -69,14 +114,13 @@ async function submitFeedback() {
             comments,
             strengths: document.getElementById('strengths').value,
             weaknesses: document.getElementById('weaknesses').value,
-            status
+            decision
         };
 
         await api.updateInterviewFeedback(currentInterview.id, body);
 
         showToast('Feedback submitted successfully', 'success');
-        document.getElementById('feedbackFormArea').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'block';
+        closeFeedbackModal();
         loadCandidates();
     } catch (e) {
         showToast('Failed to submit: ' + e.message, 'error');
@@ -86,5 +130,20 @@ async function submitFeedback() {
 window.selectCandidate = selectCandidate;
 window.setRating = setRating;
 window.submitFeedback = submitFeedback;
+window.closeFeedbackModal = closeFeedbackModal;
+
+// Close modal when clicking outside
+document.getElementById('feedbackModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'feedbackModal') {
+        closeFeedbackModal();
+    }
+});
+
+// Close modal on ESC key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('feedbackModal').classList.contains('active')) {
+        closeFeedbackModal();
+    }
+});
 
 loadCandidates();

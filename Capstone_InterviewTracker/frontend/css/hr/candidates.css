@@ -1,29 +1,63 @@
 .panel-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+    padding: 14px 16px;
     border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
     margin-bottom: 8px;
+    background: #fff;
 }
 
 .panel-option:hover {
     border-color: #4f46e5;
     background: #f8faff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
 }
 
 .panel-option.selected {
     border-color: #4f46e5;
     background: #eef2ff;
+    border-left: 4px solid #4f46e5;
+    padding-left: 12px;
 }
 
 .panel-option input[type="checkbox"] {
     accent-color: #4f46e5;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.panel-option-info {
+    min-width: 0;
+    text-align: left;
+}
+
+.panel-option-name {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.panel-option-title {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+    line-height: 1.3;
+}
+
+.panel-option-org {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+    line-height: 1.3;
 }
 
 .modal-view.active {
@@ -344,9 +378,8 @@
 }
 
 .cand-sched-header {
-    padding: 32px;
-    overflow-y: auto;
-    flex: 1;
+    padding: 12px 28px;
+    display: block;
 }
 
 .cand-sched-title {
@@ -387,6 +420,85 @@
     gap: 8px;
 }
 
+/* Candidate table helpers */
+.cand-row-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cand-row-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.cand-row-name {
+    font-weight: 500;
+}
+.cand-row-email {
+    font-size: 12px;
+    color: #64748b;
+}
+.cand-table-text {
+    font-size: 13px;
+}
+.cand-stage-select {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    min-width: 120px;
+}
+.cand-table-date {
+    font-size: 13px;
+    color: #64748b;
+}
+.cand-action-btn {
+    font-size: 13px;
+    color: #4f46e5;
+    background: none;
+    border: 1px solid #4f46e5;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    margin-right: 6px;
+}
+.cand-action-link {
+    font-size: 13px;
+    color: #64748b;
+    cursor: pointer;
+    margin-right: 12px;
+}
+.cand-action-trash {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+}
+.cand-table-empty,
+.cand-search-empty {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+.cand-search-empty {
+    font-size: 13px;
+    padding: 20px;
+}
+.cand-sched-panel-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+}
+
 .cand-sched-time-sep {
     display: flex;
     align-items: center;
@@ -410,18 +522,57 @@
 }
 
 .cand-sched-panel-box {
-    display: none;
-    background: #f8faff;
-    padding: 10px;
+    display: block;
+    background: #f8fafc;
+    padding: 16px;
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     border: 1px solid #e2e8f0;
+    min-height: 48px;
+}
+
+.cand-sched-panel-box #selectedList {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 28px;
+    align-items: center;
+}
+
+.panel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.panel-badge button {
+    background: none;
+    border: none;
+    color: #4f46e5;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.panel-badge button:hover {
+    color: #dc2626;
 }
 
 .cand-sched-panel-list {
-    margin-top: 8px;
-    max-height: 150px;
+    margin-top: 12px;
+    max-height: 280px;
     overflow-y: auto;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 12px;
 }
 
 .cand-sched-footer {
@@ -429,13 +580,6 @@
     justify-content: flex-end;
     gap: 12px;
     margin-top: 32px;
-}
-
-.cand-sched-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
 }
 
 .cand-sched-row {
@@ -472,16 +616,36 @@
 }
 
 .cand-sched-scroll {
-    padding: 32px;
+    padding: 8px 28px 16px;
     overflow-y: auto;
     flex: 1;
 }
 
-.cand-sched-header {
+/* Scoped label styles for Schedule modal to match HR schedule look */
+.cand-sched-scroll .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.cand-sched-scroll .form-group input,
+.cand-sched-scroll .form-group select,
+.cand-sched-scroll .form-group textarea {
+    width: 100%;
+}
+
+/* Ensure two-column rows keep consistent vertical alignment */
+.cand-sched-row > .form-group { display: block; }
+
+.cand-sched-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
 }
 
 .cand-sched-title {
@@ -496,6 +660,11 @@
     font-size: 24px;
     cursor: pointer;
     color: #94a3b8;
+}
+
+.cand-sched-close {
+    align-self: flex-start;
+    margin-top: 2px;
 }
 
 .cand-sched-error {

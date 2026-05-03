@@ -50,28 +50,20 @@
             <p>Experience a transparent and efficient hiring process designed to get you from application to offer
                 faster.</p>
         </div>
-        <div style="display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
-            <div style="text-align:center;">
-                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">01</div>
-                <div
-                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
-                    Apply</div>
+        <div class="flow-row">
+            <div class="flow-item">
+                <div class="flow-number">01</div>
+                <div class="flow-label">Apply</div>
             </div>
-            <div style="width:30px; height:2px; background:rgba(255,255,255,0.2); margin-top:-15px;"
-                class="flow-divider"></div>
-            <div style="text-align:center;">
-                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">02</div>
-                <div
-                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
-                    Interview</div>
+            <div class="flow-divider"></div>
+            <div class="flow-item">
+                <div class="flow-number">02</div>
+                <div class="flow-label">Interview</div>
             </div>
-            <div style="width:30px; height:2px; background:rgba(255,255,255,0.2); margin-top:-15px;"
-                class="flow-divider"></div>
-            <div style="text-align:center;">
-                <div style="font-weight:700; font-size:24px; margin-bottom:4px;">03</div>
-                <div
-                    style="font-size:13px; color:#e0e7ff; font-weight:500; text-transform:uppercase; letter-spacing:0.05em;">
-                    Track</div>
+            <div class="flow-divider"></div>
+            <div class="flow-item">
+                <div class="flow-number">03</div>
+                <div class="flow-label">Track</div>
             </div>
         </div>
     </div>
@@ -85,15 +77,15 @@
             <input type="text" id="jobsSearchInput" placeholder="Search by title or location...">
         </div>
         <div class="jd-grid" id="jobsGrid">
-            <div style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:40px;">Loading positions...</div>
+            <div class="jd-loading">Loading positions...</div>
         </div>
     </section>
 
     <footer>
-        <div class="footer-content" style="justify-content: center; text-align: center;">
+        <div class="footer-content center">
             <div class="footer-brand">
-                <div class="landing-brand" style="justify-content: center;">HireTrack</div>
-                <p style="max-width: 400px; margin: 15px auto;">Our official internal recruitment system. Helping you
+                <div class="landing-brand center">HireTrack</div>
+                <p class="footer-desc">Our official internal recruitment system. Helping you
                     find your place in the HireTrack family.</p>
             </div>
         </div>
@@ -106,7 +98,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
-                <button type="button" class="close-btn" onclick="closeApplyModal()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;">
+                <button type="button" class="close-btn close-circle" onclick="closeApplyModal()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -114,10 +106,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div id="applyErrorMsg" style="color: #dc2626; font-size: 14px; margin-bottom: 16px; display: none;">
+                <div id="applyErrorMsg" class="apply-error-msg">
                 </div>
-                <div id="applySuccessMsg"
-                    style="color: #16a34a; font-size: 14px; margin-bottom: 16px; display: none; background: #dcfce7; padding: 12px; border-radius: 6px;">
+                <div id="applySuccessMsg" class="apply-success-msg">
                     Application submitted successfully!</div>
 
                 <form id="applyForm">
@@ -144,21 +135,19 @@
                         </div>
                         <div class="form-group">
                             <label>Mobile Number</label>
-                            <div
-                                style="display:flex; gap:0; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                            <div class="mobile-input-group">
                                 <input type="text" id="applyMobileCode" value="+91" required maxlength="5"
                                     oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
-                                    style="width:70px; border:none; border-right:1px solid #e2e8f0; border-radius:0; background:#f8fafc; text-align:center; padding:10px 5px;">
+                                    class="mobile-code-input">
                                 <input type="text" id="applyMobile" placeholder="Enter 10-digit number" required
                                     maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                    style="flex:1; border:none; border-radius:0; padding:10px 14px;">
+                                    class="mobile-number-input">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Date of Birth</label>
-                        <input type="date" id="applyDob" required
-                            style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                        <input type="date" id="applyDob" required class="input-date">
                     </div>
             </div>
             <div class="form-row">
@@ -208,13 +197,13 @@
             </div>
             <div class="form-group">
                 <label>Resume (PDF only, Max 5MB)</label>
-                <input type="file" id="applyResume" accept=".pdf" style="padding: 8px 0;" required>
+                <input type="file" id="applyResume" accept=".pdf" class="file-input" required>
             </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
-            <button type="button" class="primary-btn" style="width: auto;" onclick="submitApplication()">Submit
+            <button type="button" class="primary-btn auto-width" onclick="submitApplication()">Submit
                 Application</button>
         </div>
     </div>

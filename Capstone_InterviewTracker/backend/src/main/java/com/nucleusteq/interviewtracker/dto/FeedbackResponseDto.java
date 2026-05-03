@@ -12,6 +12,7 @@ public class FeedbackResponseDto {
     private String strengths;
     private String weaknesses;
     private String decision;
+    private String panelSuggestion;
     private LocalDateTime submittedAt;
 
     public FeedbackResponseDto() {}
@@ -34,6 +35,9 @@ public class FeedbackResponseDto {
 
     public String getDecision() { return decision; }
     public void setDecision(String decision) { this.decision = decision; }
+
+    public String getPanelSuggestion() { return panelSuggestion; }
+    public void setPanelSuggestion(String panelSuggestion) { this.panelSuggestion = panelSuggestion; }
 
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }

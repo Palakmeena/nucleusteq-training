@@ -54,12 +54,7 @@ document.getElementById('createJdForm').addEventListener('submit', async functio
     };
     console.log('Sending JD:', JSON.stringify(body));
     try {
-        const res = await fetch('http://localhost:8080/api/hr/jd', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify(body)
-        });
-        const result = await res.json();
+        const result = await window.api.createJd(body);
         console.log('Response:', result);
         if (result.success) {
             alert('Job posted successfully!');

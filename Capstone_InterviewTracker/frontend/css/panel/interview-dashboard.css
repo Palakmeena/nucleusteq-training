@@ -1,0 +1,143 @@
+/* Interview Dashboard specific styles */
+
+.topbar-date-badge {
+    font-size: 13px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.topbar-avatar-badge {
+    width: 32px;
+    height: 32px;
+    background: #eef2ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #4f46e5;
+}
+
+.section-title-small {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.flex-between-start {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.flex-row-gap {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.profile-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.profile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.btn-small {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.resume-preview {
+    background: #f8fafc;
+    border-radius: 8px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.meta-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.role-paragraph {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.focus-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.focus-strong {
+    font-size: 13px;
+}
+
+.focus-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin-left: 18px;
+}
+
+.feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.feedback-note {
+    font-size: 12px;
+    color: #64748b;
+    font-style: italic;
+}
+
+.textarea-min {
+    min-height: 120px;
+}
+
+.primary-danger {
+    width: auto;
+    background: #dc2626;
+}
+
+/* Candidate avatar variants */
+.candidate-avatar.avatar-success { background:#dcfce7; color:#16a34a; }
+.candidate-avatar.avatar-warning { background:#fef3c7; color:#d97706; }
+
+/* small utility */
+.margin-top-20 { margin-top: 20px; }
+
+.schedule-flex { display:flex; justify-content:space-between; align-items:flex-start; }
+.schedule-inner { display:flex; gap:12px; align-items:center; }
+
+/* Additional utilities to replace inline styles */
+.title-22 { font-size:22px; font-weight:700; }
+.flex-gap-8 { display:flex; gap:8px; }
+.grid-two-col-gap24 { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.meta-title-margin { margin-bottom:10px; }
+.focus-dot { color: #16a34a; }
+.feedback-title { font-size:18px; font-weight:600; }
+.flex-end-gap12-margin-top20 { display:flex; justify-content:flex-end; gap:12px; margin-top:20px; }

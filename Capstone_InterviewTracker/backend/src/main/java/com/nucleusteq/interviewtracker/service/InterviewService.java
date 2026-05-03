@@ -26,7 +26,9 @@ import com.nucleusteq.interviewtracker.entity.Feedback;
 import com.nucleusteq.interviewtracker.enums.FeedbackStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,8 +93,20 @@ public class InterviewService {
                         "Candidate not found with id: " + request.getCandidateId()));
 
         validateInterviewStage(request.getInterviewStage());
-        validateNoDuplicateInterview(candidate, request.getInterviewStage());
+        validateInterviewDateTime(request.getInterviewDate(), request.getInterviewTime());
         validateSequentialWorkflow(candidate, request.getInterviewStage());
+
+        Interview existingInterview = interviewRepository
+                .findByCandidateAndInterviewStageAndIsCompletedFalse(candidate, request.getInterviewStage())
+                .orElse(null);
+
+        if (existingInterview != null) {
+            validateRescheduleWindow(existingInterview);
+            validateNoDuplicateInterviewSlot(request.getInterviewDate(), request.getInterviewTime(), existingInterview.getId());
+        } else {
+            validateNoDuplicateInterviewSlot(request.getInterviewDate(), request.getInterviewTime());
+            validateNoDuplicateInterview(candidate, request.getInterviewStage());
+        }
 
         /*
          * Panel members are required for L1 and L2 interviews.
@@ -108,14 +122,21 @@ public class InterviewService {
             }
         }
 
-        Interview interview = new Interview(
-                request.getInterviewStage(),
-                request.getInterviewDate(),
-                request.getInterviewTime(),
-                request.getFocusAreas(),
-                candidate);
-        
+        boolean rescheduled = existingInterview != null;
+        Interview interview = rescheduled ? existingInterview : new Interview(
+            request.getInterviewStage(),
+            request.getInterviewDate(),
+            request.getInterviewTime(),
+            request.getFocusAreas(),
+            candidate);
+
+        interview.setInterviewStage(request.getInterviewStage());
+        interview.setInterviewDate(request.getInterviewDate());
+        interview.setInterviewTime(request.getInterviewTime());
+        interview.setFocusAreas(request.getFocusAreas());
         interview.setMeetingLink(request.getMeetingLink());
+
+        interview.getInterviewPanels().clear();
 
         Interview savedInterview = interviewRepository.save(interview);
 
@@ -141,6 +162,7 @@ public class InterviewService {
 
             InterviewPanel assignment = new InterviewPanel(savedInterview, panelMember);
             interviewPanelRepository.save(assignment);
+            savedInterview.getInterviewPanels().add(assignment);
         }
 
         /*
@@ -152,7 +174,7 @@ public class InterviewService {
                         "Interview not found after saving — this should never happen"));
 
         // Send email notification to candidate
-        sendInterviewScheduledEmail(candidate, request);
+        sendInterviewScheduledEmail(candidate, request, rescheduled);
 
         return interviewMapper.mapToResponseDto(reloaded);
     }
@@ -161,7 +183,9 @@ public class InterviewService {
      * Sends a simple email to the candidate informing them about
      * their scheduled interview. Only essential details are shared.
      */
-    private void sendInterviewScheduledEmail(final Candidate candidate, final InterviewRequestDto request) {
+    private void sendInterviewScheduledEmail(final Candidate candidate,
+            final InterviewRequestDto request,
+            final boolean rescheduled) {
         try {
             String candidateEmail = candidate.getEmail();
             String candidateName = candidate.getFullName();
@@ -174,10 +198,12 @@ public class InterviewService {
                 message.setFrom(fromEmail);
             }
             message.setTo(candidateEmail);
-            message.setSubject("Your " + stageName + " Interview has been Scheduled - HireTrack");
+                message.setSubject("Your " + stageName + " Interview has been "
+                    + (rescheduled ? "Rescheduled" : "Scheduled") + " - HireTrack");
             message.setText(
                     "Hi " + candidateName + ",\n\n"
-                    + "Your " + stageName + " interview has been scheduled.\n\n"
+                    + "Your " + stageName + " interview has been "
+                    + (rescheduled ? "rescheduled" : "scheduled") + ".\n\n"
                     + "Date: " + date + "\n"
                     + "Time: " + time + "\n\n"
                     + "Please be prepared and ensure you are available at the scheduled time.\n\n"
@@ -371,6 +397,40 @@ public class InterviewService {
                 });
     }
 
+        private void validateNoDuplicateInterviewSlot(final LocalDate interviewDate,
+                final LocalTime interviewTime) {
+            if (interviewRepository.existsByInterviewDateAndInterviewTime(interviewDate, interviewTime)) {
+                throw new IllegalArgumentException(
+                        "An interview is already scheduled for this date and time");
+            }
+        }
+
+        private void validateNoDuplicateInterviewSlot(final LocalDate interviewDate,
+                final LocalTime interviewTime, final Long interviewId) {
+            if (interviewRepository.existsByInterviewDateAndInterviewTimeAndIdNot(
+                    interviewDate, interviewTime, interviewId)) {
+                throw new IllegalArgumentException(
+                        "An interview is already scheduled for this date and time");
+            }
+        }
+
+        private void validateRescheduleWindow(final Interview interview) {
+            LocalDateTime scheduledAt = LocalDateTime.of(interview.getInterviewDate(), interview.getInterviewTime());
+            if (!LocalDateTime.now().isBefore(scheduledAt)) {
+                throw new IllegalArgumentException(
+                        "This interview has already started or finished, so it cannot be rescheduled");
+            }
+        }
+
+        private void validateInterviewDateTime(final LocalDate interviewDate,
+                final LocalTime interviewTime) {
+            LocalDateTime scheduledAt = LocalDateTime.of(interviewDate, interviewTime);
+            if (!scheduledAt.isAfter(LocalDateTime.now())) {
+                throw new IllegalArgumentException(
+                        "Interview date and time must be today or in the future");
+            }
+        }
+
     /**
      * Returns all interviews for the logged-in candidate.
      * Candidate can only see their own interview schedule.
@@ -427,14 +487,26 @@ public class InterviewService {
         Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Interview not found"));
 
+        validateFeedbackWindow(interview);
+
         User user = userRepository.findByEmail(panelEmail)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("User not found"));
 
         PanelMember panelMember = panelMemberRepository.findByUser(user)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Panel member not found"));
 
-        FeedbackStatus status = (request.getDecision() != null && request.getDecision().toUpperCase().contains("REJECT")) 
-                                ? FeedbackStatus.REJECTED : FeedbackStatus.SELECTED;
+        // Map panel decision to FeedbackStatus enum
+        FeedbackStatus status = FeedbackStatus.SELECTED; // default
+        if (request.getDecision() != null) {
+            String decision = request.getDecision().toUpperCase();
+            if (decision.contains("REJECT")) {
+                status = FeedbackStatus.REJECTED;
+            } else if (decision.contains("ON_HOLD")) {
+                status = FeedbackStatus.SELECTED; // On Hold is treated as Selected for now
+            } else if (decision.contains("PASSED")) {
+                status = FeedbackStatus.SELECTED;
+            }
+        }
 
         Feedback feedback = new Feedback(
                 request.getComments(),
@@ -443,6 +515,7 @@ public class InterviewService {
                 "Overall Assessment", // areasCovered
                 request.getRating(),
                 status,
+                request.getDecision(), // preserve original panel suggestion
                 interview,
                 panelMember
         );
@@ -487,12 +560,22 @@ public class InterviewService {
             throw new IllegalArgumentException("HR feedback can only be submitted for HR Round interviews");
         }
 
+        validateFeedbackWindow(interview);
+
         if (interview.isCompleted()) {
             throw new IllegalArgumentException("Feedback has already been submitted for this interview");
         }
 
-        FeedbackStatus status = (request.getDecision() != null && request.getDecision().toUpperCase().contains("REJECT"))
-                                ? FeedbackStatus.REJECTED : FeedbackStatus.SELECTED;
+        // Map HR feedback decision to FeedbackStatus enum
+        FeedbackStatus status = FeedbackStatus.SELECTED; // default
+        if (request.getDecision() != null) {
+            String decision = request.getDecision().toUpperCase();
+            if (decision.contains("REJECT")) {
+                status = FeedbackStatus.REJECTED;
+            } else if (decision.contains("SELECTED")) {
+                status = FeedbackStatus.SELECTED;
+            }
+        }
 
         Feedback feedback = new Feedback(
                 request.getComments(),
@@ -501,6 +584,7 @@ public class InterviewService {
                 "HR Round Assessment",
                 request.getRating(),
                 status,
+                request.getDecision(), // preserve original HR decision
                 interview,
                 null  // No panel member for HR Round
         );
@@ -565,6 +649,14 @@ public class InterviewService {
             logger.info("Result email sent successfully to {}", candidate.getEmail());
         } catch (Exception e) {
             logger.error("Failed to send result email to {}: {}", candidate.getEmail(), e.getMessage());
+        }
+    }
+
+    private void validateFeedbackWindow(final Interview interview) {
+        LocalDateTime scheduledAt = LocalDateTime.of(interview.getInterviewDate(), interview.getInterviewTime());
+        if (LocalDateTime.now().isBefore(scheduledAt)) {
+            throw new IllegalArgumentException(
+                    "Feedback can only be submitted after the interview time");
         }
     }
 }

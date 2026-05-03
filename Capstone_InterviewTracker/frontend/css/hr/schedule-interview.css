@@ -1,4 +1,73 @@
-.form-section {
+/* Styles extracted from schedule-interview.js inline templates */
+.selected-panel-item{
+    background:#fff;
+    padding:8px 12px;
+    border-radius:6px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.selected-panel-info > .name{
+    font-size:13px;
+    font-weight:500;
+    color:#1e293b;
+}
+.selected-panel-info > .designation{
+    font-size:11px;
+    color:#64748b;
+}
+.selected-panel-remove-btn{
+    background:none;border:none;color:#dc2626;font-size:18px;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+}
+.panel-empty-msg{
+    color:#94a3b8;font-size:13px;padding:20px;text-align:center;
+}
+.panel-option-selected{
+    border-color:#4f46e5;background:#eef2ff;
+}
+.panel-option-name{font-size:14px;font-weight:500}
+.panel-option-designation{font-size:12px;color:#64748b}
+.interview-card{
+    background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.2s;
+}
+.interview-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.interview-card-title{font-weight:700;font-size:18px;color:#1e293b;margin-bottom:8px}
+.interview-card-meta{display:flex;align-items:center;gap:10px}
+.stage-pill{font-size:13px;font-weight:600;color:#64748b;background:#f1f5f9;padding:4px 12px;border-radius:100px;border:1px solid #e2e8f0}
+.status-badge{font-size:12px;font-weight:600;padding:4px 12px;border-radius:100px}
+.status-upcoming{background:#eef2ff;color:#4f46e5}
+.status-completed{background:#dcfce7;color:#16a34a}
+.status-today{background:#fef3c7;color:#d97706}
+.status-overdue{background:#fee2e2;color:#991b1b}
+.interview-card-datetime{text-align:right;background:#f8fafc;padding:10px 16px;border-radius:10px;border:1px solid #e2e8f0}
+.interview-card-datetime .date{font-size:14px;font-weight:700;color:#334155;margin-bottom:4px}
+.interview-card-datetime .time{font-size:13px;color:#64748b;font-weight:600}
+.interview-card-actions{margin-top:20px;padding-top:20px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:12px}
+.action-btn{padding:10px 20px;font-size:13px;font-weight:600;width:auto;height:auto;line-height:1.2}
+.action-btn.primary-strong{background:#16a34a;border-color:#16a34a}
+.no-interviews-empty{text-align:center;padding:60px 40px;color:#94a3b8;font-size:15px;background:#f8fafc;border-radius:12px;border:2px dashed #e2e8f0}
+.icon-gray{color:#64748b}
+.info-link{display:inline-flex;align-items:center;gap:8px;color:#4f46e5;font-weight:600;text-decoration:none}
+.info-link-empty{color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:6px}
+.feedback-empty{text-align:center;padding:40px;color:#94a3b8;background:#fff;border-radius:12px;border:1px dashed #e2e8f0}
+.feedback-card{border:1px solid #e2e8f0;border-radius:8px;padding:24px;margin-bottom:20px;background:#fff}
+.feedback-card-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9;padding-bottom:16px;margin-bottom:20px}
+.feedback-card-header .name{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.feedback-card-header .date{font-size:13px;color:#64748b}
+.feedback-rating{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:6px}
+.feedback-decision{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;padding:4px 10px;border-radius:4px}
+.feedback-decision.selected{color:#16a34a;background:#dcfce7}
+.feedback-decision.rejected{color:#ef4444;background:#fee2e2}
+.feedback-section{display:flex;flex-direction:column;gap:20px}
+.feedback-section label{display:block;font-size:12px;font-weight:600;color:#0f172a;text-transform:uppercase;margin-bottom:6px}
+.feedback-section .content{font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap}
+.feedback-content-empty{color:#94a3b8;font-style:italic}
+.interview-card-title-main{font-weight:700;font-size:18px;color:#1e293b;margin-bottom:8px}
+.interview-card-header-badges{display:flex;align-items:center;gap:10px}
+.interview-card-datetime-label{font-size:14px;font-weight:700;color:#334155;margin-bottom:4px}
+.interview-card-datetime-time{font-size:13px;color:#64748b;font-weight:600}
+.interview-meeting-link{display:inline-flex;align-items:center;gap:8px;color:#4f46e5;font-weight:600;text-decoration:none}
+.interview-no-link{color:#94a3b8;font-style:italic;display:flex;align-items:center;gap:6px}.form-section {
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;

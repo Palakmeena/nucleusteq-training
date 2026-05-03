@@ -28,22 +28,22 @@ async function loadOverview() {
         tbody.innerHTML = recent.length ? recent.map(c => `
             <tr>
                 <td>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
+                    <div class="overview-candidate-row">
+                        <div class="overview-candidate-avatar">
                             ${c.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                         </div>
-                        <div>
-                            <div style="font-weight:500;font-size:14px;">${c.fullName}</div>
-                            <div style="font-size:12px;color:#64748b;">${c.email}</div>
+                        <div class="overview-candidate-info">
+                            <div class="overview-candidate-name">${c.fullName}</div>
+                            <div class="overview-candidate-email">${c.email}</div>
                         </div>
                     </div>
                 </td>
-                <td style="font-size:14px;">${c.jobTitle || '—'}</td>
-                <td style="font-size:14px;">${c.totalExperience} yrs</td>
+                <td class="overview-table-cell">${c.jobTitle || '—'}</td>
+                <td class="overview-table-cell">${c.totalExperience} yrs</td>
                 <td>${stageBadge(c.currentStage)}</td>
-                <td><a href="candidates.html" style="font-size:13px;color:#4f46e5;text-decoration:none;padding:4px 10px;border:1px solid #4f46e5;border-radius:6px;">View</a></td>
+                <td><a href="candidates.html" class="overview-view-link">View</a></td>
             </tr>
-        `).join('') : '<tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">No candidates yet</td></tr>';
+        `).join('') : '<tr><td colspan="5" class="overview-empty-row">No candidates yet</td></tr>';
 
     } catch (e) {
         showToast('Failed to load dashboard: ' + e.message, 'error');

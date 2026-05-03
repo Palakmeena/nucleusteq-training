@@ -48,6 +48,10 @@
 
 .profile-gender-select {
     width: 100%;
+}
+
+.profile-resume-link { color:#4f46e5; font-weight:600; text-decoration:none }
+.profile-resume-empty { color:#94a3b8 }
     padding: 10px;
     border: 1px solid #e2e8f0;
     border-radius: 8px;

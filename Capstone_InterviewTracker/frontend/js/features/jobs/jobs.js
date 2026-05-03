@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (role === 'HR') dashboardLink = '../hr/pipeline.html';
         else if (role === 'PANEL') dashboardLink = '../panel/interview-dashboard.html';
         authSection.innerHTML = `
-            <a href="${dashboardLink}" class="login-btn" style="text-decoration: none;">Dashboard</a>
+            <a href="${dashboardLink}" class="login-btn jobs-dashboard-link">Dashboard</a>
             <button class="signup-btn" onclick="handleAuth()">Sign Out</button>
         `;
     }
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             checkAutoApply(allJds);
         })
         .catch(err => {
-            jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">${err.message || 'Error loading job descriptions'}</div>`;
+            jdListEl.innerHTML = `<div class="jobs-error-empty">${err.message || 'Error loading job descriptions'}</div>`;
         });
 
     searchInput.addEventListener('input', e => {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderJds(jds) {
         if (jds.length === 0) {
-            jdListEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b;">No available positions found.</div>`;
+            jdListEl.innerHTML = `<div class="jobs-no-results-empty">No available positions found.</div>`;
             return;
         }
 
@@ -63,15 +63,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <div class="ref-card">
                     <div class="ref-card-header">
-                        <div class="company-initial" style="background: ${bgColor}">${initials}</div>
+                        <div class="company-initial" style="--company-bg-color: ${bgColor}">${initials}</div>
                         <div class="${badgeClass}">${badgeText}</div>
                     </div>
                     <div class="ref-card-title">${jd.jobTitle}</div>
                     <div class="ref-card-desc">${jd.jobDescription || 'Apply to explore this role.'}</div>
                     <div class="ref-card-footer">
                         <div class="ref-location">${jd.location}</div>
-                        <div style="display:flex; gap: 8px;">
-                            ${isHR ? `<button class="btn-apply-light" style="color:#ef4444; background:#fee2e2;" onclick="deleteJd(${jd.id})">Delete</button>` : ''}
+                        <div class="jobs-action-row">
+                            ${isHR ? `<button class="btn-apply-light jobs-delete-btn" onclick="deleteJd(${jd.id})">Delete</button>` : ''}
                             <button class="btn-apply-light" onclick="openApplyModal(${jd.id}, '${jd.jobTitle.replace(/'/g, "\\'")}')">Apply Now</button>
                         </div>
                     </div>

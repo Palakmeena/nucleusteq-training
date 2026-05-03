@@ -19,7 +19,7 @@ async function loadProfile() {
 
             const status = document.getElementById('resumeStatus');
             if (currentProfile.resumePath) {
-                status.innerHTML = ` Resume is uploaded. <a href="${currentProfile.resumePath}" target="_blank" style="color:#4f46e5; text-decoration:none;">View Current</a>`;
+                status.innerHTML = ` Resume is uploaded. <a href="${currentProfile.resumePath}" target="_blank" class="settings-resume-link">View Current</a>`;
             } else {
                 status.innerHTML = ' No resume uploaded yet.';
             }

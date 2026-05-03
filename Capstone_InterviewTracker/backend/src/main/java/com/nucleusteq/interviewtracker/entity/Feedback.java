@@ -49,6 +49,11 @@ public class Feedback {
     @Column(name = "feedback_status", nullable = false)
     private FeedbackStatus feedbackStatus;
 
+    /** Original panel suggestion as submitted (PASSED/REJECTED/ON_HOLD).
+     *  Preserved to display to HR exactly as panel member selected it. */
+    @Column(name = "panel_suggestion")
+    private String panelSuggestion;
+
     @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt;
 
@@ -79,6 +84,26 @@ public class Feedback {
         this.areasCovered = areasCovered;
         this.rating = rating;
         this.feedbackStatus = feedbackStatus;
+        this.interview = interview;
+        this.panelMember = panelMember;
+        this.submittedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Creates feedback with panel suggestion preserved.
+     */
+    public Feedback(String comments, String strengths,
+            String weaknesses, String areasCovered,
+            Integer rating, FeedbackStatus feedbackStatus,
+            String panelSuggestion,
+            Interview interview, PanelMember panelMember) {
+        this.comments = comments;
+        this.strengths = strengths;
+        this.weaknesses = weaknesses;
+        this.areasCovered = areasCovered;
+        this.rating = rating;
+        this.feedbackStatus = feedbackStatus;
+        this.panelSuggestion = panelSuggestion;
         this.interview = interview;
         this.panelMember = panelMember;
         this.submittedAt = LocalDateTime.now();
@@ -138,6 +163,14 @@ public class Feedback {
 
     public void setFeedbackStatus(FeedbackStatus feedbackStatus) {
         this.feedbackStatus = feedbackStatus;
+    }
+
+    public String getPanelSuggestion() {
+        return panelSuggestion;
+    }
+
+    public void setPanelSuggestion(String panelSuggestion) {
+        this.panelSuggestion = panelSuggestion;
     }
 
     public LocalDateTime getSubmittedAt() {

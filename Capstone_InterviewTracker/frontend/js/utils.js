@@ -8,15 +8,13 @@ function showToast(message, type = 'default') {
     if (!container) {
         container = document.createElement('div');
         container.className = 'toast-container';
-        container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;';
         document.body.appendChild(container);
     }
-    const colors = { success: '#10B981', error: '#EF4444', default: '#1e293b' };
     const toast = document.createElement('div');
-    toast.style.cssText = `background:${colors[type]||colors.default};color:white;padding:12px 18px;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);min-width:260px;animation:slideIn 0.3s ease;`;
+    toast.className = `toast toast-${type || 'default'}`;
     toast.innerHTML = `<span>${type==='success'?'':type==='error'?'':''}</span><span>${message}</span>`;
     container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateX(100px)'; toast.style.transition='0.3s'; setTimeout(()=>toast.remove(),300); }, 3000);
+    setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(()=>toast.remove(),300); }, 3000);
 }
 
 // HELPERS
@@ -77,11 +75,11 @@ function buildSidebar(role, activePage) {
         <div class="sidebar-bottom">
             <a href="${base}index.html" class="bottom-item">${svgHome} Home</a>
             <a href="#" class="bottom-item logout" onclick="auth.logout(); return false;">${svgLogout} Sign Out</a>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-top:8px;border-top:1px solid #e2e8f0;">
-                <div style="width:32px;height:32px;background:#eef2ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4f46e5;font-size:13px;flex-shrink:0;">${initials}</div>
-                <div style="overflow:hidden;">
-                    <div style="font-size:13px;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fullName}</div>
-                    <div style="font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${auth.getEmail()||''}</div>
+            <div class="sidebar-user-meta">
+                <div class="sidebar-avatar">${initials}</div>
+                <div class="overflow-hidden">
+                    <div class="sidebar-user-name">${fullName}</div>
+                    <div class="sidebar-user-email">${auth.getEmail()||''}</div>
                 </div>
             </div>
         </div>
@@ -100,7 +98,7 @@ function stageBadge(stage) {
         REJECTED:     { cls: 'badge-red',    label: 'Rejected' },
     };
     const s = map[stage] || { cls: 'badge-gray', label: stage };
-    return `<span class="jd-badge ${s.cls}" style="text-transform:none;">${s.label}</span>`;
+    return `<span class="jd-badge ${s.cls} badge-capitalize">${s.label}</span>`;
 }
 
 // FORMAT DATE
@@ -114,7 +112,7 @@ function formatDate(str) {
 
 
 // MODAL HELPERS
-function showModal(title, contentHtml, footerHtml = '') {
+function showModal(title, contentHtml, footerHtml = '', modalClass = '') {
     // Remove existing modal if any
     const existing = document.querySelector('.modal-overlay');
     if (existing) existing.remove();
@@ -122,10 +120,10 @@ function showModal(title, contentHtml, footerHtml = '') {
     const modal = document.createElement('div');
     modal.className = 'modal-overlay active';
     modal.innerHTML = `
-        <div class="modal-content">
+        <div class="modal-content ${modalClass}">
             <div class="modal-header">
-                <h3 style="margin:0;">${title}</h3>
-                <button class="close-modal" onclick="this.closest('.modal-overlay').remove()" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;padding:0;">
+                <h3 class="modal-title-compact">${title}</h3>
+                <button class="close-modal modal-close-circle" onclick="this.closest('.modal-overlay').remove()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -135,7 +133,7 @@ function showModal(title, contentHtml, footerHtml = '') {
             <div class="modal-body">
                 ${contentHtml}
             </div>
-            ${footerHtml ? `<div class="modal-footer" style="margin-top:24px; display:flex; justify-content:flex-end; gap:12px;">${footerHtml}</div>` : ''}
+            ${footerHtml ? `<div class="modal-footer modal-footer-actions">${footerHtml}</div>` : ''}
         </div>
     `;
     document.body.appendChild(modal);
@@ -157,18 +155,18 @@ function showResumeModal(resumeUrl) {
 
 function showJdModal(jdData) {
     const content = `
-        <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="jd-modal-body">
             <div>
-                <label style="font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase;">Job Title</label>
-                <div style="font-size:16px; font-weight:600; color:#111827;">${jdData.title || 'N/A'}</div>
+                <label class="jd-modal-label">Job Title</label>
+                <div class="jd-modal-title">${jdData.title || 'N/A'}</div>
             </div>
             <div>
-                <label style="font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase;">Job Description</label>
-                <div style="font-size:14px; color:#374151; line-height:1.6; white-space:pre-wrap;">${jdData.details || 'No details provided.'}</div>
+                <label class="jd-modal-label">Job Description</label>
+                <div class="jd-modal-text">${jdData.details || 'No details provided.'}</div>
             </div>
         </div>
     `;
-    showModal('Job Details', content);
+    showModal('Job Details', content, '', 'job-details-modal');
 }
 
 // Make available globally

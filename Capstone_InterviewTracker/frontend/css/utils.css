@@ -1,0 +1,30 @@
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{color:#fff;padding:12px 18px;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);min-width:260px;animation:slideIn 0.3s ease}
+.toast-success{background:#10B981}
+.toast-error{background:#EF4444}
+.toast-default{background:#1e293b}
+.toast-exit{opacity:0;transform:translateX(100px);transition:0.3s}
+
+.sidebar-user-meta{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-top:8px;border-top:1px solid #e2e8f0}
+.sidebar-avatar{width:32px;height:32px;background:#eef2ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4f46e5;font-size:13px;flex-shrink:0}
+.sidebar-user-name{font-size:13px;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-user-email{font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.overflow-hidden{overflow:hidden}
+
+.badge-capitalize{text-transform:none}
+
+.modal-title-compact{margin:0}
+.modal-close-circle{background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:0.2s;padding:0}
+.modal-footer-actions{margin-top:24px;display:flex;justify-content:flex-end;gap:12px}
+
+.jd-modal-body{display:flex;flex-direction:column;gap:16px}
+.jd-modal-label{font-size:12px;color:#6b7280;font-weight:600;text-transform:uppercase}
+.jd-modal-title{font-size:16px;font-weight:600;color:#111827}
+.jd-modal-text{font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap}
+
+.job-details-modal{max-width:560px}
+.job-details-modal .modal-header{padding:16px 24px}
+.job-details-modal .modal-body{padding:16px 24px 20px}
+.job-details-modal .jd-modal-body{gap:12px}
+.job-details-modal .jd-modal-title{font-size:15px;line-height:1.35}
+.job-details-modal .jd-modal-text{line-height:1.55}

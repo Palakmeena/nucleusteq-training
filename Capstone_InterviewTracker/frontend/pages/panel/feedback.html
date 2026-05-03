@@ -12,61 +12,63 @@
 <main class="main-area">
     <header class="topbar"><div class="topbar-nav">Submit Feedback</div></header>
     <div class="content-wrapper">
-        <div class="two-col" style="grid-template-columns: 350px 1fr; gap:24px;">
+        <div class="two-col panel-feedback-layout">
             <!-- CANDIDATE LIST -->
             <div>
-                <h3 style="font-size:15px; font-weight:600; margin-bottom:16px;">Pending Feedback</h3>
-                <div id="candidateList"><div style="text-align:center; padding:40px; color:#94a3b8;">Loading...</div></div>
-            </div>
-
-            <!-- FEEDBACK FORM -->
-            <div id="feedbackFormArea" style="display:none;">
-                <div class="feedback-form">
-                    <h3 id="formTitle" style="font-size:18px; font-weight:700; margin-bottom:4px;">Evaluation</h3>
-                    <p id="formSubtitle" style="font-size:14px; color:#64748b; margin-bottom:24px;">Submit your final thoughts on the candidate.</p>
-                    
-                    <label class="form-label">Overall Rating (1-5) *</label>
-                    <div class="rating-group" id="ratingGroup">
-                        <div class="rating-btn" onclick="setRating(1)">1</div>
-                        <div class="rating-btn" onclick="setRating(2)">2</div>
-                        <div class="rating-btn" onclick="setRating(3)">3</div>
-                        <div class="rating-btn" onclick="setRating(4)">4</div>
-                        <div class="rating-btn" onclick="setRating(5)">5</div>
-                    </div>
-
-                    <label class="form-label">Mandatory Comments *</label>
-                    <textarea id="comments" rows="4" placeholder="Detailed feedback on technical skills, culture fit, etc."></textarea>
-
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                        <div>
-                            <label class="form-label">Strengths</label>
-                            <textarea id="strengths" rows="3" placeholder="Key highlights..."></textarea>
-                        </div>
-                        <div>
-                            <label class="form-label">Weaknesses / Areas for Growth</label>
-                            <textarea id="weaknesses" rows="3" placeholder="Where they can improve..."></textarea>
-                        </div>
-                    </div>
-
-                    <label class="form-label">Decision *</label>
-                    <select id="status" style="width:100%; padding:12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:14px; margin-bottom:24px;">
-                        <option value="PASSED">Clear to Next Round</option>
-                        <option value="REJECTED">Reject Candidate</option>
-                        <option value="ON_HOLD">On Hold / Need More Info</option>
-                    </select>
-
-                    <button class="btn-primary" style="width:100%; padding:14px;" onclick="submitFeedback()">Submit Final Evaluation</button>
-                </div>
-            </div>
-            
-            <!-- EMPTY STATE -->
-            <div id="emptyState" style="text-align:center; padding:100px 40px; color:#94a3b8; background:#fff; border-radius:12px; border:1px solid #e2e8f0;">
-                <div class="empty-state-icon"></div>
-                <h3>Select a candidate from the left to begin evaluation</h3>
+                <h3 class="panel-feedback-heading">Pending Feedback</h3>
+                <div id="candidateList"><div class="panel-feedback-loading">Loading...</div></div>
             </div>
         </div>
     </div>
 </main>
+
+<!-- FEEDBACK FORM MODAL -->
+<div id="feedbackModal" class="feedback-modal-overlay">
+    <div class="feedback-modal-content">
+        <div class="feedback-modal-header">
+            <div>
+                <h3 class="panel-feedback-form-title" id="formTitle">Evaluation</h3>
+                <p class="panel-feedback-form-subtitle" id="formSubtitle">Submit your final thoughts on the candidate.</p>
+            </div>
+            <button class="feedback-modal-close" onclick="closeFeedbackModal()">&times;</button>
+        </div>
+        
+        <div class="feedback-form">
+            <label class="form-label">Overall Rating (1-5) *</label>
+            <div class="rating-group" id="ratingGroup">
+                <div class="rating-btn" onclick="setRating(1)">1</div>
+                <div class="rating-btn" onclick="setRating(2)">2</div>
+                <div class="rating-btn" onclick="setRating(3)">3</div>
+                <div class="rating-btn" onclick="setRating(4)">4</div>
+                <div class="rating-btn" onclick="setRating(5)">5</div>
+            </div>
+
+            <label class="form-label">Mandatory Comments *</label>
+            <textarea id="comments" rows="4" placeholder="Detailed feedback on technical skills, culture fit, etc."></textarea>
+
+            <div class="panel-feedback-dual-grid">
+                <div>
+                    <label class="form-label">Strengths</label>
+                    <textarea id="strengths" rows="3" placeholder="Key highlights..."></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Weaknesses / Areas for Growth</label>
+                    <textarea id="weaknesses" rows="3" placeholder="Where they can improve..."></textarea>
+                </div>
+            </div>
+
+            <label class="form-label">Decision *</label>
+            <select id="decision" class="panel-feedback-status-select">
+                <option value="">Select decision</option>
+                <option value="PASSED">Clear to Next Round</option>
+                <option value="REJECTED">Reject Candidate</option>
+                <option value="ON_HOLD">On Hold / Need More Info</option>
+            </select>
+
+            <button class="btn-primary panel-feedback-submit-btn" onclick="submitFeedback()">Submit Final Evaluation</button>
+        </div>
+    </div>
+</div>
 
 <script src="../../js/services/api.js"></script>
 <script src="../../js/services/authService.js"></script>

@@ -6,6 +6,8 @@ import com.nucleusteq.interviewtracker.enums.InterviewStage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +46,27 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
      */
     Optional<Interview> findByCandidateAndInterviewStageAndIsCompletedFalse(
             Candidate candidate, InterviewStage interviewStage);
+
+        /**
+         * Checks whether any interview already occupies the given date and time.
+         * Used to prevent double-booking a slot across candidates.
+         *
+         * @param interviewDate the interview date
+         * @param interviewTime the interview time
+         * @return true if a conflicting interview already exists
+         */
+        boolean existsByInterviewDateAndInterviewTime(LocalDate interviewDate, LocalTime interviewTime);
+
+        /**
+         * Checks whether any other interview already occupies the given date and time.
+         * Used when rescheduling an existing interview so the current row is excluded
+         * from the conflict check.
+         *
+         * @param interviewDate the interview date
+         * @param interviewTime the interview time
+         * @param id the interview ID to exclude from the duplicate-slot lookup
+         * @return true if another interview already uses the slot
+         */
+        boolean existsByInterviewDateAndInterviewTimeAndIdNot(
+                        LocalDate interviewDate, LocalTime interviewTime, Long id);
 }

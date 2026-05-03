@@ -31,20 +31,20 @@ function renderCandidates(list) {
     tbody.innerHTML = list.length ? list.map(c => `
         <tr>
             <td>
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:32px;height:32px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">
+                <div class="cand-row-user">
+                    <div class="cand-row-avatar">
                         ${(c.fullName || 'CN').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                     </div>
                     <div>
-                        <div style="font-weight:500;">${c.fullName}</div>
-                        <div style="font-size:12px;color:#64748b;">${c.email}</div>
+                        <div class="cand-row-name">${c.fullName}</div>
+                        <div class="cand-row-email">${c.email}</div>
                     </div>
                 </div>
             </td>
-            <td style="font-size:13px;">${c.jobTitle || '—'}</td>
-            <td style="font-size:13px;">${c.totalExperience} yrs</td>
+            <td class="cand-table-text">${c.jobTitle || '—'}</td>
+            <td class="cand-table-text">${c.totalExperience} yrs</td>
             <td>
-                <select class="filter-btn" style="padding:6px 10px; font-size:12px; border-radius:6px; min-width:120px;" 
+                <select class="filter-btn cand-stage-select" 
                         onchange="updateStage(${c.id}, this.value)">
                     <option value="PROFILING" ${c.currentStage === 'PROFILING' ? 'selected' : ''}>Profiling</option>
                     <option value="SCREENING" ${c.currentStage === 'SCREENING' ? 'selected' : ''}>Screening</option>
@@ -55,14 +55,14 @@ function renderCandidates(list) {
                     <option value="REJECTED" ${c.currentStage === 'REJECTED' ? 'selected' : ''}>Rejected</option>
                 </select>
             </td>
-            <td style="font-size:13px;color:#64748b;">${formatDate(c.createdAt)}</td>
+            <td class="cand-table-date">${formatDate(c.createdAt)}</td>
             <td>
-                <button onclick="openScheduleModal(${c.id}, '${c.fullName.replace(/'/g, "\\'")}')" style="font-size:13px;color:#4f46e5;background:none;border:1px solid #4f46e5;border-radius:6px;padding:4px 10px;cursor:pointer;margin-right:6px;">Schedule</button>
-                <span style="font-size:13px;color:#64748b;cursor:pointer;margin-right:12px;" onclick="viewCandidate(${c.id})">View</span>
-                <button onclick="deleteCandidate(${c.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;padding:0;font-size:16px;" title="Delete Candidate"><i class="fas fa-trash-alt"></i></button>
+                <button onclick="openScheduleModal(${c.id}, '${c.fullName.replace(/'/g, "\\'")}')" class="cand-action-btn">Schedule</button>
+                <span class="cand-action-link" onclick="viewCandidate(${c.id})">View</span>
+                <button onclick="deleteCandidate(${c.id})" class="cand-action-trash" title="Delete Candidate"><i class="fas fa-trash-alt"></i></button>
             </td>
         </tr>
-    `).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No candidates found</td></tr>';
+    `).join('') : '<tr><td colspan="6"><div class="cand-table-empty">No candidates found</div></td></tr>';
 }
 
 async function updateStage(id, newStage) {
@@ -260,6 +260,15 @@ let allPanels = [];
 let selectedPanels = [];
 let currentSchedulingCandidateId = null;
 
+function buildInterviewDateTime(dateValue, timeValue) {
+    if (!dateValue || !timeValue) {
+        return null;
+    }
+
+    const interviewDateTime = new Date(`${dateValue}T${timeValue}`);
+    return Number.isNaN(interviewDateTime.getTime()) ? null : interviewDateTime;
+}
+
 async function loadPanels() {
     try {
         const pRes = await api.getAllPanelMembers();
@@ -275,33 +284,34 @@ function openScheduleModal(id) {
     selectedPanels = [];
     updateSelectedPanelsDisplay();
     document.getElementById('panelSearchInput').value = '';
-    document.getElementById('panelOptions').innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+    document.getElementById('panelOptions').innerHTML = '<div class="cand-search-empty">Type to search for panel members...</div>';
 }
 
 function closeScheduleModal() {
     document.getElementById('scheduleModal').classList.remove('active');
     document.getElementById('scheduleForm').reset();
-    document.getElementById('schedError').style.display = 'none';
+    document.getElementById('scheduleError').style.display = 'none';
 }
 
 function filterPanels() {
     const searchTerm = document.getElementById('panelSearchInput').value.toLowerCase().trim();
     const container = document.getElementById('panelOptions');
     if (!searchTerm) {
-        container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">Type to search for panel members...</div>';
+        container.innerHTML = '<div class="cand-search-empty">Type to search for panel members...</div>';
         return;
     }
     const filtered = allPanels.filter(p => p.fullName.toLowerCase().startsWith(searchTerm));
     if (filtered.length === 0) {
-        container.innerHTML = '<div style="color:#94a3b8;font-size:13px;padding:20px;text-align:center;">No panel members found</div>';
+        container.innerHTML = '<div class="cand-search-empty">No panel members found</div>';
         return;
     }
     container.innerHTML = filtered.slice(0, 3).map(p => `
-        <div class="panel-option" onclick="togglePanel(${p.id})" ${selectedPanels.includes(p.id) ? 'style="border-color:#4f46e5;background:#eef2ff;"' : ''}>
+        <div class="panel-option ${selectedPanels.includes(p.id) ? 'selected' : ''}" onclick="togglePanel(${p.id})">
             <input type="checkbox" ${selectedPanels.includes(p.id) ? 'checked' : ''}>
-            <div>
-                <div style="font-size:14px;font-weight:500;">${p.fullName}</div>
-                <div style="font-size:12px;color:#64748b;">${p.designation} — ${p.organization}</div>
+            <div class="panel-option-info">
+                <div class="panel-option-name">${p.fullName}</div>
+                <div class="panel-option-title">${p.designation}</div>
+                <div class="panel-option-org">— ${p.organization}</div>
             </div>
         </div>
     `).join('');
@@ -332,15 +342,15 @@ function updateSelectedPanelsDisplay() {
     display.style.display = 'block';
     list.innerHTML = selectedPanels.map(pid => {
         const p = allPanels.find(x => x.id === pid);
-        return `<div style="background:#fff;padding:6px 10px;border-radius:6px;display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;border:1px solid #e2e8f0;">
-            <span>${p.fullName}</span>
-            <button onclick="togglePanel(${pid})" style="background:none;border:none;color:#ef4444;cursor:pointer;">×</button>
-        </div>`;
+        return `<span class="panel-badge">
+            ${p.fullName}
+            <button type="button" onclick="togglePanel(${pid})">&times;</button>
+        </span>`;
     }).join('');
 }
 
 async function scheduleInterview() {
-    const errDiv = document.getElementById('schedError');
+    const errDiv = document.getElementById('scheduleError');
     errDiv.style.display = 'none';
 
     const saveBtn = document.getElementById('saveBtn');
@@ -356,6 +366,23 @@ async function scheduleInterview() {
         if (ap === 'PM' && hourNum !== 12) hourNum += 12;
         if (ap === 'AM' && hourNum === 12) hourNum = 0;
         time24 = `${hourNum.toString().padStart(2, '0')}:${m}`;
+    }
+
+    const selectedDateTime = buildInterviewDateTime(document.getElementById('schedDate').value, time24);
+    if (!selectedDateTime) {
+        errDiv.textContent = 'Please select a valid interview date and time';
+        errDiv.style.display = 'block';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Schedule Now';
+        return;
+    }
+
+    if (selectedDateTime <= new Date()) {
+        errDiv.textContent = 'Interview date and time must be today or in the future';
+        errDiv.style.display = 'block';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Schedule Now';
+        return;
     }
 
     const body = {

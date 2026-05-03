@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HireTrack | My Profile</title>
     <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/candidate/profile.css">
 </head>
 
 <body>
@@ -20,7 +21,7 @@
             </div>
         </header>
 
-        <div class="content-wrapper" style="max-width: 1000px;">
+        <div class="content-wrapper profile-wrapper">
             <div class="page-header">
                 <div>
                     <h1 class="page-title">Candidate Profile</h1>
@@ -119,25 +120,21 @@
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="font-size:18px; font-weight:700;">Edit Profile</h2>
-                <button onclick="closeEditModal()"
-                    style="background:none; border:none; font-size:24px; cursor:pointer; color:#94a3b8;">&times;</button>
+                <h2 class="profile-modal-title">Edit Profile</h2>
+                <button onclick="closeEditModal()" class="profile-modal-close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
                     <div class="form-grid">
                         <div class="form-group"><label>Full Name</label><input type="text" id="eName" required></div>
                         <div class="form-group"><label>Date of Birth</label><input type="date" id="eDob" required></div>
-                        <div class="form-group" style="grid-column: span 2;">
+                        <div class="form-group profile-form-span2">
                             <label>Mobile Number</label>
-                            <div
-                                style="display:flex; gap:0; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                            <div class="profile-phone-group">
                                 <input type="text" id="eMobileCode" value="+91" placeholder="+91" required maxlength="5"
-                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
-                                    style="width:70px; border:none; border-right:1px solid #e2e8f0; border-radius:0; background:#f8fafc; text-align:center; padding:10px 5px;">
+                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')" class="profile-phone-code">
                                 <input type="text" id="eMobileNumber" placeholder="Enter 10-digit number" required
-                                    maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                    style="flex:1; border:none; border-radius:0; padding:10px 14px;">
+                                    maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="profile-phone-input">
                             </div>
                         </div>
                         <div class="form-group"><label>Current Organization</label><input type="text" id="eOrg"></div>
@@ -145,8 +142,7 @@
                         </div>
                         <div class="form-group">
                             <label>Gender</label>
-                            <select id="eGender"
-                                style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;">
+                            <select id="eGender" class="profile-gender-select">
                                 <option value="" disabled>Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -165,20 +161,19 @@
                         </div>
                     </div>
 
-                    <div
-                        style="margin-top:24px; padding:20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
-                        <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Resume (PDF)</div>
-                        <input type="file" id="eResumeInput" accept=".pdf" style="display:none;"
+                    <div class="profile-resume-box">
+                        <div class="profile-resume-label">Resume (PDF)</div>
+                        <input type="file" id="eResumeInput" accept=".pdf" class="profile-resume-input"
                             onchange="uploadResume(this)">
-                        <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="profile-resume-actions">
                             <button type="button" class="secondary-btn"
                                 onclick="document.getElementById('eResumeInput').click()" id="uploadBtn">Upload New
                                 Resume</button>
-                            <span id="uploadStatus" style="font-size:12px; color:#64748b;">PDF only, Max 5MB</span>
+                            <span id="uploadStatus" class="profile-resume-status">PDF only, Max 5MB</span>
                         </div>
                     </div>
 
-                    <div style="margin-top:32px; display:flex; justify-content:flex-end; gap:12px;">
+                    <div class="profile-form-footer">
                         <button type="button" class="secondary-btn" onclick="closeEditModal()">Cancel</button>
                         <button type="button" class="primary-btn" onclick="saveChanges()" id="saveBtn">Save
                             Changes</button>

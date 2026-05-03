@@ -33,7 +33,7 @@ function renderView(p) {
     document.getElementById('vCurrentCtc').textContent = (p.currentCtc || 0) + ' LPA';
     document.getElementById('vExpectedCtc').textContent = (p.expectedCtc || 0) + ' LPA';
     document.getElementById('vJobTitle').textContent = p.jobTitle || 'N/A';
-    document.getElementById('vResume').innerHTML = p.resumePath ? `<a href="${p.resumePath}" target="_blank" style="color:#4f46e5; font-weight:600; text-decoration:none;"> View Resume</a>` : '<span style="color:#94a3b8;">Not uploaded</span>';
+    document.getElementById('vResume').innerHTML = p.resumePath ? `<a href="${p.resumePath}" target="_blank" class="profile-resume-link"> View Resume</a>` : '<span class="profile-resume-empty">Not uploaded</span>';
 }
 
 function openEditModal() {

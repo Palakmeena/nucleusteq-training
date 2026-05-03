@@ -75,6 +75,7 @@ public class InterviewMapper {
                 fr.setStrengths(f.getStrengths());
                 fr.setWeaknesses(f.getWeaknesses());
                 fr.setDecision(f.getFeedbackStatus().name());
+                fr.setPanelSuggestion(f.getPanelSuggestion()); // preserve original suggestion
                 fr.setSubmittedAt(f.getSubmittedAt());
                 return fr;
             }).collect(Collectors.toList()));

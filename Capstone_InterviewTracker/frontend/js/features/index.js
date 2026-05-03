@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (role === 'PANEL') dashboardLink = "pages/panel/overview.html";
 
         authSection.innerHTML = `
-            <a href="${dashboardLink}" class="login-btn" style="text-decoration: none;">Dashboard</a>
+            <a href="${dashboardLink}" class="login-btn jobs-dashboard-link">Dashboard</a>
             <button class="signup-btn" onclick="handleAuth()">Sign Out</button>
         `;
     }
@@ -33,7 +33,7 @@ function loadAndRenderJobs() {
             renderJobs(allJobs);
         })
         .catch(err => {
-            jobsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#ef4444;">Error loading positions. Please try again later.</div>`;
+            jobsGrid.innerHTML = `<div class="jobs-error-empty">Error loading positions. Please try again later.</div>`;
         });
 
     // Search functionality
@@ -51,7 +51,7 @@ function renderJobs(jobs) {
     const jobsGrid = document.getElementById('jobsGrid');
 
     if (jobs.length === 0) {
-        jobsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b; padding:40px;">No positions available.</div>`;
+        jobsGrid.innerHTML = `<div class="jobs-no-results-empty">No positions available.</div>`;
         return;
     }
 
@@ -65,7 +65,7 @@ function renderJobs(jobs) {
         return `
             <div class="ref-card">
                 <div class="ref-card-header">
-                    <div class="company-initial" style="background: ${bgColor}">${initials}</div>
+                    <div class="company-initial" style="--company-bg-color: ${bgColor}">${initials}</div>
                     <div class="${badgeClass}">${badgeText}</div>
                 </div>
                 <div class="ref-card-title">${jd.jobTitle}</div>

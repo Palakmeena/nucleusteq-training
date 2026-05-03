@@ -1,0 +1,21 @@
+/* Jobs listing page styles */
+
+.jobs-dashboard-link { text-decoration: none; }
+.jobs-error-empty { grid-column: 1/-1; text-align: center; color: #ef4444; }
+.jobs-no-results-empty { grid-column: 1/-1; text-align: center; color: #64748b; }
+.jobs-action-row { display: flex; gap: 8px; }
+.jobs-delete-btn { color: #ef4444; background: #fee2e2; }
+
+/* Company initial avatar with dynamic background */
+.company-initial {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    color: #fff;
+    background: var(--company-bg-color, #0f172a);
+}

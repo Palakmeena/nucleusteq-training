@@ -19,7 +19,7 @@
         </div>
     </header>
 
-    <div class="content-wrapper" style="max-width: 900px;">
+    <div class="content-wrapper candidate-settings-wrapper">
         <div class="page-header">
             <div>
                 <h1 class="page-title">Personal Profile</h1>
@@ -48,8 +48,8 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 10px; padding-top: 24px; border-top: 1px solid #f1f5f9;">
-                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">Professional Details</h3>
+                <div class="candidate-settings-section">
+                    <h3 class="candidate-settings-section-title">Professional Details</h3>
                     <div class="profile-grid">
                         <div class="form-group">
                             <label>Current Organization</label>
@@ -70,24 +70,24 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 10px; padding-top: 24px; border-top: 1px solid #f1f5f9;">
-                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">Resume & Documents</h3>
-                    <div style="background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; padding: 30px; text-align: center;">
-                        <div id="resumeStatus" style="margin-bottom: 15px; font-size: 14px; color: #475569; font-weight: 500;">
+                <div class="candidate-settings-section">
+                    <h3 class="candidate-settings-section-title">Resume & Documents</h3>
+                    <div class="candidate-resume-box">
+                        <div id="resumeStatus" class="candidate-resume-status">
                             Checking for existing resume...
                         </div>
-                        <input type="file" id="resumeInput" accept=".pdf" style="display: none;" onchange="handleFileSelect(this)">
+                        <input type="file" id="resumeInput" accept=".pdf" class="candidate-resume-input" onchange="handleFileSelect(this)">
                         <button type="button" class="secondary-btn" onclick="document.getElementById('resumeInput').click()" id="uploadBtn">
                             Choose New Resume (PDF)
                         </button>
-                        <p style="margin-top: 12px; font-size: 12px; color: #94a3b8;">Max size: 5MB</p>
+                        <p class="candidate-resume-note">Max size: 5MB</p>
                     </div>
                 </div>
             </form>
         </div>
 
-        <div style="margin-top: 30px; text-align: right;">
-            <button onclick="auth.logout()" style="background:none; border:none; color:#ef4444; font-size:14px; font-weight:500; cursor:pointer; text-decoration: underline;">Sign Out</button>
+        <div class="candidate-settings-signout-row">
+            <button onclick="auth.logout()" class="candidate-settings-signout-btn">Sign Out</button>
         </div>
     </div>
 </main>
