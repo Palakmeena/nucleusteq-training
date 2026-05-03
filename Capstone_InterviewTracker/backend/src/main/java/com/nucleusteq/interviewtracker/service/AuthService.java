@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import com.nucleusteq.interviewtracker.exception.BusinessException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +111,7 @@ public class AuthService {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
             if (user.isActive()) {
-                throw new IllegalArgumentException("Email already exists and is already verified.");
+                throw new BusinessException("Email already exists and is already verified.");
             } else {
                 // User exists but not active - resend activation email and refresh profile.
                 String newToken = UUID.randomUUID().toString();
@@ -192,7 +193,7 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
 
         if (user.getTokenExpiry() == null || LocalDateTime.now().isAfter(user.getTokenExpiry())) {
-            throw new IllegalArgumentException("Verification token has expired.");
+            throw new BusinessException("Verification token has expired.");
         }
 
         user.setActive(true);

@@ -32,10 +32,10 @@ function buildSidebar(role, activePage) {
     const navMap = {
         HR: [
             { key: 'overview',   icon: svgDashboard, label: 'Overview',          href: base + 'pages/hr/overview.html' },
-            { key: 'jobs',       icon: svgBriefcase, label: 'Job Descriptions',  href: base + 'pages/hr/jobs.html' },
+            { key: 'jobs',       icon: svgBriefcase, label: 'Job Descriptions',  href: base + 'pages/hr/job-management.html' },
             { key: 'candidates', icon: svgUsers,     label: 'Candidates',        href: base + 'pages/hr/candidates.html' },
             { key: 'panels',     icon: svgUserCheck, label: 'Panel Members',     href: base + 'pages/hr/panel-onboarding.html' },
-            { key: 'interviews', icon: svgFileText,  label: 'Feedback',          href: base + 'pages/hr/schedule-interview.html' },
+            { key: 'interviews', icon: svgFileText,  label: 'Feedback',          href: base + 'pages/hr/panel-feedback.html' },
         ],
         CANDIDATE: [
             { key: 'dashboard',  icon: svgDashboard, label: 'My Progress',       href: base + 'pages/candidate/dashboard.html' },
