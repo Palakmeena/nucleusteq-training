@@ -19,13 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorDiv = document.getElementById('signupError');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
     const mobileInput = document.getElementById('mobileNumber');
+    const dobInput = document.getElementById('dateOfBirth');
 
     if (!form) return;
+
+    if (dobInput) {
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        dobInput.max = maxDate.toISOString().split('T')[0];
+    }
 
     // Add phone number input validation
     if (mobileInput) {
         mobileInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
         });
     }
 
@@ -55,6 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (dateOfBirth) {
+            const birthDate = new Date(dateOfBirth);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if (age < 18) {
+                if (errorDiv) {
+                    errorDiv.textContent = 'Candidate must be at least 18 years old.';
+                    errorDiv.style.display = 'block';
+                }
+                return;
+            }
+        }
+
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending link...';
@@ -70,6 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 gender
             });
             if (!result.success) throw new Error(result.message || 'Signup failed');
+
+            localStorage.setItem('candidateSignupDraft', JSON.stringify({
+                fullName,
+                email,
+                mobileCode: '+91',
+                mobileNumber,
+                dateOfBirth,
+                gender
+            }));
 
             // Success state - Show verification message
             form.innerHTML = `

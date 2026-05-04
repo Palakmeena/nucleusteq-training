@@ -1,9 +1,64 @@
+
+function normalizeDateValue(value) {
+    if (!value || typeof value !== 'string') return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const parts = value.split(/[-/]/);
+    if (parts.length !== 3) return '';
+    const [first, second, third] = parts;
+    if (first.length === 4) {
+        return `${first}-${second.padStart(2, '0')}-${third.padStart(2, '0')}`;
+    }
+    return `${third}-${second.padStart(2, '0')}-${first.padStart(2, '0')}`;
+}
 auth.requireRole('CANDIDATE');
 document.getElementById('sidebar').innerHTML = buildSidebar('CANDIDATE', 'jobs');
 
 let myApplication = null;
-let myLiveProfile = null;
 let allOpenJobs = [];
+
+function readCandidateSignupDraft() {
+    try {
+        const raw = localStorage.getItem('candidateSignupDraft');
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function setFieldValue(id, value) {
+    const element = document.getElementById(id);
+    if (element && value !== undefined && value !== null) {
+        element.value = value;
+    }
+}
+
+function prefillApplyForm() {
+    const signupDraft = readCandidateSignupDraft() || {};
+    const source = myApplication || signupDraft;
+
+    setFieldValue('applyName', source.fullName || localStorage.getItem('fullName') || '');
+    setFieldValue('applyEmail', source.email || localStorage.getItem('userEmail') || '');
+    setFieldValue('applyMobileCode', '+91');
+    setFieldValue('applyMobile', source.mobileNumber || '');
+    setFieldValue('applyDob', normalizeDateValue(source.dateOfBirth));
+
+    function capMobileInput() {
+        const mobileInput = document.getElementById('applyMobile');
+        if (!mobileInput) return;
+        mobileInput.addEventListener('input', () => {
+            mobileInput.value = mobileInput.value.replace(/\D/g, '').slice(0, 10);
+        });
+    }
+    setFieldValue('applyOrg', source.currentOrganization || '');
+    setFieldValue('applyLocation', source.preferredLocation || '');
+    setFieldValue('applyGender', source.gender || '');
+    setFieldValue('applyTotalExp', source.totalExperience ?? '');
+    setFieldValue('applyRelExp', source.relevantExperience ?? '');
+    setFieldValue('applyCurrentCtc', source.currentCtc ?? '');
+    setFieldValue('applyExpectedCtc', source.expectedCtc ?? '');
+    setFieldValue('applyNotice', source.noticePeriod ?? '');
+    setFieldValue('applySource', source.source || 'LinkedIn');
+}
 
 function shortText(text, max = 180) {
     const value = (text || '').trim();
@@ -28,16 +83,11 @@ function getApplyFieldValue(id, fallback = '') {
 
 async function loadCandidateProfile() {
     try {
-        const [applicationRes, liveProfileRes] = await Promise.all([
-            api.getMyProfile().catch(() => null),
-            api.getMyLiveProfile().catch(() => null)
-        ]);
+        const applicationRes = await api.getMyProfile().catch(() => null);
 
         myApplication = applicationRes ? applicationRes.data : null;
-        myLiveProfile = liveProfileRes ? liveProfileRes.data : null;
     } catch (e) {
         myApplication = null;
-        myLiveProfile = null;
     }
 }
 
@@ -89,28 +139,9 @@ function openApplyModal(jobId, jobTitle) {
     document.getElementById('applyJdId').value = jobId;
     document.getElementById('candidateApplyModal').style.display = 'flex';
 
-    // Pre-fill if profile exists
-    const profileToUse = myLiveProfile || myApplication;
-    if (profileToUse) {
-        document.getElementById('applyName').value = profileToUse.fullName || '';
-        document.getElementById('applyEmail').value = profileToUse.email || '';
-        document.getElementById('applyMobileCode').value = profileToUse.mobileCode || '+91';
-        document.getElementById('applyMobile').value = profileToUse.mobileNumber || '';
-        document.getElementById('applyDob').value = profileToUse.dateOfBirth || '';
-        document.getElementById('applyOrg').value = profileToUse.currentOrganization || '';
-        document.getElementById('applyLocation').value = profileToUse.preferredLocation || '';
-        if (profileToUse.gender && document.getElementById('applyGender')) {
-            document.getElementById('applyGender').value = profileToUse.gender;
-        }
-        document.getElementById('applyTotalExp').value = profileToUse.totalExperience || '';
-        document.getElementById('applyRelExp').value = profileToUse.relevantExperience || '';
-        document.getElementById('applyCurrentCtc').value = profileToUse.currentCtc || '';
-        document.getElementById('applyExpectedCtc').value = profileToUse.expectedCtc || '';
-        document.getElementById('applyNotice').value = profileToUse.noticePeriod || '';
-    } else {
-        document.getElementById('applyEmail').value = localStorage.getItem('userEmail') || '';
-        document.getElementById('applyName').value = localStorage.getItem('userName') || '';
-    }
+    document.getElementById('candidateApplyForm').reset();
+    setFieldValue('applyMobileCode', '+91');
+    prefillApplyForm();
 }
 
 function closeApplyModal() {
@@ -144,6 +175,17 @@ async function submitApplication() {
     const dobValue = getApplyFieldValue('applyDob');
     const totalExperienceValue = parseFloat(getApplyFieldValue('applyTotalExp'));
     const relevantExperienceValue = parseFloat(getApplyFieldValue('applyRelExp'));
+    const currentCtcValue = parseFloat(getApplyFieldValue('applyCurrentCtc'));
+    const expectedCtcValue = parseFloat(getApplyFieldValue('applyExpectedCtc'));
+    const noticePeriodValue = parseInt(getApplyFieldValue('applyNotice'));
+
+    if ([totalExperienceValue, relevantExperienceValue, currentCtcValue, expectedCtcValue, noticePeriodValue].some(Number.isNaN)) {
+        errorMsg.textContent = 'Please fill all numeric fields with valid values.';
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit Application';
+        return;
+    }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(emailValue)) {
@@ -198,7 +240,7 @@ async function submitApplication() {
         jobDescriptionId: parseInt(getApplyFieldValue('applyJdId')),
         fullName: getApplyFieldValue('applyName'),
         email: emailValue,
-        mobileCode: getApplyFieldValue('applyMobileCode'),
+        mobileCode: '+91',
         mobileNumber: mobileValue,
         dateOfBirth: dobValue,
         currentOrganization: getApplyFieldValue('applyOrg'),
@@ -206,9 +248,9 @@ async function submitApplication() {
         gender: getApplyFieldValue('applyGender'),
         totalExperience: totalExperienceValue,
         relevantExperience: relevantExperienceValue,
-        currentCtc: parseFloat(getApplyFieldValue('applyCurrentCtc')),
-        expectedCtc: parseFloat(getApplyFieldValue('applyExpectedCtc')),
-        noticePeriod: parseInt(getApplyFieldValue('applyNotice')),
+        currentCtc: currentCtcValue,
+        expectedCtc: expectedCtcValue,
+        noticePeriod: noticePeriodValue,
         source: getApplyFieldValue('applySource')
     };
 
@@ -239,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeApplyModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeApplyModal);
     if (submitBtn) submitBtn.addEventListener('click', submitApplication);
+    capMobileInput();
 });
 
 window.openJobDetails = openJobDetails;

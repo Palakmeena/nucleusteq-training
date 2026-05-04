@@ -6,7 +6,6 @@ import com.nucleusteq.interviewtracker.dto.SignupRequestDto;
 import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.mapper.AuthMapper;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +37,6 @@ class AuthServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private CandidateProfileRepository candidateProfileRepository;
 
     @Mock
     private JwtUtil jwtUtil;

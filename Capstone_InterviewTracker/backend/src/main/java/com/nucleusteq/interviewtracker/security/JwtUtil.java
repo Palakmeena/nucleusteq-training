@@ -10,13 +10,10 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
+
 /**
- * Utility class for everything JWT related.
- *
- * Handles three things:
- * 1. Generating a token when a user logs in successfully
- * 2. Extracting information (email, role) from an incoming token
- * 3. Validating that a token is legitimate and not expired
+ * Utility class for JWT token generation and validation.
+ * Handles token creation, expiry checks, and user detail extraction.
  */
 @Component
 public class JwtUtil {

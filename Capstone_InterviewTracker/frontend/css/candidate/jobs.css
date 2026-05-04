@@ -41,11 +41,13 @@
 
 .jobs-modal-content {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 24px;
     width: 90%;
     max-width: 640px;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
@@ -83,6 +85,7 @@
 
 .jobs-modal-body {
     padding: 24px;
+    overflow-y: auto;
 }
 
 .jobs-error-msg {
@@ -127,7 +130,7 @@
     width: 100%;
     padding: 10px;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
     font-family: inherit;
     font-size: 14px;
 }
@@ -142,11 +145,16 @@
     width: 100%;
     padding: 10px;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
     background: #fff;
     font-family: inherit;
     font-size: 14px;
     cursor: pointer;
+}
+
+.jobs-form-input[readonly] {
+    background: #f8fafc;
+    color: #475569;
 }
 
 .jobs-form-select:focus {

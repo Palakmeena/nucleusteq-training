@@ -40,10 +40,6 @@ class CandidateServiceTest {
     @Mock
     private CandidateMapper candidateMapper;
 
-    // ✅ FIX: missing mocks (THIS WAS CAUSING NULL POINTER)
-    @Mock
-    private CandidateProfileRepository candidateProfileRepository;
-
     @Mock
     private com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository;
 

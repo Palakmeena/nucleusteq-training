@@ -8,7 +8,6 @@ import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.mapper.CandidateMapper;
 import com.nucleusteq.interviewtracker.repository.CandidateRepository;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.JobDescriptionRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,6 @@ public class CandidateService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CandidateMapper candidateMapper;
-        private final CandidateProfileRepository candidateProfileRepository;
     private final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository;
     private final JavaMailSender mailSender;
 
@@ -67,7 +65,6 @@ public class CandidateService {
                             final UserRepository userRepository,
                             final PasswordEncoder passwordEncoder,
                             final CandidateMapper candidateMapper,
-                                                        final CandidateProfileRepository candidateProfileRepository,
                             final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository,
                             final JavaMailSender mailSender) {
         this.candidateRepository = candidateRepository;
@@ -75,7 +72,6 @@ public class CandidateService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.candidateMapper = candidateMapper;
-                this.candidateProfileRepository = candidateProfileRepository;
         this.interviewRepository = interviewRepository;
         this.mailSender = mailSender;
     }
@@ -357,13 +353,7 @@ public class CandidateService {
         // 2. Delete Candidate
         candidateRepository.delete(candidate);
 
-                // 3. Delete CandidateProfile linked to the same user (if present)
-                if (user != null) {
-                        candidateProfileRepository.findByUser(user)
-                                        .ifPresent(candidateProfileRepository::delete);
-                }
-
-                // 4. Delete User
+        // 3. Delete User
         if (user != null) {
             userRepository.delete(user);
         }

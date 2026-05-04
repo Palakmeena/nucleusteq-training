@@ -1,5 +1,10 @@
 package com.nucleusteq.interviewtracker.service;
 
+/**
+ * Service class for panel member management.
+ * Handles panel member creation, retrieval, and deactivation.
+ */
+
 import com.nucleusteq.interviewtracker.dto.PanelMemberRequestDto;
 import com.nucleusteq.interviewtracker.dto.PanelMemberResponseDto;
 import com.nucleusteq.interviewtracker.entity.PanelMember;

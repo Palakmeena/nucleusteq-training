@@ -3,7 +3,6 @@ package com.nucleusteq.interviewtracker.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
-import com.nucleusteq.interviewtracker.service.CandidateProfileService;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +27,6 @@ class CandidateControllerCoverageTest {
     private CandidateService candidateService;
     @Mock
     private GoogleDriveService googleDriveService;
-    @Mock
-    private CandidateProfileService profileService;
 
     @InjectMocks
     private CandidateController candidateController;

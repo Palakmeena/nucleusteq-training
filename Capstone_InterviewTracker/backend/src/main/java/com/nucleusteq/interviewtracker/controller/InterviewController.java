@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST Controller for interview scheduling and feedback.
+ * Manages interview creation, scheduling, and panel feedback submission.
+ */
 @RestController
 public class InterviewController {
 

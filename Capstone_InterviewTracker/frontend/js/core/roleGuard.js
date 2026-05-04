@@ -1,4 +1,7 @@
 // Role guard used by dashboard bootstrap.
+// IIFE pattern used to maintain scope isolation:
+// - redirectByRole() remains private and inaccessible from other files
+// - Only RoleGuard object is exposed to window global scope
 (function () {
     function redirectByRole() {
         const role = window.SessionManager.getRole();

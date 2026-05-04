@@ -63,8 +63,6 @@ const api = {
 
     // CANDIDATES - candidate
     getMyProfile: () => request('GET', '/candidate/application'),
-    getMyLiveProfile: () => request('GET', '/candidate/profile'),
-    updateMyProfile: (body) => request('PUT', '/candidate/profile', body),
     getMyInterviews: () => request('GET', '/candidate/interviews'),
 
     // RESUME UPLOAD
@@ -73,20 +71,6 @@ const api = {
         formData.append('file', file);
         const res = await fetch(`${BASE_URL}/candidate/resume/${candidateId}`, {
             method: 'POST',
-            body: formData
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Upload failed');
-        return data;
-    },
-
-    uploadProfileResume: async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        const token = getToken();
-        const res = await fetch(`${BASE_URL}/candidate/profile/resume`, {
-            method: 'POST',
-            headers: token ? { 'Authorization': 'Bearer ' + token } : {},
             body: formData
         });
         const data = await res.json();

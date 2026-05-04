@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!token) {
         if (errorBox) {
-            errorBox.textContent = 'Invalid activation link. Token is missing.';
+            errorBox.textContent = 'Invalid activation link.';
             errorBox.style.display = 'block';
         }
         if (btn) btn.disabled = true;

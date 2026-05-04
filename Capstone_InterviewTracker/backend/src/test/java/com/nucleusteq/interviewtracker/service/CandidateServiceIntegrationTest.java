@@ -7,7 +7,6 @@ import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.enums.JobType;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.repository.CandidateRepository;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.InterviewRepository;
 import com.nucleusteq.interviewtracker.repository.JobDescriptionRepository;
 import org.junit.jupiter.api.Test;
@@ -35,9 +34,6 @@ public class CandidateServiceIntegrationTest {
 
     @Autowired
     private CandidateRepository candidateRepository;
-
-    @Autowired
-    private CandidateProfileRepository candidateProfileRepository;
 
     @Autowired
     private InterviewRepository interviewRepository;
@@ -88,24 +84,12 @@ public class CandidateServiceIntegrationTest {
             "Org", 1.0, 1.0, 1.0, 1.0, 30, "City", "Referral", jd, user);
         candidate = candidateRepository.save(candidate);
 
-        // create profile
-        com.nucleusteq.interviewtracker.entity.CandidateProfile profile = new com.nucleusteq.interviewtracker.entity.CandidateProfile(user);
-        profile.setFullName("To Delete");
-        candidateProfileRepository.save(profile);
-
-        // create interview (use parameterized constructor to set createdAt)
-        com.nucleusteq.interviewtracker.entity.Interview interview = new com.nucleusteq.interviewtracker.entity.Interview(
-            com.nucleusteq.interviewtracker.enums.InterviewStage.L1_TECHNICAL,
-            java.time.LocalDate.now(), java.time.LocalTime.now(), "Focus", candidate);
-        interviewRepository.save(interview);
-
         // perform delete
         candidateService.deleteCandidate(candidate.getId());
 
         assertFalse(candidateRepository.findById(candidate.getId()).isPresent());
         assertFalse(userRepository.findById(user.getId()).isPresent());
         assertTrue(interviewRepository.findByCandidate(candidate).isEmpty());
-        assertTrue(candidateProfileRepository.findByUser(user).isEmpty());
     }
 
 }

@@ -1,5 +1,9 @@
 package com.nucleusteq.interviewtracker.util;
 
+/**
+ * Application-wide constants for API endpoints, roles, and messages.
+ * Centralizes all hardcoded strings for easier maintenance.
+ */
 public final class AppConstants {
 
     private AppConstants() {}

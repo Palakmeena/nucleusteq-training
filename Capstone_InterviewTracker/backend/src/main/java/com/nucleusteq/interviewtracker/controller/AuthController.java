@@ -3,6 +3,7 @@ package com.nucleusteq.interviewtracker.controller;
 import com.nucleusteq.interviewtracker.dto.LoginRequestDto;
 import com.nucleusteq.interviewtracker.dto.LoginResponseDto;
 import com.nucleusteq.interviewtracker.dto.SignupRequestDto;
+import com.nucleusteq.interviewtracker.exception.BusinessException;
 import com.nucleusteq.interviewtracker.service.AuthService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
 import com.nucleusteq.interviewtracker.util.AppConstants;
@@ -22,6 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST Controller for authentication endpoints.
+ * Handles user login, signup, and activation operations.
+ */
 @RestController
 @RequestMapping(AppConstants.AUTH_BASE)
 public class AuthController {
@@ -83,6 +88,9 @@ public class AuthController {
             logger.info("New account created: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(AppConstants.ACCOUNT_CREATED, response));
+        } catch (BusinessException e) {
+            logger.warn("Signup business rule failed for {}: {}", request.getEmail(), e.getMessage());
+            return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getMessage()));
         } catch (IllegalArgumentException e) {
             logger.warn("Signup validation failed for {}: {}", request.getEmail(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
@@ -99,6 +107,9 @@ public class AuthController {
             authService.verifyCandidate(token);
             logger.info("Candidate verified via token");
             return ResponseEntity.ok(ApiResponse.success(AppConstants.EMAIL_VERIFIED, null));
+        } catch (BusinessException e) {
+            logger.warn("Candidate verification business rule failed: {}", e.getMessage());
+            return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getMessage()));
         } catch (IllegalArgumentException e) {
             logger.warn("Candidate verification failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
