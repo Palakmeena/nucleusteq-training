@@ -1,16 +1,44 @@
 auth.requireRole('HR');
 document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'candidates');
 
-// Add stage listener to hide/show panel search
-document.getElementById('schedStage').addEventListener('change', function (e) {
-    const panelGroup = document.getElementById('panelGroup');
-    if (e.target.value === 'HR_ROUND') {
-        panelGroup.style.display = 'none';
-        selectedPanels = [];
-        updateSelectedPanelsDisplay();
-    } else {
-        panelGroup.style.display = 'block';
+document.addEventListener('DOMContentLoaded', () => {
+    const addCandidateBtn = document.getElementById('addCandidateBtn');
+    const addModalCloseBtn = document.getElementById('addModalCloseBtn');
+    const addCancelBtn = document.getElementById('addCancelBtn');
+    const viewModalCloseBtn = document.getElementById('viewModalCloseBtn');
+    const viewCloseBtn = document.getElementById('viewCloseBtn');
+    const searchInput = document.getElementById('searchInput');
+    const stageFilter = document.getElementById('stageFilter');
+    const addMobile = document.getElementById('addMobile');
+    const schedStage = document.getElementById('schedStage');
+    const panelSearchInput = document.getElementById('panelSearchInput');
+
+    if (addCandidateBtn) addCandidateBtn.addEventListener('click', openAddModal);
+    if (addModalCloseBtn) addModalCloseBtn.addEventListener('click', closeAddModal);
+    if (addCancelBtn) addCancelBtn.addEventListener('click', closeAddModal);
+    if (viewModalCloseBtn) viewModalCloseBtn.addEventListener('click', closeViewModal);
+    if (viewCloseBtn) viewCloseBtn.addEventListener('click', closeViewModal);
+    if (searchInput) searchInput.addEventListener('input', filterCandidates);
+    if (stageFilter) stageFilter.addEventListener('change', filterCandidates);
+    if (addMobile) {
+        addMobile.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
     }
+    if (schedStage) {
+        schedStage.addEventListener('change', function (e) {
+            const panelGroup = document.getElementById('panelGroup');
+            if (!panelGroup) return;
+            if (e.target.value === 'HR_ROUND') {
+                panelGroup.style.display = 'none';
+                selectedPanels = [];
+                updateSelectedPanelsDisplay();
+            } else {
+                panelGroup.style.display = 'block';
+            }
+        });
+    }
+    if (panelSearchInput) panelSearchInput.addEventListener('input', filterPanels);
 });
 
 let allCandidates = [];
@@ -272,7 +300,7 @@ function buildInterviewDateTime(dateValue, timeValue) {
 async function loadPanels() {
     try {
         const pRes = await api.getAllPanelMembers();
-        allPanels = pRes.data || [];
+        allPanels = (pRes.data || []).filter(p => p.active);
     } catch (e) {
         console.error('Failed to load panels', e);
     }

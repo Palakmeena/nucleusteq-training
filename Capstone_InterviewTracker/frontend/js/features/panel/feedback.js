@@ -128,20 +128,37 @@ async function submitFeedback() {
 }
 
 window.selectCandidate = selectCandidate;
-window.setRating = setRating;
-window.submitFeedback = submitFeedback;
-window.closeFeedbackModal = closeFeedbackModal;
+
+// Setup event listeners for modal controls
+document.addEventListener('DOMContentLoaded', () => {
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const ratingGroup = document.getElementById('ratingGroup');
+
+    // Close button listener
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeFeedbackModal);
+    }
+
+    // Submit button listener
+    if (submitBtn) {
+        submitBtn.addEventListener('click', submitFeedback);
+    }
+
+    // Rating buttons - use event delegation on parent
+    if (ratingGroup) {
+        ratingGroup.addEventListener('click', (e) => {
+            if (e.target.classList.contains('rating-btn')) {
+                const rating = parseInt(e.target.getAttribute('data-rating'), 10);
+                setRating(rating);
+            }
+        });
+    }
+});
 
 // Close modal when clicking outside
 document.getElementById('feedbackModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'feedbackModal') {
-        closeFeedbackModal();
-    }
-});
-
-// Close modal on ESC key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('feedbackModal').classList.contains('active')) {
         closeFeedbackModal();
     }
 });

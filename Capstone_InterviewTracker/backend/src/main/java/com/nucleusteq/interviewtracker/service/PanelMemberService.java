@@ -6,8 +6,8 @@ import com.nucleusteq.interviewtracker.entity.PanelMember;
 import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.mapper.PanelMemberMapper;
-import com.nucleusteq.interviewtracker.repository.PanelMemberRepository;
 import com.nucleusteq.interviewtracker.repository.FeedbackRepository;
+import com.nucleusteq.interviewtracker.repository.PanelMemberRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,11 @@ public class PanelMemberService {
 
     private final PanelMemberRepository panelMemberRepository;
     private final UserRepository userRepository;
-        private final FeedbackRepository feedbackRepository;
+    private final FeedbackRepository feedbackRepository;
     private final PasswordEncoder passwordEncoder;
     private final PanelMemberMapper panelMemberMapper;
-        private final JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final InterviewService interviewService;
 
         @Value("${spring.mail.username:}")
         private String fromEmail;
@@ -56,17 +57,19 @@ public class PanelMemberService {
      */
     @Autowired
     public PanelMemberService(final PanelMemberRepository panelMemberRepository,
-                                                           final FeedbackRepository feedbackRepository,
-                               final UserRepository userRepository,
-                               final PasswordEncoder passwordEncoder,
-                                                           final PanelMemberMapper panelMemberMapper,
-                                                           final JavaMailSender mailSender) {
+                              final FeedbackRepository feedbackRepository,
+                              final UserRepository userRepository,
+                              final PasswordEncoder passwordEncoder,
+                              final PanelMemberMapper panelMemberMapper,
+                              final JavaMailSender mailSender,
+                              final InterviewService interviewService) {
         this.panelMemberRepository = panelMemberRepository;
-                this.feedbackRepository = feedbackRepository;
+        this.feedbackRepository = feedbackRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.panelMemberMapper = panelMemberMapper;
-                this.mailSender = mailSender;
+        this.mailSender = mailSender;
+        this.interviewService = interviewService;
     }
 
     /**
@@ -282,7 +285,8 @@ public class PanelMemberService {
     }
 
     /**
-     * Deletes a panel member and their linked user account.
+     * Deletes a panel member and their linked user account permanently.
+     * Performs a hard delete from the database.
      *
      * @param id the panel member ID
      */
@@ -293,17 +297,19 @@ public class PanelMemberService {
                         "Panel member not found with id: " + id
                 ));
 
-        if (feedbackRepository.existsByPanelMember(panelMember)) {
-            throw new IllegalStateException(
-                    "This panel member has interview feedback attached. Remove the feedback first before deleting the panel member."
-            );
-        }
+        feedbackRepository.findByPanelMember(panelMember).forEach(feedback -> {
+            feedback.setPanelMember(null);
+            feedbackRepository.save(feedback);
+        });
+
+        interviewService.deleteInterviewPanelsByMember(panelMember);
 
         User user = panelMember.getUser();
-        panelMemberRepository.delete(panelMember);
         if (user != null) {
             userRepository.delete(user);
         }
+
+        panelMemberRepository.delete(panelMember);
     }
 
     /**

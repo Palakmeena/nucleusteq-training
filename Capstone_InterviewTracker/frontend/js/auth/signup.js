@@ -18,8 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('signupForm');
     const errorDiv = document.getElementById('signupError');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+    const mobileInput = document.getElementById('mobileNumber');
 
     if (!form) return;
+
+    // Add phone number input validation
+    if (mobileInput) {
+        mobileInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();

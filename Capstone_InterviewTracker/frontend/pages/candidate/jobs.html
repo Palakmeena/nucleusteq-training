@@ -35,7 +35,7 @@
         <div class="jobs-modal-content">
             <div class="jobs-modal-header">
                 <h2 class="jobs-modal-title">Apply for <span id="modalJobTitle"></span></h2>
-                <button type="button" onclick="closeApplyModal()" class="jobs-modal-close">
+                <button type="button" id="modalCloseBtn" class="jobs-modal-close">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -99,8 +99,8 @@
                 </form>
             </div>
             <div class="jobs-modal-footer">
-                <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
-                <button class="primary-btn" onclick="submitApplication()" id="submitBtn">Submit Application</button>
+                <button class="secondary-btn" id="cancelBtn">Cancel</button>
+                <button class="primary-btn" id="submitBtn">Submit Application</button>
             </div>
         </div>
     </div>

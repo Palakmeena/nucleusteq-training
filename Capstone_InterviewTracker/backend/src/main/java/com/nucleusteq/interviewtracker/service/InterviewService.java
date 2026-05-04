@@ -360,6 +360,18 @@ public class InterviewService {
     }
 
     /**
+     * Deletes all interview panel assignments for a given panel member.
+     * Called during panel member deletion to clean up assignments.
+     * 
+     * @param panelMember the panel member to remove from all interviews
+     */
+    @Transactional
+    public void deleteInterviewPanelsByMember(final PanelMember panelMember) {
+        interviewPanelRepository.findByPanelMember(panelMember)
+                .forEach(interviewPanelRepository::delete);
+    }
+
+    /**
      * Validates that the interview stage is schedulable.
      * Only L1_TECHNICAL, L2_TECHNICAL and HR_ROUND can be scheduled.
      * PROFILING and SCREENING are not interview stages.
@@ -522,24 +534,13 @@ public class InterviewService {
 
         feedbackRepository.save(feedback);
 
-        // Check if all panels have submitted feedback
+        // Mark the interview complete only after every assigned panel member has submitted feedback.
         List<Feedback> allFeedbacks = feedbackRepository.findByInterview(interview);
         long assignedCount = interview.getInterviewPanels().size();
 
-        if (allFeedbacks.size() >= assignedCount) {
+        if (assignedCount > 0 && allFeedbacks.size() >= assignedCount) {
             interview.setCompleted(true);
             interviewRepository.save(interview);
-
-            // If any feedback was a rejection, the candidate is rejected
-            boolean isRejected = allFeedbacks.stream()
-                    .anyMatch(f -> f.getFeedbackStatus() == FeedbackStatus.REJECTED);
-
-            if (isRejected) {
-                Candidate candidate = interview.getCandidate();
-                candidate.setCurrentStage(InterviewStage.REJECTED);
-                candidateRepository.save(candidate);
-                sendResultEmail(candidate, false);
-            }
         }
     }
     /**

@@ -190,6 +190,17 @@ function handleAuth() {
     }
 }
 
+// Setup event listeners for modal buttons
+document.addEventListener('DOMContentLoaded', () => {
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeApplyModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeApplyModal);
+    if (submitBtn) submitBtn.addEventListener('click', submitApplication);
+});
+
 window.openApplyModal = openApplyModal;
 window.closeApplyModal = closeApplyModal;
 window.submitApplication = submitApplication;

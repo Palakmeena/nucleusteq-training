@@ -29,9 +29,6 @@ async function loadOverview() {
             <tr>
                 <td>
                     <div class="overview-candidate-row">
-                        <div class="overview-candidate-avatar">
-                            ${c.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </div>
                         <div class="overview-candidate-info">
                             <div class="overview-candidate-name">${c.fullName}</div>
                             <div class="overview-candidate-email">${c.email}</div>

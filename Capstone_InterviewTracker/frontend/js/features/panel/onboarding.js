@@ -104,6 +104,10 @@ async function createPanel() {
     }
 
     document.getElementById('panelFormError').style.display = 'none';
+    const createBtn = document.querySelector('.panel-primary-auto');
+    const originalText = createBtn.textContent;
+    createBtn.textContent = 'Creating...';
+
     try {
         const res = await api.createPanelMember(body);
         const panel = res.data || {};
@@ -132,6 +136,8 @@ async function createPanel() {
     } catch (e) {
         document.getElementById('panelFormError').textContent = e.message;
         document.getElementById('panelFormError').style.display = 'block';
+    } finally {
+        createBtn.textContent = originalText;
     }
 }
 

@@ -23,6 +23,21 @@
         REJECTED: 'Thank you for your time. We wish you the best in your future endeavors.'
     };
 
+    function formatInterviewTime(timeValue) {
+        if (!timeValue) return '—';
+
+        const parts = String(timeValue).split(':');
+        if (parts.length < 2) return timeValue;
+
+        const hours = Number.parseInt(parts[0], 10);
+        const minutes = parts[1];
+        if (Number.isNaN(hours)) return timeValue;
+
+        const displayHours = hours % 12 || 12;
+        const period = hours >= 12 ? 'PM' : 'AM';
+        return `${displayHours}:${minutes} ${period}`;
+    }
+
     function setNoApplicationState() {
         document.getElementById('jobTitle').textContent = "You haven't applied to any job yet";
         document.getElementById('appliedDate').textContent = 'Go to Jobs tab from sidebar to apply.';
@@ -77,7 +92,7 @@
                     document.getElementById('interviewSection').style.display = 'block';
                     document.getElementById('noInterviewSection').style.display = 'none';
                     document.getElementById('iDate').textContent = formatDate(next.interviewDate);
-                    document.getElementById('iTime').textContent = next.interviewTime || '—';
+                    document.getElementById('iTime').textContent = formatInterviewTime(next.interviewTime);
                     document.getElementById('iStage').textContent = stageLabels[next.interviewStage] || next.interviewStage;
 
                     // Add Join Meeting button if link exists

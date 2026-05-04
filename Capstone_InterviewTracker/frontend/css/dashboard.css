@@ -29,7 +29,13 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
 }
 .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
 .nav-item:hover { background: #f1f5f9; color: #1e293b; }
-.nav-item.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+.nav-item.active {
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+    color: #3730a3;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 #4f46e5;
+}
+.nav-item.active svg { color: #4f46e5; }
 
 .post-job-btn-container { padding: 0 16px; margin-top: auto; }
 
@@ -420,10 +426,20 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
 }
 
 .interview-card {
-    background: linear-gradient(135deg, #4f46e5, #3730a3);
-    color: white;
+    width: min(100%, 920px);
+    margin: 0 auto;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    color: #0f172a;
     border-radius: 12px;
-    padding: 24px;
+    padding: 22px 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.interview-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
 .interview-card h3 {
@@ -442,6 +458,47 @@ body { display: flex; min-height: 100vh; background: #f1f5f9; color: #1e293b; }
     align-items: center;
     gap: 10px;
     font-size: 14px;
+}
+
+.interview-card .dash-interview-title,
+.interview-card .dash-interview-detail-value {
+    color: #0f172a;
+}
+
+.interview-card .dash-interview-icon {
+    background: #e0e7ff;
+    color: #4f46e5;
+}
+
+.interview-card .dash-interview-stage-label {
+    background: #ede9fe;
+    color: #4f46e5;
+    border-color: #ddd6fe;
+}
+
+.interview-card .dash-interview-detail-label {
+    color: #64748b;
+}
+
+.interview-card .dashboard-join-btn-container {
+    margin-top: 18px;
+}
+
+.interview-card .dashboard-join-btn {
+    background: #4f46e5;
+    color: #fff;
+    box-shadow: none;
+    border-color: #4f46e5;
+}
+
+.interview-card .dashboard-join-btn:hover {
+    background: #4338ca;
+}
+
+.dash-no-interview {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
 @media (max-width: 980px) {

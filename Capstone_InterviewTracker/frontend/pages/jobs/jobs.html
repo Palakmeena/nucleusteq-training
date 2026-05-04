@@ -42,7 +42,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Apply for <span id="modalJobTitle"></span></h2>
-                <button class="close-btn" onclick="closeApplyModal()">X</button>
+                <button class="close-btn" id="modalCloseBtn">X</button>
             </div>
             <div class="modal-body">
                 <div id="applyErrorMsg" class="jobs-error-msg">
@@ -102,8 +102,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
-                <button type="button" class="primary-btn" onclick="submitApplication()">Submit Application</button>
+                <button class="secondary-btn" id="cancelBtn">Cancel</button>
+                <button type="button" class="primary-btn" id="submitBtn">Submit Application</button>
             </div>
         </div>
     </div>

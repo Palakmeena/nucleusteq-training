@@ -30,17 +30,17 @@
                 <h3 class="panel-feedback-form-title" id="formTitle">Evaluation</h3>
                 <p class="panel-feedback-form-subtitle" id="formSubtitle">Submit your final thoughts on the candidate.</p>
             </div>
-            <button class="feedback-modal-close" onclick="closeFeedbackModal()">&times;</button>
+            <button class="feedback-modal-close" id="modalCloseBtn">&times;</button>
         </div>
         
         <div class="feedback-form">
             <label class="form-label">Overall Rating (1-5) *</label>
             <div class="rating-group" id="ratingGroup">
-                <div class="rating-btn" onclick="setRating(1)">1</div>
-                <div class="rating-btn" onclick="setRating(2)">2</div>
-                <div class="rating-btn" onclick="setRating(3)">3</div>
-                <div class="rating-btn" onclick="setRating(4)">4</div>
-                <div class="rating-btn" onclick="setRating(5)">5</div>
+                <div class="rating-btn" data-rating="1">1</div>
+                <div class="rating-btn" data-rating="2">2</div>
+                <div class="rating-btn" data-rating="3">3</div>
+                <div class="rating-btn" data-rating="4">4</div>
+                <div class="rating-btn" data-rating="5">5</div>
             </div>
 
             <label class="form-label">Mandatory Comments *</label>
@@ -57,15 +57,15 @@
                 </div>
             </div>
 
-            <label class="form-label">Decision *</label>
+            <label class="form-label">Recommendation *</label>
             <select id="decision" class="panel-feedback-status-select">
-                <option value="">Select decision</option>
-                <option value="PASSED">Clear to Next Round</option>
-                <option value="REJECTED">Reject Candidate</option>
-                <option value="ON_HOLD">On Hold / Need More Info</option>
+                <option value="">Select recommendation</option>
+                <option value="PASSED">Recommend Next Round</option>
+                <option value="REJECTED">Recommend Rejection</option>
+                <option value="ON_HOLD">Need More Info / On Hold</option>
             </select>
 
-            <button class="btn-primary panel-feedback-submit-btn" onclick="submitFeedback()">Submit Final Evaluation</button>
+            <button class="btn-primary panel-feedback-submit-btn" id="submitBtn">Submit Recommendation</button>
         </div>
     </div>
 </div>

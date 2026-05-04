@@ -18,7 +18,7 @@
         <header class="topbar">
             <div class="topbar-nav">Candidates</div>
             <div class="topbar-actions">
-                <button class="primary-btn cand-add-btn" onclick="openAddModal()">+ Add Candidate</button>
+                <button class="primary-btn cand-add-btn" id="addCandidateBtn">+ Add Candidate</button>
             </div>
         </header>
 
@@ -39,9 +39,9 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                     <input type="text" id="searchInput" placeholder="Search by name or email..."
-                        oninput="filterCandidates()" class="cand-search-input">
+                        class="cand-search-input">
                 </div>
-                <select id="stageFilter" class="filter-btn" onchange="filterCandidates()">
+                <select id="stageFilter" class="filter-btn">
                     <option value="">All Stages</option>
                     <option value="PROFILING">Profiling</option>
                     <option value="SCREENING">Screening</option>
@@ -83,7 +83,7 @@
             <div class="cand-modal-scroll">
             <div class="cand-modal-header">
                 <h2 class="cand-modal-title">Add New Candidate</h2>
-                <button type="button" onclick="closeAddModal()" class="cand-modal-close-btn">
+                <button type="button" id="addModalCloseBtn" class="cand-modal-close-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -100,8 +100,7 @@
                         <div class="cand-phone-group">
                             <div class="cand-phone-prefix">+91</div>
                             <input type="text" id="addMobile" placeholder="Enter 10-digit number" required
-                                maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                class="cand-phone-input">
+                                maxlength="10" class="cand-phone-input">
                         </div>
                     </div>
                     <div class="form-group"><label>Job Role</label><select id="jdSelect" required></select></div>
@@ -132,7 +131,7 @@
                             type="text" id="addLocation" required></div>
                 </div>
                 <div class="cand-modal-footer">
-                    <button type="button" class="secondary-btn" onclick="closeAddModal()">Cancel</button>
+                    <button type="button" class="secondary-btn" id="addCancelBtn">Cancel</button>
                     <button type="submit" class="primary-btn">Create Candidate</button>
                 </div>
             </form>
@@ -146,7 +145,7 @@
             <!-- Modal Header -->
             <div class="cand-view-header">
                 <h2 class="cand-view-title">Candidate Profile</h2>
-                <button onclick="closeViewModal()" class="cand-modal-close-btn">
+                <button id="viewModalCloseBtn" class="cand-modal-close-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -262,7 +261,7 @@
             </div>
 
             <div class="cand-view-footer">
-                <button onclick="closeViewModal()" class="cand-view-close-btn">Close</button>
+                <button id="viewCloseBtn" class="cand-view-close-btn">Close</button>
             </div>
         </div>
     </div>
