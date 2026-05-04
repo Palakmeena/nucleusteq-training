@@ -1,7 +1,6 @@
 package com.nucleusteq.interviewtracker.service;
 
 import com.nucleusteq.interviewtracker.mapper.AuthMapper;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.security.JwtUtil;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,6 @@ class AuthServicePrivateTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private CandidateProfileRepository candidateProfileRepository;
-    @Mock
     private JwtUtil jwtUtil;
     @Mock
     private AuthMapper authMapper;
@@ -33,7 +30,7 @@ class AuthServicePrivateTest {
 
     @Test
     void sendActivationEmail_shouldTrimFrontendUrlAndCallMailSender() throws Exception {
-        AuthService svc = new AuthService(authenticationManager, userRepository, candidateProfileRepository, jwtUtil, authMapper, mailSender);
+        AuthService svc = new AuthService(authenticationManager, userRepository, jwtUtil, authMapper, mailSender);
 
         // set frontendBaseUrl to value with trailing slash
         Field f = AuthService.class.getDeclaredField("frontendBaseUrl");

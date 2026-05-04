@@ -52,8 +52,8 @@ class InterviewMapperTest {
         // Setup Candidate
         candidate = new Candidate();
         candidate.setId(1L);
-        candidate.setFullName("John Doe");
-        candidate.setEmail("candidate@example.com");
+        candidateUser.setFullName("John Doe");
+        candidateUser.setEmail("candidate@example.com");
         candidate.setJobDescription(jd);
         candidate.setUser(candidateUser);
         candidate.setResumePath("/resumes/john-resume.pdf");
@@ -80,7 +80,7 @@ class InterviewMapperTest {
         
         PanelMember panelMember1 = new PanelMember();
         panelMember1.setId(10L);
-        panelMember1.setFullName("Alice Smith");
+        panelUser1.setFullName("Alice Smith");
         panelMember1.setUser(panelUser1);
 
         InterviewPanel panel1 = new InterviewPanel();
@@ -94,7 +94,7 @@ class InterviewMapperTest {
         
         PanelMember panelMember2 = new PanelMember();
         panelMember2.setId(11L);
-        panelMember2.setFullName("Bob Johnson");
+        panelUser2.setFullName("Bob Johnson");
         panelMember2.setUser(panelUser2);
 
         InterviewPanel panel2 = new InterviewPanel();

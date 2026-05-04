@@ -84,7 +84,7 @@ public class CandidateServiceIntegrationTest {
         User user = new User("To Delete", "todelete@example.com", "pw", UserRole.CANDIDATE);
         user = userRepository.save(user);
 
-        Candidate candidate = new Candidate("To Delete", "todelete@example.com", "+91", "9999999999",
+        Candidate candidate = new Candidate("+91", "9999999999",
             "Org", 1.0, 1.0, 1.0, 1.0, 30, "City", "Referral", jd, user);
         candidate = candidateRepository.save(candidate);
 

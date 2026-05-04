@@ -21,8 +21,6 @@ public class PanelMemberMapper {
      */
     public PanelMember mapToEntity(final PanelMemberRequestDto request) {
         return new PanelMember(
-                request.getFullName(),
-                request.getEmail(),
                 request.getMobileNumber(),
                 request.getOrganization(),
                 request.getDesignation()

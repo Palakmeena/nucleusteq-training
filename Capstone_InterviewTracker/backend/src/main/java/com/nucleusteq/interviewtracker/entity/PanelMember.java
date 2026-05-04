@@ -27,14 +27,6 @@ public class PanelMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Full name of the panel member. */
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
-
-    /** Email address — used for login and sending the activation link. */
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     /** Mobile number — must be unique across all panel members. */
     @Column(name = "mobile_number", nullable = false, unique = true)
     private String mobileNumber;
@@ -46,11 +38,6 @@ public class PanelMember {
     /** Job title of the panel member e.g. Senior Developer, Tech Lead. */
     @Column(name = "designation", nullable = false)
     private String designation;
-
-    /** Whether HR has activated this panel member's account.
-     *  Starts as false — becomes true after panel member sets their password. */
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive = false;
 
     /** Timestamp when HR created this panel member account. */
     @Column(name = "created_at", nullable = false)
@@ -69,17 +56,13 @@ public class PanelMember {
 
     /**
      * Creates a new panel member with all required fields.
-     * isActive is set to false and createdAt is set automatically.
+     * createdAt is set automatically.
      */
-    public PanelMember(String fullName, String email,
-            String mobileNumber, String organization,
+    public PanelMember(String mobileNumber, String organization,
             String designation) {
-        this.fullName = fullName;
-        this.email = email;
         this.mobileNumber = mobileNumber;
         this.organization = organization;
         this.designation = designation;
-        this.isActive = false;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -92,19 +75,13 @@ public class PanelMember {
     }
 
     public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+        // Return from User entity - single source of truth
+        return user != null ? user.getFullName() : null;
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        // Return from User entity - single source of truth
+        return user != null ? user.getEmail() : null;
     }
 
     public String getMobileNumber() {
@@ -132,11 +109,15 @@ public class PanelMember {
     }
 
     public boolean isActive() {
-        return isActive;
+        // Return from User entity - single source of truth
+        return user != null && user.isActive();
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        // Delegate to User entity
+        if (this.user != null) {
+            this.user.setActive(active);
+        }
     }
 
     public LocalDateTime getCreatedAt() {

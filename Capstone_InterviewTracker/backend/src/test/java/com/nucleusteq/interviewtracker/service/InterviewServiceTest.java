@@ -72,19 +72,20 @@ class InterviewServiceTest {
 
         testCandidate = new Candidate();
         testCandidate.setId(1L);
+        testUser.setFullName("Test Candidate");
+        testUser.setEmail("candidate@example.com");
         testCandidate.setUser(testUser);
         testCandidate.setCurrentStage(InterviewStage.SCREENING);
-        testCandidate.setFullName("Test Candidate");
-        testCandidate.setEmail("candidate@example.com");
 
         JobDescription jd = new JobDescription();
         jd.setJobTitle("Backend Developer");
         testCandidate.setJobDescription(jd);
 
+        User panelUser = new User("Panel", "panel@example.com", "pass", UserRole.PANEL);
+        panelUser.setActive(true);
         testPanelMember = new PanelMember();
         testPanelMember.setId(1L);
-        testPanelMember.setActive(true);
-        testPanelMember.setUser(new User("Panel", "panel@example.com", "pass", UserRole.PANEL));
+        testPanelMember.setUser(panelUser);
 
         testInterview = new Interview();
         testInterview.setId(1L);

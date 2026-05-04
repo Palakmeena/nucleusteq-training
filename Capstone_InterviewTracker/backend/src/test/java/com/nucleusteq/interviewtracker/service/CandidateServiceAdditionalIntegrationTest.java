@@ -9,7 +9,6 @@ import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.enums.InterviewStage;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.repository.CandidateRepository;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.JobDescriptionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +33,8 @@ public class CandidateServiceAdditionalIntegrationTest {
     @Autowired
     private CandidateRepository candidateRepository;
 
-    @Autowired
-    private CandidateProfileRepository candidateProfileRepository;
-
     @Test
-    void createCandidateProfileByHr_shouldCreateUserCandidateAndProfile() {
+    void createCandidateProfileByHr_shouldCreateUserAndCandidate() {
         JobDescription jd = new JobDescription("Backend Dev", "desc", 1, 3, 1.0, 2.0, "Onsite", JobType.REMOTE);
         jd.setActive(true);
         jd = jobDescriptionRepository.save(jd);
@@ -71,10 +67,8 @@ public class CandidateServiceAdditionalIntegrationTest {
         assertNotNull(user.getActivationToken());
         assertNotNull(user.getTokenExpiry());
 
-        // candidate profile sync
-        var profileOpt = candidateProfileRepository.findByUser(user);
-        assertTrue(profileOpt.isPresent());
-        assertEquals("HR Created", profileOpt.get().getFullName());
+        // candidate entity should be linked to the created user
+        assertTrue(candidateRepository.findByUser(user).isPresent());
     }
 
     @Test
@@ -86,7 +80,7 @@ public class CandidateServiceAdditionalIntegrationTest {
         jd.setActive(true);
         jd = jobDescriptionRepository.save(jd);
 
-        Candidate candidate = new Candidate("C", "resume.user@example.com", "+91", "9111111111",
+        Candidate candidate = new Candidate("+91", "9111111111",
                 "Org", 1.0, 1.0, 1.0, 1.0, 25, "City", "src", jd, user);
         candidate = candidateRepository.save(candidate);
 
@@ -104,7 +98,7 @@ public class CandidateServiceAdditionalIntegrationTest {
         jd.setActive(true);
         jd = jobDescriptionRepository.save(jd);
 
-        Candidate candidate = new Candidate("C2", "stage.user@example.com", "+91", "9222222222",
+        Candidate candidate = new Candidate("+91", "9222222222",
                 "Org", 1.0, 1.0, 1.0, 1.0, 26, "City", "src", jd, user);
         candidate = candidateRepository.save(candidate);
 

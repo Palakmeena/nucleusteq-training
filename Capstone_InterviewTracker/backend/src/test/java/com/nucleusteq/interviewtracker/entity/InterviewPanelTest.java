@@ -20,8 +20,6 @@ class InterviewPanelTest {
      */
     private PanelMember createSamplePanelMember() {
         return new PanelMember(
-            "Rahul Verma",
-            "rahul@gmail.com",
             "9876543210",
             "TechCorp",
             "Senior Developer"
@@ -46,8 +44,6 @@ class InterviewPanelTest {
             JobType.FULL_TIME
         );
         return new Candidate(
-            "Palak Meena",
-            "palak@gmail.com",
             "+91",
             "9876543210",
             "NucleusTeq",
@@ -137,15 +133,18 @@ class InterviewPanelTest {
          */
         Interview interview = createSampleInterview();
 
+        // Create panel members with linked users so they have emails
+        User user1 = new User("Rahul Verma", "rahul@gmail.com", "pass", UserRole.PANEL);
         PanelMember panel1 = createSamplePanelMember();
+        panel1.setUser(user1);
 
+        User user2 = new User("Sneha Joshi", "sneha@gmail.com", "pass", UserRole.PANEL);
         PanelMember panel2 = new PanelMember(
-            "Sneha Joshi",
-            "sneha@gmail.com",
             "8888888888",
             "InfoSys",
             "Tech Lead"
         );
+        panel2.setUser(user2);
 
         InterviewPanel assignment1 = new InterviewPanel(
             interview, panel1

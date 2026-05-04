@@ -30,8 +30,6 @@ public class CandidateMapper {
                                   final JobDescription jd,
                                   final User savedUser) {
         Candidate candidate = new Candidate(
-                request.getFullName(),
-                request.getEmail(),
                 request.getMobileCode(),
                 request.getMobileNumber(),
                 request.getCurrentOrganization(),

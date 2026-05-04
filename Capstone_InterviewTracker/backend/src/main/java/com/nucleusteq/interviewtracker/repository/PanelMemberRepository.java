@@ -15,15 +15,6 @@ import java.util.Optional;
 public interface PanelMemberRepository extends JpaRepository<PanelMember, Long> {
 
     /**
-     * Checks if a panel member with the given email already exists.
-     * Used to prevent duplicate panel member accounts.
-     *
-     * @param email the email to check
-     * @return true if a panel member with this email exists
-     */
-    boolean existsByEmail(String email);
-
-    /**
      * Checks if a panel member with the given mobile number already exists.
      * Used to prevent duplicate panel member accounts.
      *
@@ -40,13 +31,4 @@ public interface PanelMemberRepository extends JpaRepository<PanelMember, Long> 
      * @return Optional containing the panel member if found
      */
     Optional<PanelMember> findByUser(User user);
-
-    /**
-     * Finds a panel member by their email address.
-     * Used during panel activation to look up the panel member.
-     *
-     * @param email the email to search for
-     * @return Optional containing the panel member if found
-     */
-    Optional<PanelMember> findByEmail(String email);
 }

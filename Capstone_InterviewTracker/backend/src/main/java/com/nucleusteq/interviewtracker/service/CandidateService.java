@@ -1,7 +1,5 @@
 package com.nucleusteq.interviewtracker.service;
 
-import com.nucleusteq.interviewtracker.entity.CandidateProfile;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
 import com.nucleusteq.interviewtracker.entity.Candidate;
@@ -10,6 +8,7 @@ import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.enums.UserRole;
 import com.nucleusteq.interviewtracker.mapper.CandidateMapper;
 import com.nucleusteq.interviewtracker.repository.CandidateRepository;
+import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.JobDescriptionRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class CandidateService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CandidateMapper candidateMapper;
-    private final CandidateProfileRepository candidateProfileRepository;
+        private final CandidateProfileRepository candidateProfileRepository;
     private final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository;
     private final JavaMailSender mailSender;
 
@@ -68,7 +67,7 @@ public class CandidateService {
                             final UserRepository userRepository,
                             final PasswordEncoder passwordEncoder,
                             final CandidateMapper candidateMapper,
-                            final CandidateProfileRepository candidateProfileRepository,
+                                                        final CandidateProfileRepository candidateProfileRepository,
                             final com.nucleusteq.interviewtracker.repository.InterviewRepository interviewRepository,
                             final JavaMailSender mailSender) {
         this.candidateRepository = candidateRepository;
@@ -76,7 +75,7 @@ public class CandidateService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.candidateMapper = candidateMapper;
-        this.candidateProfileRepository = candidateProfileRepository;
+                this.candidateProfileRepository = candidateProfileRepository;
         this.interviewRepository = interviewRepository;
         this.mailSender = mailSender;
     }
@@ -126,31 +125,7 @@ public class CandidateService {
         Candidate candidate = candidateMapper.mapToEntity(request, jd, user);
         Candidate saved = candidateRepository.save(candidate);
 
-        // SYNC TO LIVE PROFILE: So the candidate sees their updated info in dashboard
-        syncToLiveProfile(saved, user);
-
         return candidateMapper.mapToResponseDto(saved);
-    }
-
-    private void syncToLiveProfile(Candidate snapshot, User user) {
-        CandidateProfile profile = candidateProfileRepository.findByUser(user)
-                .orElse(new CandidateProfile(user));
-        
-        profile.setFullName(snapshot.getFullName());
-        profile.setMobileCode(snapshot.getMobileCode());
-        profile.setMobileNumber(snapshot.getMobileNumber());
-        profile.setDateOfBirth(snapshot.getDateOfBirth());
-        profile.setResumePath(snapshot.getResumePath());
-        profile.setCurrentOrganization(snapshot.getCurrentOrganization());
-        profile.setTotalExperience(snapshot.getTotalExperience());
-        profile.setRelevantExperience(snapshot.getRelevantExperience());
-        profile.setCurrentCtc(snapshot.getCurrentCtc());
-        profile.setExpectedCtc(snapshot.getExpectedCtc());
-        profile.setNoticePeriod(snapshot.getNoticePeriod());
-        profile.setPreferredLocation(snapshot.getPreferredLocation());
-        profile.setGender(snapshot.getGender());
-        
-        candidateProfileRepository.save(profile);
     }
 
     /**
@@ -186,10 +161,7 @@ public class CandidateService {
         Candidate candidate = candidateMapper.mapToEntity(request, jd, savedUser);
         Candidate saved = candidateRepository.save(candidate);
 
-        // SYNC TO LIVE PROFILE: So the candidate sees their updated info in dashboard
-        syncToLiveProfile(saved, savedUser);
-
-                // Send activation email with link
+        // Send activation email with link
                 String activationLink = buildCandidateActivationLink(activationToken);
                 sendCandidateActivationEmail(request.getEmail(), request.getFullName(), activationLink);
 
@@ -325,8 +297,7 @@ public class CandidateService {
      */
     private void validateNoDuplicates(final String email,
                                        final String mobileNumber) {
-        if (candidateRepository.existsByEmail(email)
-                || userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException(
                     "An account with this email already exists"
             );
@@ -386,12 +357,14 @@ public class CandidateService {
         // 2. Delete Candidate
         candidateRepository.delete(candidate);
 
-        // 3. Delete CandidateProfile
+                // 3. Delete CandidateProfile linked to the same user (if present)
+                if (user != null) {
+                        candidateProfileRepository.findByUser(user)
+                                        .ifPresent(candidateProfileRepository::delete);
+                }
+
+                // 4. Delete User
         if (user != null) {
-            candidateProfileRepository.findByUser(user)
-                    .ifPresent(candidateProfileRepository::delete);
-            
-            // 4. Delete User
             userRepository.delete(user);
         }
     }

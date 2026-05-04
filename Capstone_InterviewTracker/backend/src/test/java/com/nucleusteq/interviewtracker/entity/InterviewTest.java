@@ -34,8 +34,6 @@ class InterviewTest {
             JobType.FULL_TIME
         );
         return new Candidate(
-            "Palak Meena",
-            "palak@gmail.com",
             "+91",
             "9876543210",
             "NucleusTeq",

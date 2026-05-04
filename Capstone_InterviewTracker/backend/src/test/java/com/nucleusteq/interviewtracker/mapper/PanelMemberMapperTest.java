@@ -3,12 +3,14 @@ package com.nucleusteq.interviewtracker.mapper;
 import com.nucleusteq.interviewtracker.dto.PanelMemberRequestDto;
 import com.nucleusteq.interviewtracker.dto.PanelMemberResponseDto;
 import com.nucleusteq.interviewtracker.entity.PanelMember;
+import com.nucleusteq.interviewtracker.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit tests for PanelMemberMapper.
@@ -40,8 +42,9 @@ class PanelMemberMapperTest {
         PanelMember result = mapper.mapToEntity(request);
 
         assertNotNull(result);
-        assertEquals("John Rao", result.getFullName());
-        assertEquals("john@techcorp.com", result.getEmail());
+        // fullName and email come from User entity (not mapped in mapToEntity)
+        assertNull(result.getFullName());
+        assertNull(result.getEmail());
         assertEquals("9876543210", result.getMobileNumber());
         assertEquals("TechCorp", result.getOrganization());
         assertEquals("Senior Developer", result.getDesignation());
@@ -57,8 +60,10 @@ class PanelMemberMapperTest {
     @Test
     void mapToResponseDto_shouldMapAllFields() {
         PanelMember panelMember = new PanelMember(
-                "John Rao", "john@techcorp.com", "9876543210", "TechCorp", "Senior Developer"
+                "9876543210", "TechCorp", "Senior Developer"
         );
+        User user = new User("John Rao", "john@techcorp.com", "pass", com.nucleusteq.interviewtracker.enums.UserRole.PANEL);
+        panelMember.setUser(user);
 
         PanelMemberResponseDto result = mapper.mapToResponseDto(panelMember);
 

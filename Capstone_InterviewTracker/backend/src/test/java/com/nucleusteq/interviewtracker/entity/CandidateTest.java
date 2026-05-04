@@ -45,8 +45,6 @@ class CandidateTest {
      */
     private Candidate createSampleCandidate() {
         return new Candidate(
-            "Palak Meena",
-            "palak@gmail.com",
             "+91",
             "9876543210",
             "NucleusTeq",
@@ -103,14 +101,16 @@ class CandidateTest {
     @Test
     void shouldSetAndGetFullName() {
         Candidate candidate = new Candidate();
-        candidate.setFullName("Rahul Sharma");
+        User user = new User("Rahul Sharma", "rahul@test.com", "pass", UserRole.CANDIDATE);
+        candidate.setUser(user);
         assertEquals("Rahul Sharma", candidate.getFullName());
     }
 
     @Test
     void shouldSetAndGetEmail() {
         Candidate candidate = new Candidate();
-        candidate.setEmail("rahul@gmail.com");
+        User user = new User("Rahul Sharma", "rahul@gmail.com", "pass", UserRole.CANDIDATE);
+        candidate.setUser(user);
         assertEquals("rahul@gmail.com", candidate.getEmail());
     }
 

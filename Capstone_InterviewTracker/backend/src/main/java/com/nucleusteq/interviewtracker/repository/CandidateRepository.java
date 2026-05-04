@@ -24,15 +24,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByUser(User user);
 
     /**
-     * Checks if a candidate with the given email already exists.
-     * Used to prevent duplicate candidate profiles.
-     *
-     * @param email the email to check
-     * @return true if a candidate with this email exists
-     */
-    boolean existsByEmail(String email);
-
-    /**
      * Checks if a candidate with the given mobile number already exists.
      * Used to prevent duplicate candidate profiles.
      *

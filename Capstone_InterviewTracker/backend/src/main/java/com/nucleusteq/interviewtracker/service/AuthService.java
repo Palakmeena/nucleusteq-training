@@ -3,10 +3,8 @@ package com.nucleusteq.interviewtracker.service;
 import com.nucleusteq.interviewtracker.dto.LoginRequestDto;
 import com.nucleusteq.interviewtracker.dto.LoginResponseDto;
 import com.nucleusteq.interviewtracker.dto.SignupRequestDto;
-import com.nucleusteq.interviewtracker.entity.CandidateProfile;
 import com.nucleusteq.interviewtracker.entity.User;
 import com.nucleusteq.interviewtracker.mapper.AuthMapper;
-import com.nucleusteq.interviewtracker.repository.CandidateProfileRepository;
 import com.nucleusteq.interviewtracker.repository.UserRepository;
 import com.nucleusteq.interviewtracker.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final CandidateProfileRepository candidateProfileRepository;
     private final JwtUtil jwtUtil;
     private final AuthMapper authMapper;
     private final JavaMailSender mailSender;
@@ -49,13 +46,11 @@ public class AuthService {
     @Autowired
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
-                       CandidateProfileRepository candidateProfileRepository,
                        JwtUtil jwtUtil,
                        AuthMapper authMapper,
                        JavaMailSender mailSender) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.candidateProfileRepository = candidateProfileRepository;
         this.jwtUtil = jwtUtil;
         this.authMapper = authMapper;
         this.mailSender = mailSender;
@@ -113,22 +108,12 @@ public class AuthService {
             if (user.isActive()) {
                 throw new BusinessException("Email already exists and is already verified.");
             } else {
-                // User exists but not active - resend activation email and refresh profile.
+                // User exists but not active - resend activation email.
                 String newToken = UUID.randomUUID().toString();
                 user.setActivationToken(newToken);
                 user.setTokenExpiry(LocalDateTime.now().plusHours(24));
                 user.setFullName(request.getFullName());
                 userRepository.save(user);
-
-                CandidateProfile profile = candidateProfileRepository.findByUser(user)
-                        .orElse(new CandidateProfile(user));
-                profile.setEmail(user.getEmail());
-                profile.setFullName(request.getFullName());
-                profile.setMobileCode(request.getMobileCode());
-                profile.setMobileNumber(request.getMobileNumber());
-                profile.setDateOfBirth(request.getDateOfBirth());
-                profile.setGender(request.getGender());
-                candidateProfileRepository.save(profile);
 
                 sendActivationEmail(user.getEmail(), user.getFullName(), newToken);
                 return authMapper.mapToLoginResponse(user, null);
@@ -149,15 +134,6 @@ public class AuthService {
         user.setActivationToken(activationToken);
         user.setTokenExpiry(tokenExpiry);
         userRepository.save(user);
-
-        CandidateProfile profile = new CandidateProfile(user);
-        profile.setEmail(user.getEmail());
-        profile.setFullName(request.getFullName());
-        profile.setMobileCode(request.getMobileCode());
-        profile.setMobileNumber(request.getMobileNumber());
-        profile.setDateOfBirth(request.getDateOfBirth());
-        profile.setGender(request.getGender());
-        candidateProfileRepository.save(profile);
 
         sendActivationEmail(user.getEmail(), user.getFullName(), activationToken);
 

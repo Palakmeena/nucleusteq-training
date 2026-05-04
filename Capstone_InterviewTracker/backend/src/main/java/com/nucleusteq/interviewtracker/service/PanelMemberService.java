@@ -222,15 +222,13 @@ public class PanelMemberService {
         userRepository.save(user);
 
         /*
-         * Also mark the PanelMember entity as active
-         * so HR can see the activated status on the dashboard.
+         * PanelMember activation status now comes from User entity.
+         * No need to save PanelMember separately as isActive is delegated to User.
          */
         PanelMember panelMember = panelMemberRepository.findByUser(user)
                 .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
                         "Panel member not found for this user"
                 ));
-        panelMember.setActive(true);
-        panelMemberRepository.save(panelMember);
     }
 
     /**
@@ -269,15 +267,15 @@ public class PanelMemberService {
                         "Panel member not found with id: " + id
                 ));
 
-        // Update fields
-        panelMember.setFullName(request.getFullName());
+        // Update fields - fullName is managed by User entity
         panelMember.setMobileNumber(request.getMobileNumber());
         panelMember.setOrganization(request.getOrganization());
         panelMember.setDesignation(request.getDesignation());
 
-        // Update linked user name
+        // Update linked user name and email
         User user = panelMember.getUser();
         user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
         userRepository.save(user);
 
         PanelMember saved = panelMemberRepository.save(panelMember);
@@ -322,8 +320,7 @@ public class PanelMemberService {
      */
     private void validateNoDuplicates(final String email,
                                        final String mobileNumber) {
-        if (panelMemberRepository.existsByEmail(email)
-                || userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException(
                     "An account with this email already exists"
             );

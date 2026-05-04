@@ -107,7 +107,7 @@ class CandidateControllerCoverageTest {
     void uploadProfileResume_shouldRejectInvalidFile() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "data".getBytes());
 
-        mockMvc.perform(multipart("/candidate/profile/resume").file(file))
+        mockMvc.perform(multipart("/candidate/resume/1").file(file))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false));
 

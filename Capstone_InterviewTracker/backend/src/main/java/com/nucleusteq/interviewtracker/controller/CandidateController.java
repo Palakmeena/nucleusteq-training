@@ -2,8 +2,6 @@ package com.nucleusteq.interviewtracker.controller;
 
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
-import com.nucleusteq.interviewtracker.entity.CandidateProfile;
-import com.nucleusteq.interviewtracker.service.CandidateProfileService;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import com.nucleusteq.interviewtracker.util.ApiResponse;
@@ -35,7 +33,6 @@ public class CandidateController {
 
     private final CandidateService candidateService;
     private final GoogleDriveService googleDriveService;
-    private final CandidateProfileService profileService;
     private static final Logger logger = LoggerFactory.getLogger(CandidateController.class);
 
     /**
@@ -46,11 +43,9 @@ public class CandidateController {
      */
     @Autowired
     public CandidateController(final CandidateService candidateService, 
-                               final GoogleDriveService googleDriveService,
-                               final CandidateProfileService profileService) {
+                               final GoogleDriveService googleDriveService) {
         this.candidateService = candidateService;
         this.googleDriveService = googleDriveService;
-        this.profileService = profileService;
     }
 
     /**
@@ -173,30 +168,6 @@ public class CandidateController {
     }
 
     /**
-     * Logged-in candidate views their own profile.
-     * Email is extracted from the JWT token — candidate can't see others.
-     * GET /candidate/profile
-     *
-     * @param authentication Spring Security injects this automatically
-     * @return 200 OK with the candidate's own profile
-     */
-    @GetMapping("/candidate/profile")
-    public ResponseEntity<ApiResponse<CandidateProfile>> getCandidateProfile(
-            final Authentication authentication) {
-        try {
-            if (Objects.isNull(authentication)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(ApiResponse.error("Unauthorized request. Please login first."));
-            }
-
-            String email = authentication.getName();
-            return ResponseEntity.ok(ApiResponse.success("Profile fetched", profileService.getProfileByEmail(email)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
-        }
-    }
-
-    /**
      * Returns the candidate's applied application snapshot for dashboard and locking logic.
      */
     @GetMapping("/candidate/application")
@@ -210,41 +181,6 @@ public class CandidateController {
 
             String email = authentication.getName();
             return ResponseEntity.ok(ApiResponse.success("Application fetched", candidateService.getCandidateProfile(email)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
-        }
-    }
-
-    @org.springframework.web.bind.annotation.PutMapping("/candidate/profile")
-    public ResponseEntity<ApiResponse<com.nucleusteq.interviewtracker.entity.CandidateProfile>> updateCandidateProfile(
-            @RequestBody final com.nucleusteq.interviewtracker.entity.CandidateProfile profile,
-            final Authentication authentication) {
-        try {
-            String email = authentication.getName();
-            return ResponseEntity.ok(ApiResponse.success("Profile updated", profileService.updateProfile(email, profile)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
-        }
-    }
-
-    /**
-     * Candidate uploads their resume to their LIVE PROFILE.
-     * This does NOT affect existing job applications (snapshots).
-     */
-    @PostMapping("/candidate/profile/resume")
-    public ResponseEntity<ApiResponse<String>> uploadProfileResume(
-            @RequestParam("file") final MultipartFile file,
-            final Authentication authentication) {
-
-        try {
-            if (file.isEmpty() || !"application/pdf".equals(file.getContentType())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Invalid PDF file"));
-            }
-
-            String driveUrl = googleDriveService.uploadFile(file);
-            profileService.updateResume(authentication.getName(), driveUrl);
-
-            return ResponseEntity.ok(ApiResponse.success("Profile resume updated", driveUrl));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }

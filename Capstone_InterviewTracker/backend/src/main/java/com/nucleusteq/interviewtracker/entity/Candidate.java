@@ -31,12 +31,6 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
-
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     @Column(name = "mobile_code", nullable = false)
     private String mobileCode;
 
@@ -108,14 +102,12 @@ public class Candidate {
     /**
      * Creates a new candidate profile with all required fields.
      */
-    public Candidate(String fullName, String email, String mobileCode,
-            String mobileNumber, String currentOrganization,
-            Double totalExperience, Double relevantExperience,
-            Double currentCtc, Double expectedCtc,
-            Integer noticePeriod, String preferredLocation,
-            String source, JobDescription jobDescription, User user) {
-        this.fullName = fullName;
-        this.email = email;
+    public Candidate(String mobileCode, String mobileNumber,
+            String currentOrganization, Double totalExperience,
+            Double relevantExperience, Double currentCtc,
+            Double expectedCtc, Integer noticePeriod,
+            String preferredLocation, String source,
+            JobDescription jobDescription, User user) {
         this.mobileCode = mobileCode;
         this.mobileNumber = mobileNumber;
         this.currentOrganization = currentOrganization;
@@ -142,19 +134,13 @@ public class Candidate {
     }
 
     public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+        // Return from User entity - single source of truth
+        return user != null ? user.getFullName() : null;
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        // Return from User entity - single source of truth
+        return user != null ? user.getEmail() : null;
     }
 
     public String getMobileCode() {

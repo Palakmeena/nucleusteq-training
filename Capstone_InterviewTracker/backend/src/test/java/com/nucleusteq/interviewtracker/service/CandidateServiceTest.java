@@ -93,8 +93,6 @@ class CandidateServiceTest {
         user.setActive(true);
 
         candidate = new Candidate(
-                "Sarah Gupta",
-                "sarah@example.com",
                 "+91",
                 "9876543210",
                 "TechCorp",
@@ -136,10 +134,6 @@ class CandidateServiceTest {
 
         when(candidateMapper.mapToResponseDto(candidate))
                 .thenReturn(responseDto);
-
-        // FIX: sync method dependency mock
-        when(candidateProfileRepository.findByUser(user))
-                .thenReturn(Optional.empty());
 
         CandidateResponseDto result =
                 candidateService.createCandidateProfile(request, "sarah@example.com");

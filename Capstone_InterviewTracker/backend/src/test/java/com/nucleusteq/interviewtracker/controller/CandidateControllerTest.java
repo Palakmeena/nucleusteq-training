@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nucleusteq.interviewtracker.dto.CandidateRequestDto;
 import com.nucleusteq.interviewtracker.dto.CandidateResponseDto;
-import com.nucleusteq.interviewtracker.entity.CandidateProfile;
-import com.nucleusteq.interviewtracker.service.CandidateProfileService;
 import com.nucleusteq.interviewtracker.service.CandidateService;
 import com.nucleusteq.interviewtracker.service.GoogleDriveService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,9 +39,6 @@ class CandidateControllerTest {
 
     @Mock
     private GoogleDriveService googleDriveService;
-
-    @Mock
-    private CandidateProfileService profileService;
 
     @Mock
     private Authentication authentication;
@@ -210,26 +205,27 @@ class CandidateControllerTest {
     // ───── GET OWN PROFILE ─────
 
     @Test
-    void getCandidateProfile_shouldReturn200() throws Exception {
+    void getCandidateApplication_shouldReturn200() throws Exception {
 
-        CandidateProfile profile = new CandidateProfile();
+        CandidateResponseDto response = new CandidateResponseDto();
+        response.setFullName("Test User");
 
         when(authentication.getName()).thenReturn("test@example.com");
-        when(profileService.getProfileByEmail("test@example.com")).thenReturn(profile);
+        when(candidateService.getCandidateProfile("test@example.com")).thenReturn(response);
 
-        mockMvc.perform(get("/candidate/profile")
+        mockMvc.perform(get("/candidate/application")
                         .principal(authentication))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getCandidateProfile_shouldReturn500_whenError() throws Exception {
+    void getCandidateApplication_shouldReturn500_whenError() throws Exception {
 
         when(authentication.getName()).thenReturn("test@example.com");
-        when(profileService.getProfileByEmail("test@example.com"))
+        when(candidateService.getCandidateProfile("test@example.com"))
                 .thenThrow(new RuntimeException("Database error"));
 
-        mockMvc.perform(get("/candidate/profile")
+        mockMvc.perform(get("/candidate/application")
                         .principal(authentication))
                 .andExpect(status().isInternalServerError());
     }
@@ -237,38 +233,21 @@ class CandidateControllerTest {
     // ───── UPDATE PROFILE ─────
 
     @Test
-    void updateCandidateProfile_shouldReturn200() throws Exception {
-        CandidateProfile profile = new CandidateProfile();
-        // Set minimal properties to avoid serialization issues
-        // The actual profile will be returned by the mocked service
+    void registerCandidate_shouldReturn200_whenUpdate() throws Exception {
+        CandidateResponseDto response = new CandidateResponseDto();
+        response.setFullName("Test User");
 
         when(authentication.getName()).thenReturn("test@example.com");
-        when(profileService.updateProfile(any(), any())).thenReturn(profile);
+        when(candidateService.createCandidateProfile(any(), any())).thenReturn(response);
 
-        // Use a simple JSON object for the request body
-        String jsonBody = "{\"fullName\":\"Test User\",\"mobileCode\":\"+91\",\"mobileNumber\":\"9876543210\"}";
+        // Use a simple JSON object for the request body - include all required fields
+        String jsonBody = "{\"fullName\":\"Test User\",\"email\":\"test@example.com\",\"mobileCode\":\"+91\",\"mobileNumber\":\"9876543210\",\"currentOrganization\":\"TechCorp\",\"totalExperience\":3.0,\"relevantExperience\":2.0,\"currentCtc\":6.0,\"expectedCtc\":10.0,\"noticePeriod\":30,\"preferredLocation\":\"Bangalore\",\"source\":\"LinkedIn\",\"gender\":\"Male\",\"jobDescriptionId\":1}";
 
-        mockMvc.perform(put("/candidate/profile")
+        mockMvc.perform(post("/candidate/register")
                         .principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBody))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void updateCandidateProfile_shouldReturn500_whenError() throws Exception {
-
-        when(authentication.getName()).thenReturn("test@example.com");
-        when(profileService.updateProfile(any(), any()))
-                .thenThrow(new RuntimeException("Database error"));
-
-        String jsonBody = "{\"fullName\":\"Test User\",\"mobileCode\":\"+91\",\"mobileNumber\":\"9876543210\"}";
-
-        mockMvc.perform(put("/candidate/profile")
-                        .principal(authentication)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBody))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isCreated());
     }
 
     // ───── DELETE CANDIDATE ─────

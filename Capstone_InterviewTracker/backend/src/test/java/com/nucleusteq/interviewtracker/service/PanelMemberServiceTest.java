@@ -50,7 +50,6 @@ class PanelMemberServiceTest {
         request.setMobileNumber("9876543210");
 
         panelMember = new PanelMember(
-                "John Rao", "john@techcorp.com",
                 "9876543210", "TechCorp", "Senior Dev"
         );
 
@@ -64,7 +63,6 @@ class PanelMemberServiceTest {
 
     @Test
     void create_shouldWork() {
-        when(panelMemberRepository.existsByEmail(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(panelMemberRepository.existsByMobileNumber(any())).thenReturn(false);
 
@@ -85,7 +83,7 @@ class PanelMemberServiceTest {
 
     @Test
     void create_shouldThrow_whenEmailExists() {
-        when(panelMemberRepository.existsByEmail(any())).thenReturn(true);
+        when(userRepository.existsByEmail(any())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class,
                 () -> service.createPanelMember(request));
@@ -95,7 +93,6 @@ class PanelMemberServiceTest {
 
     @Test
     void create_shouldThrow_whenMobileExists() {
-        when(panelMemberRepository.existsByEmail(any())).thenReturn(false);
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(panelMemberRepository.existsByMobileNumber(any())).thenReturn(true);
 
@@ -124,7 +121,7 @@ class PanelMemberServiceTest {
         assertNull(user.getTokenExpiry());
 
         verify(userRepository).save(user);
-        verify(panelMemberRepository).save(panelMember);
+        // panelMemberRepository.save is not called anymore since isActive is delegated to User
     }
 
     @Test

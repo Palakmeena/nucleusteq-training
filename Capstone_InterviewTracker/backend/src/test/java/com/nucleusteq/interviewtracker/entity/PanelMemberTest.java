@@ -17,8 +17,6 @@ class PanelMemberTest {
      */
     private PanelMember createSamplePanelMember() {
         return new PanelMember(
-            "Rahul Verma",
-            "rahul@gmail.com",
             "9876543210",
             "TechCorp",
             "Senior Developer"
@@ -43,8 +41,8 @@ class PanelMemberTest {
         PanelMember panelMember = createSamplePanelMember();
 
         /** Assert. */
-        assertEquals("Rahul Verma", panelMember.getFullName());
-        assertEquals("rahul@gmail.com", panelMember.getEmail());
+        assertNull(panelMember.getFullName()); // No user linked yet
+        assertNull(panelMember.getEmail()); // No user linked yet
         assertEquals("9876543210", panelMember.getMobileNumber());
         assertEquals("TechCorp", panelMember.getOrganization());
         assertEquals("Senior Developer", panelMember.getDesignation());
@@ -64,6 +62,8 @@ class PanelMemberTest {
     void shouldActivatePanelMemberCorrectly() {
         /** After HR activates, isActive should become true. */
         PanelMember panelMember = createSamplePanelMember();
+        User user = createSampleUser();
+        panelMember.setUser(user);
         panelMember.setActive(true);
         assertTrue(panelMember.isActive());
     }
@@ -98,14 +98,16 @@ class PanelMemberTest {
     @Test
     void shouldSetAndGetFullName() {
         PanelMember panelMember = new PanelMember();
-        panelMember.setFullName("Sneha Joshi");
+        User user = new User("Sneha Joshi", "sneha@test.com", "pass", UserRole.PANEL);
+        panelMember.setUser(user);
         assertEquals("Sneha Joshi", panelMember.getFullName());
     }
 
     @Test
     void shouldSetAndGetEmail() {
         PanelMember panelMember = new PanelMember();
-        panelMember.setEmail("sneha@gmail.com");
+        User user = new User("Sneha Joshi", "sneha@gmail.com", "pass", UserRole.PANEL);
+        panelMember.setUser(user);
         assertEquals("sneha@gmail.com", panelMember.getEmail());
     }
 
