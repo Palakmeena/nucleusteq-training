@@ -172,7 +172,7 @@ class AuthServiceTest {
         when(userRepository.findByEmail("existing@example.com"))
                 .thenReturn(Optional.of(existing));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(com.nucleusteq.interviewtracker.exception.BusinessException.class,
                 () -> authService.signup(request, passwordEncoder));
 
         verify(userRepository, never()).save(any());
@@ -217,7 +217,7 @@ class AuthServiceTest {
         when(userRepository.findByActivationToken("expired-token"))
                 .thenReturn(Optional.of(candidate));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(com.nucleusteq.interviewtracker.exception.BusinessException.class,
                 () -> authService.verifyCandidate("expired-token"));
     }
 

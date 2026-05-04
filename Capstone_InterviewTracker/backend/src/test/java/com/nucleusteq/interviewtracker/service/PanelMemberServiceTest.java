@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.nucleusteq.interviewtracker.repository.FeedbackRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,6 +32,8 @@ class PanelMemberServiceTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private PanelMemberMapper panelMemberMapper;
     @Mock private JavaMailSender mailSender;
+    @Mock private FeedbackRepository feedbackRepository;
+    @Mock private InterviewService interviewService;
 
     @InjectMocks private PanelMemberService service;
 
