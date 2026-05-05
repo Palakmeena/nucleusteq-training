@@ -1,0 +1,35 @@
+.create-jd-breadcrumb-separator {
+    color: #cbd5e1;
+}
+
+.create-jd-avatar-badge {
+    width: 32px;
+    height: 32px;
+    background: #eef2ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #4f46e5;
+}
+
+.create-jd-inline-row {
+    display: flex;
+    gap: 8px;
+}
+
+.create-jd-skill-add-btn {
+    white-space: nowrap;
+}
+
+.create-jd-form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.create-jd-primary-auto {
+    width: auto;
+}

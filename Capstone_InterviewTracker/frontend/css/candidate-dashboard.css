@@ -1,0 +1,183 @@
+/* Candidate Dashboard Specific Styles */
+
+/* Status Card */
+.dash-status-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+.dash-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dash-job-info-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.dash-job-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.dash-applied-date {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.dash-stage-badge {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Stage Labels */
+.dash-stage-labels-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.dash-stage-label {
+    font-size: 12px;
+    flex: 1;
+    text-align: center;
+}
+
+.dash-stage-note {
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1e293b;
+    text-align: center;
+}
+
+/* Interview Card */
+.dash-interview-container {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.dash-interview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.dash-interview-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.dash-interview-icon {
+    background: #e0e7ff;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4f46e5;
+}
+
+.dash-interview-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #4f46e5;
+}
+
+.dash-interview-stage-label {
+    background: #ede9fe;
+    color: #4f46e5;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid #ddd6fe;
+}
+
+.dash-interview-details {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 8px;
+}
+
+.dash-interview-detail {
+    flex: 1;
+}
+
+.dash-interview-detail-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.dash-interview-detail-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+/* No Interview Section */
+.dash-no-interview {
+    background: linear-gradient(135deg, #f8f7ff 0%, #fafbff 100%);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: #94a3b8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.dash-no-interview-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: center;
+}
+
+.dash-no-interview-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.dash-no-interview-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.dash-no-interview-subtitle {
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+/* Utility hidden class for toggling visibility */
+.hidden { display: none; }

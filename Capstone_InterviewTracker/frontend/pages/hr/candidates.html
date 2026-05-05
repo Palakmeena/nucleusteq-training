@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Candidates</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/hr/candidates.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main-area">
+        <header class="topbar">
+            <div class="topbar-nav">Candidates</div>
+            <div class="topbar-actions">
+                <button class="primary-btn cand-add-btn" id="addCandidateBtn">+ Add Candidate</button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Candidates</h1>
+                    <p class="page-subtitle">Master list of all applicants across all job roles.</p>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="cand-filter-row">
+                <div class="search-container cand-search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by name or email..."
+                        class="cand-search-input">
+                </div>
+                <select id="stageFilter" class="filter-btn">
+                    <option value="">All Stages</option>
+                    <option value="PROFILING">Profiling</option>
+                    <option value="SCREENING">Screening</option>
+                    <option value="L1_TECHNICAL">L1 Technical</option>
+                    <option value="L2_TECHNICAL">L2 Technical</option>
+                    <option value="HR_ROUND">HR Round</option>
+                    <option value="SELECTED">Selected</option>
+                    <option value="REJECTED">Rejected</option>
+                </select>
+                <span id="countLabel" class="cand-count-label"></span>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>JD Applied</th>
+                            <th>Experience</th>
+                            <th>Current Stage</th>
+                            <th>Applied On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidateTableBody">
+                        <tr>
+                            <td colspan="6" class="cand-loading-td">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ADD CANDIDATE MODAL -->
+    <div id="addCandidateModal" class="cand-modal-add">
+        <div class="cand-modal-card">
+            <div class="cand-modal-scroll">
+            <div class="cand-modal-header">
+                <h2 class="cand-modal-title">Add New Candidate</h2>
+                <button type="button" id="addModalCloseBtn" class="cand-modal-close-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="addCandidateForm">
+                <div class="cand-form-grid-2col">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="addFullName" required></div>
+                    <div class="form-group"><label>Email Address</label><input type="email" id="addEmail" required>
+                    </div>
+                    <div class="form-group cand-form-span2">
+                        <label>Mobile Number</label>
+                        <div class="cand-phone-group">
+                            <div class="cand-phone-prefix">+91</div>
+                            <input type="text" id="addMobile" placeholder="Enter 10-digit number" required
+                                maxlength="10" class="cand-phone-input">
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Job Role</label><select id="jdSelect" required></select></div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="addGender" required class="cand-select-skill">
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Total Experience (Yrs)</label><input type="number" step="0.1"
+                            id="addTotalExp" required min="0"></div>
+                    <div class="form-group"><label>Relevant Experience (Yrs)</label><input type="number" step="0.1"
+                            id="addRelExp" required min="0"></div>
+                    <div class="form-group"><label>Current CTC (LPA)</label><input type="number" step="0.1"
+                            id="addCurrentCtc" required min="0"></div>
+                    <div class="form-group"><label>Expected CTC (LPA)</label><input type="number" step="0.1"
+                            id="addExpectedCtc" required min="0"></div>
+                    <div class="form-group"><label>Notice Period (Days)</label><input type="number" id="addNotice"
+                            required min="0"></div>
+                    <div class="form-group"><label>Current Organization</label><input type="text" id="addOrg" required></div>
+                    <div class="form-group"><label>Date of Birth</label><input type="date" id="addDob" required></div>
+                    <div class="form-group cand-form-span2"><label>Resume (PDF)</label><input type="file"
+                            id="addResume" accept=".pdf,application/pdf"></div>
+                    <div class="form-group cand-form-span2"><label>Preferred Location</label><input
+                            type="text" id="addLocation" required></div>
+                </div>
+                <div class="cand-modal-footer">
+                    <button type="button" class="secondary-btn" id="addCancelBtn">Cancel</button>
+                    <button type="submit" class="primary-btn">Create Candidate</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANDIDATE VIEW MODAL -->
+    <div id="viewCandidateModal" class="cand-modal-view">
+        <div class="cand-view-card">
+            <!-- Modal Header -->
+            <div class="cand-view-header">
+                <h2 class="cand-view-title">Candidate Profile</h2>
+                <button id="viewModalCloseBtn" class="cand-modal-close-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="cand-view-scroll">
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Personal Information</h3>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Full Name</label>
+                            <div class="cand-view-value" id="candidateName">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Email</label>
+                            <div class="cand-view-value" id="candidateEmail">—</div>
+                        </div>
+                    </div>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Mobile</label>
+                            <div class="cand-view-value" id="candidateMobile">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Date of Birth</label>
+                            <div class="cand-view-value" id="candidateDob">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Gender</label>
+                            <div class="cand-view-value" id="candidateGender">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Professional Information</h3>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Current Organization</label>
+                            <div class="cand-view-value" id="candidateOrg">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Preferred Location</label>
+                            <div class="cand-view-value" id="candidateLocation">—</div>
+                        </div>
+                    </div>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Total Experience</label>
+                            <div class="cand-view-value" id="candidateTotalExp">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Relevant Experience</label>
+                            <div class="cand-view-value" id="candidateRelExp">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Compensation & Availability</h3>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Current CTC</label>
+                            <div class="cand-view-value" id="candidateCurrentCtc">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Expected CTC</label>
+                            <div class="cand-view-value" id="candidateExpectedCtc">—</div>
+                        </div>
+                    </div>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Notice Period</label>
+                            <div class="cand-view-value" id="candidateNotice">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Source</label>
+                            <div class="cand-view-value" id="candidateSource">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cand-view-section">
+                    <h3 class="cand-view-section-title">Application Information</h3>
+                    <div class="cand-view-grid">
+                        <div>
+                            <label class="cand-view-label">Job Title Applied</label>
+                            <div class="cand-view-value" id="candidateJobTitle">—</div>
+                        </div>
+                        <div>
+                            <label class="cand-view-label">Applied On</label>
+                            <div class="cand-view-value" id="candidateAppliedOn">—</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="cand-view-label">Current Stage</label>
+                        <div class="cand-view-value" id="candidateStage">—</div>
+                    </div>
+                    <div class="cand-view-attachments">
+                        <label class="cand-view-attachments-label">Attachments</label>
+                        <div id="resumeSection">
+                            <a id="candidateResumeLink" href="#" target="_blank" class="cand-view-resume-link">
+                                View Resume
+                            </a>
+                            <p id="noResumeMsg" class="cand-view-no-resume">No resume
+                                uploaded yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cand-view-footer">
+                <button id="viewCloseBtn" class="cand-view-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCHEDULE INTERVIEW MODAL -->
+    <div id="scheduleModal" class="cand-modal-schedule">
+        <div class="cand-sched-card">
+            <div class="cand-sched-header">
+            <div class="cand-sched-top">
+                <h2 class="cand-sched-title">Schedule Interview</h2>
+                <button type="button" onclick="closeScheduleModal()" class="cand-sched-close">×</button>
+            </div>
+            <div id="scheduleError" class="cand-sched-error"></div>
+            </div>
+            <div class="cand-sched-scroll">
+            <form id="scheduleForm">
+                <div class="form-group">
+                    <label>Interview Stage *</label>
+                    <select id="schedStage" class="cand-sched-input">
+                        <option value="">Select stage</option>
+                        <option value="L1_TECHNICAL">L1 Technical</option>
+                        <option value="L2_TECHNICAL">L2 Technical</option>
+                        <option value="HR_ROUND">HR Round</option>
+                    </select>
+                </div>
+                <div class="cand-sched-row">
+                    <div class="form-group"><label>Date *</label><input type="date" id="schedDate" class="cand-sched-input"></div>
+                    <div class="form-group">
+                        <label>Time *</label>
+                        <div class="cand-sched-time-inputs">
+                            <select id="schedHour" class="cand-sched-time-select">
+                                <option value="">HH</option>
+                                <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
+                                <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option>
+                                <option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <span class="cand-sched-time-sep">:</span>
+                            <select id="schedMinute" class="cand-sched-time-select">
+                                <option value="">MM</option>
+                                <option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
+                                <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option>
+                                <option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option>
+                                <option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option>
+                                <option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                                <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option>
+                                <option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option>
+                                <option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option>
+                                <option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option>
+                                <option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option>
+                                <option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option>
+                                <option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option>
+                            </select>
+                            <select id="schedAmPm" class="cand-sched-time-select">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label>Meeting Link</label><input type="url" id="schedLink" placeholder="https://meet.google.com/..." class="cand-sched-input"></div>
+                <div class="form-group"><label>Focus Areas</label><textarea id="schedFocus" rows="2" class="cand-sched-input" placeholder="Specific topics for the panel..."></textarea></div>
+
+                <div class="form-group cand-panel-group" id="panelGroup">
+                    <label>Assign Panel Members * (Max 2)</label>
+                    <div id="selectedPanelsDisplay" class="cand-sched-panel-box">
+                        <div id="selectedList"></div>
+                    </div>
+                    <input type="text" id="panelSearchInput" placeholder="Search panel by name..." class="cand-sched-input" oninput="filterPanels()">
+                    <div id="panelOptions" class="cand-sched-panel-list"></div>
+                </div>
+
+                <div class="cand-sched-footer">
+                    <button type="button" class="secondary-btn" onclick="closeScheduleModal()">Cancel</button>
+                    <button type="button" class="primary-btn" onclick="scheduleInterview()" id="saveBtn">Schedule
+                        Now</button>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/services/api.js"></script>
+    <script src="../../js/services/authService.js"></script>
+    <script src="../../js/svg-icons.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/features/hr/candidates.js"></script>
+</body>
+
+</html>

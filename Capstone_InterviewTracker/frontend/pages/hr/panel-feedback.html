@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Schedule Interview</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="../../css/hr/panel-feedback.css">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-area">
+        <header class="topbar">
+            <div class="topbar-nav">Feedback</div>
+        </header>
+        <div class="content-wrapper">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Feedback</h1>
+                    <p class="page-subtitle">Review and manage candidate interview evaluations.</p>
+                </div>
+            </div>
+
+            <div class="schedule-feedback-grid-root">
+                <!-- UPCOMING LIST -->
+                <div class="interview-list-card">
+                    <div class="schedule-list-header">
+                        <h3 class="schedule-list-title">Interview Feedback</h3>
+                        <div class="schedule-list-copy">Detailed list of all candidate interview feedback.</div>
+                    </div>
+                    <div id="upcomingList">
+                        <div class="schedule-loading-state">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- INTERVIEW INFO MODAL -->
+    <div class="modal-overlay schedule-modal-overlay" id="infoModal">
+        <div class="schedule-modal-card">
+            <div class="schedule-modal-header">
+                <div>
+                    <h3 class="schedule-modal-title">Interview Details</h3>
+                    <p class="schedule-modal-subtitle">Comprehensive view of the scheduled interview</p>
+                </div>
+                <button onclick="document.getElementById('infoModal').classList.remove('active')" class="schedule-icon-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="schedule-summary-card">
+                <div class="schedule-summary-grid">
+                    <div>
+                        <label class="schedule-info-label">Candidate</label>
+                        <div id="infoCandidate" class="schedule-info-value"></div>
+                    </div>
+                    <div>
+                        <label class="schedule-info-label">Stage</label>
+                        <div id="infoStage" class="schedule-stage-pill"></div>
+                    </div>
+                </div>
+                <div class="schedule-form-group-spaced">
+                    <label class="schedule-info-label">Date & Time</label>
+                    <div id="infoDateTime" class="schedule-info-text"></div>
+                </div>
+                <div class="schedule-form-group-spaced">
+                    <label class="schedule-info-label">Panel Members</label>
+                    <div id="infoPanels" class="schedule-info-box"></div>
+                </div>
+                <div>
+                    <label class="schedule-info-label">Meeting Link</label>
+                    <div id="infoLink" class="schedule-link-box"></div>
+                </div>
+            </div>
+            
+            <div class="schedule-modal-footer">
+                <button class="secondary-btn schedule-modal-footer-space" onclick="document.getElementById('infoModal').classList.remove('active')">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK VIEW MODAL -->
+    <div class="modal-overlay schedule-modal-lg" id="feedbackModal">
+        <div class="schedule-modal-lg-card">
+            
+            <div class="schedule-modal-lg-header">
+                <div>
+                    <h3 class="schedule-modal-title">Interview Feedback</h3>
+                    <p class="schedule-modal-subtitle">Review evaluations from panel members</p>
+                </div>
+                <button onclick="document.getElementById('feedbackModal').classList.remove('active')" class="schedule-icon-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="schedule-modal-scroll">
+                <div class="schedule-summary-card-lg">
+                    <div class="schedule-summary-grid-lg">
+                        <div>
+                            <label class="schedule-info-label">Candidate</label>
+                            <div id="fCandidate" class="schedule-info-value"></div>
+                        </div>
+                        <div>
+                            <label class="schedule-info-label">Interview Stage</label>
+                            <div id="fStage" class="schedule-stage-pill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="feedbackList">
+                    <!-- Individual panel feedback will be injected here -->
+                </div>
+            </div>
+
+            <div class="schedule-modal-lg-footer">
+                <button class="secondary-btn schedule-modal-footer-space"
+                    onclick="document.getElementById('feedbackModal').classList.remove('active')">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HR FEEDBACK FORM MODAL -->
+    <div class="modal-overlay schedule-feedback-card" id="hrFeedbackModal">
+        <div class="schedule-feedback-panel">
+            <div class="schedule-feedback-header">
+                <h3 class="schedule-feedback-title">Give HR Feedback</h3>
+                <button onclick="document.getElementById('hrFeedbackModal').classList.remove('active')" class="schedule-feedback-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="schedule-feedback-summary">
+                <div class="schedule-feedback-grid">
+                    <div>
+                        <label class="schedule-form-label">Candidate</label>
+                        <div id="hrfCandidate" class="schedule-info-value"></div>
+                    </div>
+                    <div>
+                        <label class="schedule-form-label">Stage</label>
+                        <div class="schedule-info-text">HR Round</div>
+                    </div>
+                </div>
+            </div>
+            <div id="hrFeedbackError" class="schedule-feedback-error"></div>
+            <form id="hrFeedbackForm">
+                <div class="form-group">
+                    <label class="schedule-form-label">Rating (1-5) *</label>
+                    <select id="hrfRating" class="schedule-select">
+                        <option value="">Select rating</option>
+                        <option value="1">1 — Poor</option>
+                        <option value="2">2 — Below Average</option>
+                        <option value="3">3 — Average</option>
+                        <option value="4">4 — Good</option>
+                        <option value="5">5 — Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group schedule-form-group-spaced">
+                    <label class="schedule-form-label">Comments *</label>
+                    <textarea id="hrfComments" rows="3" class="schedule-textarea"
+                        placeholder="Overall assessment of the candidate..."></textarea>
+                </div>
+                <div class="schedule-feedback-grid schedule-form-group-spaced">
+                    <div class="form-group">
+                        <label class="schedule-form-label schedule-form-label-green">Strengths</label>
+                        <textarea id="hrfStrengths" rows="2" class="schedule-textarea"
+                            placeholder="Key strengths..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="schedule-form-label schedule-form-label-red">Weaknesses</label>
+                        <textarea id="hrfWeaknesses" rows="2" class="schedule-textarea"
+                            placeholder="Areas for improvement..."></textarea>
+                    </div>
+                </div>
+                <div class="form-group schedule-form-group-spaced">
+                    <label class="schedule-form-label">Decision *</label>
+                    <select id="hrfDecision" class="schedule-select">
+                        <option value="">Select decision</option>
+                        <option value="SELECTED">Selected</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
+                <div class="schedule-action-row">
+                    <button type="button" class="secondary-btn"
+                        onclick="document.getElementById('hrFeedbackModal').classList.remove('active')">Cancel</button>
+                    <button type="button" class="primary-btn" onclick="submitHrFeedback()" id="hrFeedbackBtn">Submit
+                        Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../../js/services/api.js"></script>
+    <script src="../../js/services/authService.js"></script>
+    <script src="../../js/svg-icons.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/features/hr/panel-feedback.js"></script>
+</body>
+
+</html>

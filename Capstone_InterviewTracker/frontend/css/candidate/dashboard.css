@@ -1,0 +1,7 @@
+/* Candidate dashboard page styles */
+
+.dashboard-not-applied-badge { text-transform: none; }
+.dashboard-join-btn-container { margin-top: 28px; }
+.dashboard-join-btn { display: flex; align-items: center; gap: 10px; padding: 12px 28px; text-decoration: none; background: #4f46e5; color: #ffffff; border-radius: 8px; font-weight: 700; font-size: 16px; width: auto; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); border: none; cursor: pointer; }
+.dashboard-join-btn:hover { background: #4338ca; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); transform: translateY(-2px); }
+.dashboard-join-btn:active { transform: translateY(0); }

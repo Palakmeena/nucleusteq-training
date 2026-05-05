@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTrack | Available Positions</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+    <div class="blob-bg"></div>
+
+    <header class="landing-header">
+        <div class="landing-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z">
+                </path>
+                <path
+                    d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z">
+                </path>
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+            </svg>
+            HireTrack
+        </div>
+
+        <div class="header-nav">
+            <a href="index.html" class="active">Home</a>
+            <a href="#jobsSection" onclick="document.getElementById('jobsSection').scrollIntoView({behavior: 'smooth'}); return false;">Jobs</a>
+        </div>
+
+        <div class="landing-actions" id="authSection">
+            <a href="pages/auth/login.html" class="login-btn">Login</a>
+            <a href="pages/auth/signup.html" class="signup-btn">Sign Up</a>
+        </div>
+    </header>
+
+    <div class="hero-container">
+        <h1 class="hero-title">Our <span>Recruitment Portal</span></h1>
+        <p class="hero-subtitle">The official platform for tracking applications and managing interviews at HireTrack.
+            Join our mission and build your career with us.</p>
+    </div>
+
+    <div class="cta-section">
+        <div class="cta-text">
+            <h3>Streamlined Recruitment Flow</h3>
+            <p>Experience a transparent and efficient hiring process designed to get you from application to offer
+                faster.</p>
+        </div>
+        <div class="flow-row">
+            <div class="flow-item">
+                <div class="flow-number">01</div>
+                <div class="flow-label">Apply</div>
+            </div>
+            <div class="flow-divider"></div>
+            <div class="flow-item">
+                <div class="flow-number">02</div>
+                <div class="flow-label">Interview</div>
+            </div>
+            <div class="flow-divider"></div>
+            <div class="flow-item">
+                <div class="flow-number">03</div>
+                <div class="flow-label">Track</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="jobs-section" id="jobsSection">
+        <div class="jobs-section-header">
+            <h2>Open Positions</h2>
+            <p>Browse and apply to current opportunities at HireTrack</p>
+        </div>
+        <div class="jobs-search-wrapper">
+            <input type="text" id="jobsSearchInput" placeholder="Search by title or location...">
+        </div>
+        <div class="jd-grid" id="jobsGrid">
+            <div class="jd-loading">Loading positions...</div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content center">
+            <div class="footer-brand">
+                <div class="landing-brand center">HireTrack</div>
+                <p class="footer-desc">Our official internal recruitment system. Helping you
+                    find your place in the HireTrack family.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 HireTrack. Productive recruitment for a modern world.
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="applyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Apply for <span id="modalJobTitle"></span></h2>
+                <button type="button" class="close-btn close-circle" onclick="closeApplyModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="applyErrorMsg" class="apply-error-msg">
+                </div>
+                <div id="applySuccessMsg" class="apply-success-msg">
+                    Application submitted successfully!</div>
+
+                <form id="applyForm">
+                    <input type="hidden" id="applyJdId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="applyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" id="applyEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="applyGender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <div class="mobile-input-group">
+                                <input type="text" id="applyMobileCode" value="+91" required maxlength="5"
+                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                                    class="mobile-code-input">
+                                <input type="text" id="applyMobile" placeholder="Enter 10-digit number" required
+                                    maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    class="mobile-number-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" id="applyDob" required class="input-date">
+                    </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Current Organization</label>
+                    <input type="text" id="applyOrg" required>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Location</label>
+                    <input type="text" id="applyLocation" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Experience (Yrs)</label>
+                    <input type="number" id="applyTotalExp" min="0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Relevant Experience (Yrs)</label>
+                    <input type="number" id="applyRelExp" min="0" step="0.1" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Current CTC (LPA)</label>
+                    <input type="number" id="applyCurrentCtc" min="0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Expected CTC (LPA)</label>
+                    <input type="number" id="applyExpectedCtc" min="0" step="0.1" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Notice Period (Days)</label>
+                    <input type="number" id="applyNotice" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Source</label>
+                    <select id="applySource" required>
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="Indeed">Indeed</option>
+                        <option value="Company Website">Company Website</option>
+                        <option value="Referral">Referral</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Resume (PDF only, Max 5MB)</label>
+                <input type="file" id="applyResume" accept=".pdf" class="file-input" required>
+            </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeApplyModal()">Cancel</button>
+            <button type="button" class="primary-btn auto-width" onclick="submitApplication()">Submit
+                Application</button>
+        </div>
+    </div>
+    </div>
+
+    <script src="js/services/api.js"></script>
+    <script src="js/services/authService.js"></script>
+    <script src="js/features/index.js"></script>
+</body>
+
+</html>

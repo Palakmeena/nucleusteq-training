@@ -1,0 +1,7 @@
+/* Panel overview page styles */
+
+.panel-overview-candidate-name { font-weight: 500; }
+.panel-overview-interview-date { font-size: 13px; }
+.panel-overview-interview-time { font-size: 13px; }
+.panel-overview-focus-areas { font-size: 13px; color: #64748b; }
+.panel-overview-empty { text-align: center; padding: 40px; color: #94a3b8; }

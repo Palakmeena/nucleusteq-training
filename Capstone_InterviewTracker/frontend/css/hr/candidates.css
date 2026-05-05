@@ -1,0 +1,735 @@
+.panel-option {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+    background: #fff;
+}
+
+.panel-option:hover {
+    border-color: #4f46e5;
+    background: #f8faff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+}
+
+.panel-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+    border-left: 4px solid #4f46e5;
+    padding-left: 12px;
+}
+
+.panel-option input[type="checkbox"] {
+    accent-color: #4f46e5;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.panel-option-info {
+    min-width: 0;
+    text-align: left;
+}
+
+.panel-option-name {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.panel-option-title {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+    line-height: 1.3;
+}
+
+.panel-option-org {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+.modal-view.active {
+    display: flex !important;
+}
+
+/* Candidates Page Classes */
+.cand-add-btn {
+    padding: 8px 16px;
+}
+
+.cand-filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.cand-search-box {
+    flex: 1;
+    max-width: 320px;
+    margin-bottom: 0;
+}
+
+.cand-count-label {
+    line-height: 42px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.cand-modal-add {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.cand-modal-add.active {
+    display: flex !important;
+}
+
+.cand-modal-card {
+    background: white;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cand-modal-scroll {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.cand-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.cand-modal-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.cand-modal-close-btn {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cand-form-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.cand-form-group-span2 {
+    grid-column: span 2;
+}
+
+.cand-phone-group {
+    display: flex;
+    gap: 0;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.cand-phone-prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.cand-phone-input {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 10px 14px;
+}
+
+.cand-select-skill {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.cand-modal-view {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.cand-modal-view.active {
+    display: flex !important;
+}
+
+.cand-view-card {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 720px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.cand-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fff;
+    z-index: 1;
+}
+
+.cand-view-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.cand-view-scroll {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+    background: #f8fafc;
+}
+
+.cand-view-section {
+    margin-bottom: 30px;
+}
+
+.cand-view-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+.cand-view-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.cand-view-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.cand-view-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.cand-view-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cand-view-close-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.cand-modal-schedule {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.cand-modal-schedule.active {
+    display: flex !important;
+}
+
+.cand-view-resume-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #4f46e5;
+    color: white;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.cand-view-resume-link:hover {
+    background: #4338ca;
+}
+
+.cand-view-no-resume {
+    margin: 0;
+    font-size: 14px;
+    color: #94a3b8;
+    display: none;
+}
+
+.cand-view-attachments {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.cand-view-attachments-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cand-view-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Schedule Modal Styles */
+.cand-sched-card {
+    background: white;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 550px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cand-sched-header {
+    padding: 12px 28px;
+    display: block;
+}
+
+.cand-sched-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cand-sched-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.cand-sched-error {
+    display: none;
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.cand-sched-input {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.cand-sched-time-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+/* Candidate table helpers */
+.cand-row-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cand-row-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.cand-row-name {
+    font-weight: 500;
+}
+.cand-row-email {
+    font-size: 12px;
+    color: #64748b;
+}
+.cand-table-text {
+    font-size: 13px;
+}
+.cand-stage-select {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    min-width: 120px;
+}
+.cand-table-date {
+    font-size: 13px;
+    color: #64748b;
+}
+.cand-action-btn {
+    font-size: 13px;
+    color: #4f46e5;
+    background: none;
+    border: 1px solid #4f46e5;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    margin-right: 6px;
+}
+.cand-action-link {
+    font-size: 13px;
+    color: #64748b;
+    cursor: pointer;
+    margin-right: 12px;
+}
+.cand-action-trash {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+}
+.cand-table-empty,
+.cand-search-empty {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+.cand-search-empty {
+    font-size: 13px;
+    padding: 20px;
+}
+.cand-sched-panel-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+}
+
+.cand-sched-time-sep {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.cand-sched-time-select {
+    flex: 1;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.cand-sched-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.cand-sched-panel-box {
+    display: block;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    min-height: 48px;
+}
+
+.cand-sched-panel-box #selectedList {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 28px;
+    align-items: center;
+}
+
+.panel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.panel-badge button {
+    background: none;
+    border: none;
+    color: #4f46e5;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.panel-badge button:hover {
+    color: #dc2626;
+}
+
+.cand-sched-panel-list {
+    margin-top: 12px;
+    max-height: 280px;
+    overflow-y: auto;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 12px;
+}
+
+.cand-sched-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.cand-sched-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.cand-search-input {
+    padding-left: 40px;
+}
+
+.cand-form-span2 {
+    grid-column: span 2;
+}
+
+.cand-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.cand-sched-card {
+    background: white;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 550px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cand-sched-scroll {
+    padding: 8px 28px 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Scoped label styles for Schedule modal to match HR schedule look */
+.cand-sched-scroll .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.cand-sched-scroll .form-group input,
+.cand-sched-scroll .form-group select,
+.cand-sched-scroll .form-group textarea {
+    width: 100%;
+}
+
+/* Ensure two-column rows keep consistent vertical alignment */
+.cand-sched-row > .form-group { display: block; }
+
+.cand-sched-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.cand-sched-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cand-sched-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.cand-sched-close {
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+.cand-sched-error {
+    display: none;
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.cand-time-group {
+    display: flex;
+    gap: 8px;
+}
+
+.cand-time-select {
+    flex: 1;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.cand-time-sep {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.cand-panel-search {
+    display: none;
+    background: #f8faff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.cand-panel-input {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.cand-panel-list {
+    margin-top: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.cand-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.cand-loading-td {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+.cand-panel-group {
+    margin-top: 16px;
+}
