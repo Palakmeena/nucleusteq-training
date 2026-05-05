@@ -1,10 +1,5 @@
 package com.nucleusteq.interviewtracker.service;
 
-/**
- * Service class for job description operations.
- * Manages job creation and retrieval.
- */
-
 import com.nucleusteq.interviewtracker.dto.JobDescriptionRequestDto;
 import com.nucleusteq.interviewtracker.dto.JobDescriptionResponseDto;
 import com.nucleusteq.interviewtracker.entity.JobDescription;
@@ -18,8 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service class that handles business logic for Job Description management.
+ * Service class for job description operations.
+ * Manages job creation and retrieval.
  */
+
 @Service
 public class JobDescriptionService {
 

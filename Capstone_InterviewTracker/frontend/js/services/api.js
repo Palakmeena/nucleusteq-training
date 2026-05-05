@@ -39,7 +39,6 @@ const api = {
         const encoded = typeof btoa === 'function' ? btoa(password) : Buffer.from(password, 'utf8').toString('base64');
         return request('POST', `/auth/activate?token=${encodeURIComponent(token)}&password=${encodeURIComponent(encoded)}`);
     },
-    verifyCandidate: (token) => request('POST', `/auth/verify-candidate?token=${token}`),
 
     // JD - public
     getAllPublicJds: () => request('GET', '/jd/all'),

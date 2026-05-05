@@ -1,12 +1,38 @@
 auth.requireRole('HR');
 document.getElementById('sidebar').innerHTML = buildSidebar('HR', 'panels');
 
-async function loadPanels() {
-    try {
-        const res = await api.getAllPanelMembers();
-        const panels = res.data || [];
-        const container = document.getElementById('panelList');
-        container.innerHTML = panels.length ? panels.map(p => `
+let allPanels = [];
+let currentPanelSearchQuery = '';
+const panelSearchInput = document.getElementById('panelSearchInput');
+const panelCountLabel = document.getElementById('panelCountLabel');
+
+function panelNormalizeText(value) {
+    return String(value || '').toLowerCase();
+}
+
+function panelMatchesSearch(panel, query) {
+    if (!query) return true;
+    const haystack = [
+        panel.fullName,
+        panel.email,
+        panel.organization,
+        panel.designation
+    ].map(panelNormalizeText).join(' ');
+    return haystack.includes(query);
+}
+
+function renderPanels() {
+    const container = document.getElementById('panelList');
+    const query = panelNormalizeText(currentPanelSearchQuery.trim());
+    const filteredPanels = allPanels.filter(panel => panelMatchesSearch(panel, query));
+
+    if (panelCountLabel) {
+        panelCountLabel.textContent = query
+            ? `${filteredPanels.length} of ${allPanels.length} panel members shown`
+            : `${allPanels.length} panel members`;
+    }
+
+    container.innerHTML = filteredPanels.length ? filteredPanels.map(p => `
             <div class="panel-card">
                 <div class="panel-user">
                     <div class="panel-avatar">
@@ -29,7 +55,16 @@ async function loadPanels() {
                     </div>
                 </div>
             </div>
-        `).join('') : '<div class="panel-empty">No panel members yet. Add your first interviewer!</div>';
+        `).join('') : (query
+            ? '<div class="panel-empty">No panel members match your search.</div>'
+            : '<div class="panel-empty">No panel members yet. Add your first interviewer!</div>');
+}
+
+async function loadPanels() {
+    try {
+        const res = await api.getAllPanelMembers();
+        allPanels = res.data || [];
+        renderPanels();
     } catch (e) {
         showToast('Failed to load panel members: ' + e.message, 'error');
         const container = document.getElementById('panelList');
@@ -61,9 +96,17 @@ function openEditModal(p) {
 }
 
 async function updatePanel() {
+    const emailVal = document.getElementById('eEmail').value;
+    if (!emailVal) {
+        showToast('Update failed: Email is required', 'error');
+        return;
+    }
+
+    const mobileVal = document.getElementById('eMobile').value || '';
     const body = {
         fullName: document.getElementById('eFullName').value,
-        mobileNumber: '+91' + document.getElementById('eMobile').value,
+        email: emailVal,
+        mobileNumber: mobileVal ? '+91' + mobileVal : '',
         organization: document.getElementById('eOrg').value,
         designation: document.getElementById('eDesignation').value
     };
@@ -145,5 +188,12 @@ window.openEditModal = openEditModal;
 window.updatePanel = updatePanel;
 window.deletePanel = deletePanel;
 window.createPanel = createPanel;
+
+if (panelSearchInput) {
+    panelSearchInput.addEventListener('input', () => {
+        currentPanelSearchQuery = panelSearchInput.value;
+        renderPanels();
+    });
+}
 
 loadPanels();

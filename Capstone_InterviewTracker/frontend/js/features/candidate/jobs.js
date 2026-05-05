@@ -69,7 +69,19 @@ function shortText(text, max = 180) {
 function openJobDetails(id) {
     const jd = allOpenJobs.find(item => item.id === id);
     if (!jd) return;
-    showJdModal({ title: jd.jobTitle || 'Untitled Role', details: jd.jobDescription || 'No details provided.' });
+    showJdModal({
+        jobTitle: jd.jobTitle,
+        title: jd.jobTitle || 'Untitled Role',
+        location: jd.location,
+        jobType: jd.jobType,
+        minExperience: jd.minExperience,
+        maxExperience: jd.maxExperience,
+        minSalary: jd.minSalary,
+        maxSalary: jd.maxSalary,
+        skills: jd.skills || [],
+        jobDescription: jd.jobDescription,
+        details: jd.jobDescription || 'No details provided.'
+    });
 }
 
 function canApplyNow() {

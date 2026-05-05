@@ -54,7 +54,7 @@ async function load() {
                     <button onclick="showResumeModal('${i.resumeUrl || ''}')" title="View Resume">
                         ${svgFileText} Resume
                     </button>
-                    <button onclick="showJdModal({title:'${i.jdTitle}', details:'${i.jdDetails?.replace(/'/g, "\\'")}'})" title="View Job Details">
+                    <button onclick="openJobInfo('${i.jdId || ''}','${(i.jdTitle||'').replace(/'/g,"\\'")}', '${(i.jdDetails||'').replace(/'/g,"\\'")}')" title="View Job Details">
                         ${svgBriefcase} Job Info
                     </button>
                     ${i.meetingLink ? `
@@ -71,3 +71,32 @@ async function load() {
 }
 
 load();
+
+// Fetch full JD by id when possible and show modal. Falls back to provided title/details.
+async function openJobInfo(jdId, fallbackTitle, fallbackDetails) {
+    try {
+        if (jdId) {
+            const res = await api.getJdById(jdId);
+            const jd = res.data || {};
+            // Normalize keys expected by showJdModal
+            const jdData = {
+                jobTitle: jd.jobTitle || jd.title || fallbackTitle || 'N/A',
+                location: jd.location || jd.city || jd.address || 'N/A',
+                jobType: jd.jobType || jd.type || 'N/A',
+                minExperience: jd.minExperience || jd.minExp || jd.min || 0,
+                maxExperience: jd.maxExperience || jd.maxExp || jd.max || 'N/A',
+                minSalary: jd.minSalary || jd.minSalaryLpa || jd.minSal || 0,
+                maxSalary: jd.maxSalary || jd.maxSalaryLpa || jd.maxSal || 'N/A',
+                skills: jd.skills || jd.skillSet || [],
+                jobDescription: jd.jobDescription || jd.details || fallbackDetails || ''
+            };
+            showJdModal(jdData);
+            return;
+        }
+    } catch (e) {
+        // ignore and fallback to simple title/details
+        console.warn('Failed to fetch JD by id:', e.message);
+    }
+    // fallback when no jdId or fetch fails
+    showJdModal({ title: fallbackTitle || 'N/A', details: fallbackDetails || 'No details provided.' });
+}

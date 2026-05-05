@@ -107,7 +107,6 @@ public class SecurityConfig {
                         .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.LOGIN).permitAll()
                         .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.SIGNUP).permitAll()
                         .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.ACTIVATE).permitAll()
-                        .requestMatchers(com.nucleusteq.interviewtracker.util.AppConstants.AUTH_BASE + com.nucleusteq.interviewtracker.util.AppConstants.VERIFY_CANDIDATE).permitAll()
                         
                         // Allow Spring Boot error endpoint so validation errors
                         // don't get transformed into security 401/403 responses.

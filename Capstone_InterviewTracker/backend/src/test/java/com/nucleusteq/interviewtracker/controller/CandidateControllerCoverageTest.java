@@ -15,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.security.core.Authentication;
+
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -98,6 +101,118 @@ class CandidateControllerCoverageTest {
                 .andExpect(jsonPath("$.data.email").value("hr.add@example.com"));
 
         verify(candidateService).createCandidateProfileByHr(any());
+    }
+
+    @Test
+    void registerCandidate_shouldReturnCreated_whenAuthenticated() throws Exception {
+        CandidateRequestDto req = new CandidateRequestDto();
+        req.setEmail("cand@example.com");
+        req.setFullName("Cand User");
+        req.setMobileCode("+91");
+        req.setMobileNumber("7777777777");
+        req.setCurrentOrganization("Org");
+        req.setTotalExperience(2.0);
+        req.setRelevantExperience(1.5);
+        req.setCurrentCtc(3.0);
+        req.setExpectedCtc(5.0);
+        req.setNoticePeriod(30);
+        req.setPreferredLocation("Remote");
+        req.setSource("LinkedIn");
+        req.setGender("F");
+        req.setJobDescriptionId(1L);
+
+        CandidateResponseDto resp = new CandidateResponseDto();
+        resp.setEmail("cand@example.com");
+        resp.setFullName("Cand User");
+
+        when(candidateService.createCandidateProfile(any(), eq("cand@example.com"))).thenReturn(resp);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("cand@example.com");
+
+        mockMvc.perform(post("/candidate/register")
+                .principal(authentication)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(req)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.email").value("cand@example.com"));
+
+        verify(candidateService).createCandidateProfile(any(), eq("cand@example.com"));
+    }
+
+    @Test
+    void getAllCandidates_shouldReturnOk_withList() throws Exception {
+        CandidateResponseDto resp = new CandidateResponseDto();
+        resp.setEmail("one@example.com");
+        when(candidateService.getAllCandidates()).thenReturn(List.of(resp));
+
+        mockMvc.perform(get("/hr/candidates"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].email").value("one@example.com"));
+    }
+
+    @Test
+    void getCandidateById_shouldReturnOk() throws Exception {
+        CandidateResponseDto resp = new CandidateResponseDto();
+        resp.setEmail("single@example.com");
+        when(candidateService.getCandidateById(10L)).thenReturn(resp);
+
+        mockMvc.perform(get("/hr/candidate/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.email").value("single@example.com"));
+    }
+
+    @Test
+    void getCandidateApplication_shouldReturnOk_whenAuthenticated() throws Exception {
+        CandidateResponseDto resp = new CandidateResponseDto();
+        resp.setEmail("app@example.com");
+        when(candidateService.getCandidateProfile("app@example.com")).thenReturn(resp);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("app@example.com");
+
+        mockMvc.perform(get("/candidate/application")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.email").value("app@example.com"));
+    }
+
+    @Test
+    void uploadResumeByCandidateId_shouldReturnOk_whenPdfUploaded() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("file", "resume.pdf", "application/pdf", "pdf-data".getBytes());
+        when(googleDriveService.uploadFile(any())).thenReturn("https://drive.google.com/file/d/123/preview");
+
+        mockMvc.perform(multipart("/candidate/resume/42").file(file))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").value("https://drive.google.com/file/d/123/preview"));
+
+        verify(candidateService).updateResumePath(42L, "https://drive.google.com/file/d/123/preview");
+    }
+
+    @Test
+    void updateStage_shouldReturnOk_whenServiceSucceeds() throws Exception {
+        CandidateResponseDto resp = new CandidateResponseDto();
+        resp.setEmail("stage@example.com");
+        when(candidateService.updateCandidateStage(eq(55L), any())).thenReturn(resp);
+
+        mockMvc.perform(put("/hr/candidate/55/stage").param("stage", "SCREENING"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.email").value("stage@example.com"));
+    }
+
+    @Test
+    void deleteCandidate_shouldReturnOk_whenServiceSucceeds() throws Exception {
+        mockMvc.perform(delete("/hr/candidate/60"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        verify(candidateService).deleteCandidate(60L);
     }
 
     @Test

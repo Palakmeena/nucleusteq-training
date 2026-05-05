@@ -1,4 +1,25 @@
 /* Panel onboarding styles */
+.panel-filter-row {
+	display: flex;
+	gap: 12px;
+	margin-top: 20px;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.panel-search-box {
+	flex: 1;
+	max-width: 420px;
+	margin-bottom: 0;
+}
+
+.panel-count-label {
+	line-height: 42px;
+	font-size: 13px;
+	color: #64748b;
+}
+
 .panel-card {
     background: #fff;
     border: 1px solid #e2e8f0;
@@ -116,6 +137,17 @@
 .panel-disabled-input {
 	background: #f8fafc;
 	cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+	.panel-search-box {
+		max-width: none;
+		width: 100%;
+	}
+
+	.panel-count-label {
+		line-height: 1.4;
+	}
 }
 .form-group { margin-bottom:16px; }
 .form-group label { display:block;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;margin-bottom:6px; }

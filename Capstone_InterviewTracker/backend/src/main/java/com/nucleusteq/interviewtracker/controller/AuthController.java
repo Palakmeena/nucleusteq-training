@@ -101,21 +101,4 @@ public class AuthController {
         }
     }
 
-    @PostMapping(AppConstants.VERIFY_CANDIDATE)
-    public ResponseEntity<ApiResponse<Void>> verifyCandidate(@org.springframework.web.bind.annotation.RequestParam String token) {
-        try {
-            authService.verifyCandidate(token);
-            logger.info("Candidate verified via token");
-            return ResponseEntity.ok(ApiResponse.success(AppConstants.EMAIL_VERIFIED, null));
-        } catch (BusinessException e) {
-            logger.warn("Candidate verification business rule failed: {}", e.getMessage());
-            return ResponseEntity.status(e.getStatus()).body(ApiResponse.error(e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            logger.warn("Candidate verification failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            logger.error("Unexpected error during candidate verification", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.SOMETHING_WENT_WRONG));
-        }
-    }
 }

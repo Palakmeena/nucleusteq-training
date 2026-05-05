@@ -236,7 +236,6 @@ npx http-server -p 8000
 | POST | `/api/auth/login` | User login (email + password) |
 | POST | `/api/auth/signup` | Candidate signup |
 | POST | `/api/auth/activate?token=xxx&password=xxx` | Activate panel/candidate account |
-| POST | `/api/auth/verify-candidate?token=xxx` | Email verification for candidate |
 
 ### Job Descriptions (JD)
 | Method | Endpoint | Description | Access |

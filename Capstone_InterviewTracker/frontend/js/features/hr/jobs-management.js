@@ -5,7 +5,10 @@ let skills = [];
 let isEditMode = false;
 let editingJobId = null;
 let allHrJobs = [];
+let currentJobSearchQuery = '';
 const modal = document.getElementById('jdModal');
+const jobSearchInput = document.getElementById('jobSearchInput');
+const jobCountLabel = document.getElementById('jobCountLabel');
 
 function shortText(text, max = 180) {
     const value = (text || '').trim();
@@ -13,10 +16,38 @@ function shortText(text, max = 180) {
     return value.length > max ? value.slice(0, max) + '...' : value;
 }
 
+function normalizeText(value) {
+    return String(value || '').toLowerCase();
+}
+
+function matchesJobSearch(jd, query) {
+    if (!query) return true;
+    const haystack = [
+        jd.jobTitle,
+        jd.location,
+        jd.jobType,
+        jd.jobDescription,
+        ...(jd.skills || [])
+    ].map(normalizeText).join(' ');
+    return haystack.includes(query);
+}
+
 function openJobDetails(id) {
     const jd = allHrJobs.find(item => item.id === id);
     if (!jd) return;
-    showJdModal({ title: jd.jobTitle, details: jd.jobDescription || 'No details provided.' });
+    showJdModal({
+        jobTitle: jd.jobTitle,
+        title: jd.jobTitle,
+        location: jd.location,
+        jobType: jd.jobType,
+        minExperience: jd.minExperience,
+        maxExperience: jd.maxExperience,
+        minSalary: jd.minSalary,
+        maxSalary: jd.maxSalary,
+        skills: jd.skills || [],
+        jobDescription: jd.jobDescription,
+        details: jd.jobDescription || 'No details provided.'
+    });
 }
 
 function openModal() {
@@ -129,14 +160,33 @@ async function loadJobs() {
         const res = await api.getAllJdsForHr();
         const allJds = res.data || [];
         allHrJobs = allJds;
-        const jds = allJds.filter(jd => jd.active);
-        const container = document.getElementById('hrJobsList');
-        if (!jds.length) {
-            container.innerHTML = '<div class="job-empty">No active job descriptions right now.</div>';
-            return;
-        }
-        const typeLabel = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
-        container.innerHTML = jds.map(jd => `
+        renderJobs();
+    } catch (e) {
+        showToast('Failed to load jobs: ' + e.message, 'error');
+    }
+}
+
+function renderJobs() {
+    const container = document.getElementById('hrJobsList');
+    const typeLabel = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
+    const activeJobs = allHrJobs.filter(jd => jd.active);
+    const query = normalizeText(currentJobSearchQuery.trim());
+    const filteredJobs = activeJobs.filter(jd => matchesJobSearch(jd, query));
+
+    if (jobCountLabel) {
+        jobCountLabel.textContent = query
+            ? `${filteredJobs.length} of ${activeJobs.length} jobs shown`
+            : `${activeJobs.length} active jobs`;
+    }
+
+    if (!filteredJobs.length) {
+        container.innerHTML = query
+            ? '<div class="job-empty">No jobs match your search.</div>'
+            : '<div class="job-empty">No active job descriptions right now.</div>';
+        return;
+    }
+
+    container.innerHTML = filteredJobs.map(jd => `
             <div class="job-row-card">
                 <div class="job-main">
                     <h3 class="job-title">${jd.jobTitle}</h3>
@@ -156,9 +206,13 @@ async function loadJobs() {
                 </div>
             </div>
         `).join('');
-    } catch (e) {
-        showToast('Failed to load jobs: ' + e.message, 'error');
-    }
+}
+
+if (jobSearchInput) {
+    jobSearchInput.addEventListener('input', () => {
+        currentJobSearchQuery = jobSearchInput.value;
+        renderJobs();
+    });
 }
 
 async function editJd(id) {

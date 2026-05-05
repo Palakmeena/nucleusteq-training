@@ -28,11 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-/**
- * Service class for interview scheduling and management.
- * Handles interview creation, panel assignment, and feedback submission.
- */
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

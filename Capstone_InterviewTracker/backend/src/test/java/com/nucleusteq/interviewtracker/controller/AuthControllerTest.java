@@ -143,42 +143,6 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ───────── VERIFY ─────────
-
-    private static final String VERIFY_URL = "/verify-candidate";
-
-    @Test
-    void verifyCandidate_shouldReturn200() throws Exception {
-
-        doNothing().when(authService).verifyCandidate("valid");
-
-        mockMvc.perform(post(BASE_URL + VERIFY_URL)
-                        .param("token", "valid"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void verifyCandidate_shouldReturn400() throws Exception {
-
-        doThrow(new IllegalArgumentException())
-                .when(authService).verifyCandidate("bad");
-
-        mockMvc.perform(post(BASE_URL + VERIFY_URL)
-                        .param("token", "bad"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void verifyCandidate_shouldReturn500() throws Exception {
-
-        doThrow(new RuntimeException())
-                .when(authService).verifyCandidate("error");
-
-        mockMvc.perform(post(BASE_URL + VERIFY_URL)
-                        .param("token", "error"))
-                .andExpect(status().isInternalServerError());
-    }
-
     // ───────── EXTRA ERROR PATH TESTS ─────────
 
     @Test

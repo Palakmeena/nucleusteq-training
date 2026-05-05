@@ -154,15 +154,45 @@ function showResumeModal(resumeUrl) {
 }
 
 function showJdModal(jdData) {
+    const typeLabels = { FULL_TIME: 'Full Time', CONTRACT: 'Contract', REMOTE: 'Remote' };
+    const jobType = typeLabels[jdData.jobType] || jdData.jobType || 'N/A';
+    const skillsList = (jdData.skills || []).length > 0 
+        ? jdData.skills.map(s => `<span class="jd-modal-skill">${s}</span>`).join('')
+        : '<span class="jd-modal-empty">No skills specified</span>';
+    
     const content = `
         <div class="jd-modal-body">
-            <div>
+            <div class="jd-modal-section">
                 <label class="jd-modal-label">Job Title</label>
-                <div class="jd-modal-title">${jdData.title || 'N/A'}</div>
+                <div class="jd-modal-title">${jdData.title || jdData.jobTitle || 'N/A'}</div>
             </div>
-            <div>
+            <div class="jd-modal-grid">
+                <div class="jd-modal-section">
+                    <label class="jd-modal-label">Location</label>
+                    <div class="jd-modal-text">${jdData.location || 'N/A'}</div>
+                </div>
+                <div class="jd-modal-section">
+                    <label class="jd-modal-label">Job Type</label>
+                    <div class="jd-modal-text">${jobType}</div>
+                </div>
+            </div>
+            <div class="jd-modal-grid">
+                <div class="jd-modal-section">
+                    <label class="jd-modal-label">Experience (Years)</label>
+                    <div class="jd-modal-text">${jdData.minExperience || '0'} - ${jdData.maxExperience || 'N/A'}</div>
+                </div>
+                <div class="jd-modal-section">
+                    <label class="jd-modal-label">Salary (LPA)</label>
+                    <div class="jd-modal-text">${jdData.minSalary || '0'} - ${jdData.maxSalary || 'N/A'}</div>
+                </div>
+            </div>
+            <div class="jd-modal-section">
+                <label class="jd-modal-label">Required Skills</label>
+                <div class="jd-modal-skills">${skillsList}</div>
+            </div>
+            <div class="jd-modal-section">
                 <label class="jd-modal-label">Job Description</label>
-                <div class="jd-modal-text">${jdData.details || 'No details provided.'}</div>
+                <div class="jd-modal-text jd-modal-desc">${jdData.details || jdData.jobDescription || 'No details provided.'}</div>
             </div>
         </div>
     `;

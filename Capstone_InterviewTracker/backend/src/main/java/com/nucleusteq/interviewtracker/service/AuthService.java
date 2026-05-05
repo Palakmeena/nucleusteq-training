@@ -162,19 +162,4 @@ public class AuthService {
             logger.error("CRITICAL: Failed to send activation email to {}: {}", toEmail, e.getMessage());
         }
     }
-
-    @Transactional
-    public void verifyCandidate(String token) {
-        User user = userRepository.findByActivationToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
-
-        if (user.getTokenExpiry() == null || LocalDateTime.now().isAfter(user.getTokenExpiry())) {
-            throw new BusinessException("Verification token has expired.");
-        }
-
-        user.setActive(true);
-        user.setActivationToken(null);
-        user.setTokenExpiry(null);
-        userRepository.save(user);
-    }
 }

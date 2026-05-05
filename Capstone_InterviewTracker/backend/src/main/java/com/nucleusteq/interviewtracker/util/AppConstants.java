@@ -16,7 +16,6 @@ public final class AppConstants {
     public static final String AUTH_BASE = "/auth";
     public static final String LOGIN = "/login";
     public static final String SIGNUP = "/signup";
-    public static final String VERIFY_CANDIDATE = "/verify-candidate";
     public static final String ACTIVATE = "/activate";
 
     public static final String HR_INTERVIEW = "/hr/interview";
@@ -33,7 +32,6 @@ public final class AppConstants {
     public static final String SOMETHING_WENT_WRONG = "Something went wrong. Please try again later.";
     public static final String LOGIN_SUCCESS = "Login successful";
     public static final String ACCOUNT_CREATED = "Account created successfully. Please check your email for the activation link.";
-    public static final String EMAIL_VERIFIED = "Email verified successfully. You can now login.";
     public static final String INTERVIEW_SCHEDULED = "Interview scheduled successfully";
     public static final String INTERVIEWS_FETCHED = "Interviews fetched successfully";
     public static final String INTERVIEW_FETCHED = "Interview fetched successfully";

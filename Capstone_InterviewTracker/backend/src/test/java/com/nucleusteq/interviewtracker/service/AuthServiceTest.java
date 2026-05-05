@@ -174,49 +174,6 @@ class AuthServiceTest {
         verify(userRepository, never()).save(any());
     }
 
-    // ────────────── VERIFY CANDIDATE ──────────────
-
-    @Test
-    void verifyCandidate_shouldVerify_whenTokenValid() {
-
-        User candidate = new User("Candidate Name", "candidate@example.com", "pass", UserRole.CANDIDATE);
-        candidate.setActivationToken("valid-token");
-        candidate.setActive(false);
-                candidate.setTokenExpiry(java.time.LocalDateTime.now().plusHours(1));
-
-        when(userRepository.findByActivationToken("valid-token"))
-                .thenReturn(Optional.of(candidate));
-
-        authService.verifyCandidate("valid-token");
-
-        verify(userRepository).save(any(User.class));
-    }
-
-    @Test
-    void verifyCandidate_shouldThrow_whenTokenInvalid() {
-
-        when(userRepository.findByActivationToken("invalid-token"))
-                .thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class,
-                () -> authService.verifyCandidate("invalid-token"));
-    }
-
-    @Test
-    void verifyCandidate_shouldThrow_whenTokenExpired() {
-
-        User candidate = new User("Candidate", "candidate@test.com", "pass", UserRole.CANDIDATE);
-        candidate.setActivationToken("expired-token");
-        candidate.setActive(false);
-        candidate.setTokenExpiry(java.time.LocalDateTime.now().minusHours(1));
-
-        when(userRepository.findByActivationToken("expired-token"))
-                .thenReturn(Optional.of(candidate));
-
-        assertThrows(com.nucleusteq.interviewtracker.exception.BusinessException.class,
-                () -> authService.verifyCandidate("expired-token"));
-    }
-
     // ────────────── EXTRA TESTS FOR LOGIN/SIGNUP ──────────────
 
     @Test

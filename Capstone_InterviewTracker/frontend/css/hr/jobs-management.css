@@ -1,8 +1,35 @@
+.main-area,
+.content-wrapper,
+.job-list-container {
+    background: #f1f5f9;
+}
+
 .job-list-container {
     display: flex;
     flex-direction: column;
     gap: 14px;
     margin-top: 20px;
+}
+
+.jd-filter-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.jd-search-box {
+    flex: 1;
+    max-width: 360px;
+    margin-bottom: 0;
+}
+
+.jd-count-label {
+    line-height: 42px;
+    font-size: 13px;
+    color: #64748b;
 }
 
 .job-row-card {
@@ -191,3 +218,14 @@
 .job-action-row { display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end }
 .btn-compact { padding:6px 12px; font-size:13px }
 .job-empty { color:#64748b; text-align:center; padding:40px }
+
+@media (max-width: 640px) {
+    .jd-search-box {
+        max-width: none;
+        width: 100%;
+    }
+
+    .jd-count-label {
+        line-height: 1.4;
+    }
+}
