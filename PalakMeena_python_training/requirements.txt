@@ -1,1 +1,9 @@
-# No external dependencies — only Python built-in modules used
+numpy
+
+pandas
+
+matplotlib
+
+seaborn
+
+pytest
