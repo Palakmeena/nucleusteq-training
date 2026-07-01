@@ -1,3 +1,5 @@
+"""Slot API routes."""
+
 from fastapi import APIRouter, Depends, status
 
 from middleware.auth_middleware import require_doctor
@@ -28,6 +30,8 @@ async def create(
     data: SlotCreateRequest,
     current_user: dict = Depends(require_doctor),
 ):
+    """Create a new slot for the current doctor."""
+
     return await create_slot(
         user_id=current_user["sub"],
         data=data,
@@ -43,6 +47,8 @@ async def update(
     data: SlotUpdateRequest,
     current_user: dict = Depends(require_doctor),
 ):
+    """Update one of the current doctor's slots."""
+
     return await update_slot(
         slot_id=slot_id,
         user_id=current_user["sub"],
@@ -57,6 +63,8 @@ async def delete(
     slot_id: str,
     current_user: dict = Depends(require_doctor),
 ):
+    """Delete one of the current doctor's slots."""
+
     return await delete_slot(
         slot_id=slot_id,
         user_id=current_user["sub"],
@@ -70,6 +78,8 @@ async def delete(
 async def get_doctor_slots(
     doctor_id: str,
 ):
+    """List the available slots for a doctor."""
+
     return await get_slots_by_doctor(
         doctor_id
     )

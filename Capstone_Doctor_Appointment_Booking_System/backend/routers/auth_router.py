@@ -1,3 +1,5 @@
+"""Authentication API routes."""
+
 from fastapi import APIRouter, status
 
 from schemas.request.auth_request import LoginRequest
@@ -29,6 +31,8 @@ router = APIRouter(
 async def register_patient_endpoint(
     data: PatientRegisterRequest,
 ):
+    """Register a patient account."""
+
     return await register_patient(data)
 
 
@@ -40,6 +44,8 @@ async def register_patient_endpoint(
 async def register_doctor_endpoint(
     data: DoctorRegisterRequest,
 ):
+    """Register a doctor account."""
+
     return await register_doctor(data)
 
 
@@ -50,6 +56,8 @@ async def register_doctor_endpoint(
 async def login(
     data: LoginRequest,
 ):
+    """Authenticate a user and return a token."""
+
     return await login_user(
         email=data.email,
         password=data.password,

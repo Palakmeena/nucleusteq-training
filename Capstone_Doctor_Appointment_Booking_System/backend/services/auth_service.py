@@ -1,6 +1,8 @@
+"""Authentication service operations."""
+
 from fastapi import HTTPException, status
 
-from constants.messages import AuthMessages
+from constants.auth_constants import AuthMessages
 from models.doctor import Doctor
 from models.patient import Patient
 from models.user import Role, User
@@ -29,10 +31,7 @@ doctor_repo = DoctorRepository()
 async def register_patient(
     data: PatientRegisterRequest,
 ) -> UserResponse:
-    """
-    Register a new patient.
-    Creates both the User and Patient documents.
-    """
+    """Register a patient and create the linked records."""
 
     existing_user = await user_repo.find_by_email(data.email)
 
@@ -72,12 +71,7 @@ async def register_patient(
 async def register_doctor(
     data: DoctorRegisterRequest,
 ) -> UserResponse:
-    """
-    Register a doctor.
-
-    The doctor account remains inactive until approved
-    by the administrator.
-    """
+    """Register a doctor and keep the account inactive until approval."""
 
     existing_user = await user_repo.find_by_email(data.email)
 
@@ -137,9 +131,7 @@ async def login_user(
     email: str,
     password: str,
 ) -> LoginResponse:
-    """
-    Authenticate a user and return a JWT access token.
-    """
+    """Authenticate a user and return an access token."""
 
     user = await user_repo.find_by_email(email)
 

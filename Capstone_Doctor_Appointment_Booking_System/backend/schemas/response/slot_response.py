@@ -1,9 +1,13 @@
+"""Slot response schemas."""
+
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
 class SlotResponse(BaseModel):
+    """Response payload for a slot."""
+
     id: str
     doctor_id: str
     date: str

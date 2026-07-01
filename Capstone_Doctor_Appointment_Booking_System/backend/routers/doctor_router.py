@@ -1,3 +1,5 @@
+"""Doctor API routes."""
+
 from typing import Optional
 
 from fastapi import APIRouter, Depends
@@ -30,6 +32,8 @@ async def update_profile(
     data: DoctorUpdateRequest,
     current_user: dict = Depends(require_doctor),
 ):
+    """Update the current doctor's profile."""
+
     return await update_doctor_profile(
         data=data,
         user_id=current_user["sub"],
@@ -44,6 +48,8 @@ async def get_doctors(
     name: Optional[str] = None,
     specialization: Optional[str] = None,
 ):
+    """Search active doctors by name and specialization."""
+
     return await search_doctors(
         name=name,
         specialization=specialization,
@@ -57,6 +63,8 @@ async def get_doctors(
 async def get_doctor(
     doctor_id: str,
 ):
+    """Fetch a doctor profile by id."""
+
     return await get_doctor_by_id(
         doctor_id,
     )

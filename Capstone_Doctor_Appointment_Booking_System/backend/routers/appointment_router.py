@@ -1,3 +1,5 @@
+"""Appointment API routes."""
+
 from fastapi import APIRouter, Depends, status
 
 from middleware.auth_middleware import (
@@ -35,6 +37,8 @@ async def book(
     data: AppointmentBookRequest,
     current_user: dict = Depends(require_patient),
 ):
+    """Book a new appointment for the current patient."""
+
     return await book_appointment(
         patient_id=current_user["sub"],
         data=data,
@@ -49,6 +53,8 @@ async def pay(
     appointment_id: str,
     current_user: dict = Depends(require_patient),
 ):
+    """Mark an appointment as paid."""
+
     return await process_payment(
         appointment_id=appointment_id,
         patient_id=current_user["sub"],
@@ -62,6 +68,8 @@ async def cancel(
     appointment_id: str,
     current_user: dict = Depends(require_patient),
 ):
+    """Cancel a patient appointment."""
+
     return await cancel_appointment(
         appointment_id=appointment_id,
         patient_id=current_user["sub"],
@@ -75,6 +83,8 @@ async def cancel(
 async def my_appointments(
     current_user: dict = Depends(require_patient),
 ):
+    """List the current patient's appointments."""
+
     return await get_patient_appointments(
         patient_id=current_user["sub"],
     )
@@ -87,6 +97,8 @@ async def my_appointments(
 async def doctor_appointments(
     current_user: dict = Depends(require_doctor),
 ):
+    """List appointments for the current doctor."""
+
     return await get_doctor_appointments(
         doctor_id=current_user["sub"],
     )
@@ -101,6 +113,8 @@ async def update_status(
     data: AppointmentStatusRequest,
     current_user: dict = Depends(require_doctor),
 ):
+    """Update the status of a doctor's appointment."""
+
     return await update_appointment_status(
         appointment_id=appointment_id,
         doctor_id=current_user["sub"],

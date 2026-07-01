@@ -1,9 +1,13 @@
+"""Appointment data access helpers."""
+
 from typing import Optional
 
 from models.appointment import Appointment, AppointmentStatus
 
 
 class AppointmentRepository:
+
+    """Repository methods for appointment documents."""
 
     async def find_by_id(self, appointment_id: str) -> Optional[Appointment]:
         return await Appointment.get(appointment_id)

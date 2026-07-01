@@ -1,9 +1,13 @@
+"""Slot data access helpers."""
+
 from typing import Optional
 
 from models.slot import Slot
 
 
 class SlotRepository:
+
+    """Repository methods for slot documents."""
 
     async def find_by_id(
         self,

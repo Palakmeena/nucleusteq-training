@@ -1,3 +1,5 @@
+"""JWT creation and decoding helpers."""
+
 import jwt
 from datetime import datetime, timedelta
 
@@ -9,6 +11,7 @@ def create_access_token(
     email: str,
     role: str,
 ) -> str:
+    """Create a signed access token for the authenticated user."""
 
     payload = {
         "sub": user_id,
@@ -31,6 +34,7 @@ def create_access_token(
 def decode_access_token(
     token: str,
 ) -> dict:
+    """Decode an access token and return its payload."""
 
     try:
         return jwt.decode(

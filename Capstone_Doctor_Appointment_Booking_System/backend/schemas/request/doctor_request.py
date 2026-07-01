@@ -1,3 +1,5 @@
+"""Doctor request schemas."""
+
 from typing import Literal
 
 from pydantic import BaseModel, field_validator
@@ -18,6 +20,8 @@ Specialization = Literal[
 
 
 class DoctorProfileRequest(BaseModel):
+    """Payload for creating a doctor profile."""
+
     full_name: str
     phone: str
     qualification: str
@@ -30,6 +34,8 @@ class DoctorProfileRequest(BaseModel):
     @field_validator("experience")
     @classmethod
     def validate_experience(cls, value: int) -> int:
+        """Ensure experience is not negative."""
+
         if value < 0:
             raise ValueError("Experience cannot be negative")
         return value
@@ -37,12 +43,16 @@ class DoctorProfileRequest(BaseModel):
     @field_validator("consultation_fee")
     @classmethod
     def validate_consultation_fee(cls, value: float) -> float:
+        """Ensure consultation fee is positive."""
+
         if value <= 0:
             raise ValueError("Consultation fee must be greater than 0")
         return value
 
 
 class DoctorUpdateRequest(BaseModel):
+    """Payload for updating a doctor profile."""
+
     qualification: str | None = None
     experience: int | None = None
     specialization: Specialization | None = None
@@ -52,6 +62,8 @@ class DoctorUpdateRequest(BaseModel):
     @field_validator("experience")
     @classmethod
     def validate_experience(cls, value):
+        """Ensure experience is not negative when provided."""
+
         if value is not None and value < 0:
             raise ValueError("Experience cannot be negative")
         return value
@@ -59,6 +71,8 @@ class DoctorUpdateRequest(BaseModel):
     @field_validator("consultation_fee")
     @classmethod
     def validate_consultation_fee(cls, value):
+        """Ensure consultation fee is positive when provided."""
+
         if value is not None and value <= 0:
             raise ValueError("Consultation fee must be greater than 0")
         return value

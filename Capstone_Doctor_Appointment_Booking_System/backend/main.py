@@ -1,3 +1,5 @@
+"""Application entrypoint for the doctor appointment backend."""
+
 import uvicorn
 from contextlib import asynccontextmanager
 
@@ -22,6 +24,8 @@ from routers.appointment_router import router as appointment_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Connect to MongoDB on startup and close it on shutdown."""
+
     await connect_db(
         [
             User,
@@ -32,11 +36,11 @@ async def lifespan(app: FastAPI):
         ]
     )
 
-    print("✅ MongoDB Connected")
+    print("MongoDB connected")
 
     yield
 
-    print("❌ Application Shutdown")
+    print("Application shutdown")
 
 
 app = FastAPI(
@@ -63,6 +67,8 @@ app.include_router(appointment_router)
 
 @app.get("/")
 async def root():
+    """Return a basic welcome message."""
+
     return {
         "message": "Doctor Appointment Booking System API"
     }
@@ -70,6 +76,8 @@ async def root():
 
 @app.get("/health")
 async def health():
+    """Return the service health status."""
+
     return {
         "status": "healthy"
     }

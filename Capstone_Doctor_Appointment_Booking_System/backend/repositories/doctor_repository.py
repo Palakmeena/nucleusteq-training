@@ -1,9 +1,13 @@
+"""Doctor data access helpers."""
+
 from typing import Optional
 
 from models.doctor import Doctor
 
 
 class DoctorRepository:
+
+    """Repository methods for doctor documents."""
 
     async def find_by_id(self, doctor_id: str) -> Optional[Doctor]:
         return await Doctor.get(doctor_id)

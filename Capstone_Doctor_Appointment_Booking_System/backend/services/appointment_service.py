@@ -1,12 +1,12 @@
+"""Appointment service operations."""
+
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException, status
 
-from constants.messages import (
-    AppointmentMessages,
-    DoctorMessages,
-    SlotMessages,
-)
+from constants.appointment_constants import AppointmentMessages
+from constants.doctor_constants import DoctorMessages
+from constants.slot_constants import SlotMessages
 from models.appointment import (
     Appointment,
     AppointmentStatus,
@@ -35,6 +35,7 @@ async def book_appointment(
     patient_id: str,
     data: AppointmentBookRequest,
 ) -> AppointmentResponse:
+    """Book a slot for the given patient."""
 
     doctor = await doctor_repo.find_by_id(
         data.doctor_id,
@@ -143,6 +144,7 @@ async def process_payment(
     appointment_id: str,
     patient_id: str,
 ) -> AppointmentResponse:
+    """Mark a patient appointment as paid."""
 
     appointment = await appointment_repo.find_by_id_and_patient(
         appointment_id,
@@ -176,6 +178,7 @@ async def cancel_appointment(
     appointment_id: str,
     patient_id: str,
 ) -> dict:
+    """Cancel a patient appointment when it is still allowed."""
 
     appointment = await appointment_repo.find_by_id_and_patient(
         appointment_id,
@@ -234,6 +237,7 @@ async def cancel_appointment(
 async def get_patient_appointments(
     patient_id: str,
 ) -> list[AppointmentResponse]:
+    """Return all appointments for a patient."""
 
     appointments = await appointment_repo.find_by_patient(
         patient_id,
@@ -248,6 +252,7 @@ async def get_patient_appointments(
 async def get_doctor_appointments(
     doctor_id: str,
 ) -> list[AppointmentResponse]:
+    """Return all appointments for a doctor."""
 
     appointments = await appointment_repo.find_by_doctor(
         doctor_id,
@@ -264,6 +269,7 @@ async def update_appointment_status(
     doctor_id: str,
     data: AppointmentStatusRequest,
 ) -> AppointmentResponse:
+    """Update the status of a doctor's appointment."""
 
     appointment = await appointment_repo.find_by_id_and_doctor(
         appointment_id,

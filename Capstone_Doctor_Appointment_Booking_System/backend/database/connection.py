@@ -1,3 +1,5 @@
+"""MongoDB connection helpers for Beanie initialization."""
+
 from typing import Sequence
 
 from beanie import init_beanie
@@ -14,6 +16,8 @@ client = AsyncIOMotorClient(
 async def connect_db(
     models: Sequence[type],
 ):
+    """Initialize Beanie with the configured database and models."""
+
     await init_beanie(
         database=client[settings.db_name],
         document_models=models,
@@ -21,4 +25,6 @@ async def connect_db(
 
 
 async def close_db():
+    """Close the MongoDB client."""
+
     client.close()

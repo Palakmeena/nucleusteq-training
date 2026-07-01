@@ -1,8 +1,11 @@
+"""Slot service operations."""
+
 from datetime import datetime
 
 from fastapi import HTTPException, status
 
-from constants.messages import DoctorMessages, SlotMessages
+from constants.doctor_constants import DoctorMessages
+from constants.slot_constants import SlotMessages
 from models.slot import Slot
 from repositories.doctor_repository import DoctorRepository
 from repositories.slot_repository import SlotRepository
@@ -25,9 +28,7 @@ def is_overlapping(
     start2: str,
     end2: str,
 ) -> bool:
-    """
-    Returns True if two time intervals overlap.
-    """
+    """Return True when two time intervals overlap."""
 
     start1 = datetime.strptime(start1, "%H:%M")
     end1 = datetime.strptime(end1, "%H:%M")
@@ -42,9 +43,7 @@ async def create_slot(
     user_id: str,
     data: SlotCreateRequest,
 ) -> SlotResponse:
-    """
-    Create an availability slot for the logged-in doctor.
-    """
+    """Create a new availability slot for the current doctor."""
 
     doctor = await doctor_repo.find_by_user_id(user_id)
 
@@ -108,9 +107,7 @@ async def update_slot(
     slot_id: str,
     data: SlotUpdateRequest,
 ) -> SlotResponse:
-    """
-    Update one of the doctor's own slots.
-    """
+    """Update one of the current doctor's slots."""
 
     doctor = await doctor_repo.find_by_user_id(user_id)
 
@@ -195,9 +192,7 @@ async def delete_slot(
     user_id: str,
     slot_id: str,
 ) -> dict:
-    """
-    Delete one of the doctor's own slots.
-    """
+    """Delete one of the current doctor's slots."""
 
     doctor = await doctor_repo.find_by_user_id(user_id)
 
@@ -238,9 +233,7 @@ async def delete_slot(
 async def get_slots_by_doctor(
     doctor_id: str,
 ) -> list[SlotResponse]:
-    """
-    Retrieve all available slots for a doctor.
-    """
+    """Retrieve all available slots for a doctor."""
 
     slots = await slot_repo.find_available_by_doctor(
         doctor_id

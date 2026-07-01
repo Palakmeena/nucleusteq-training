@@ -1,3 +1,5 @@
+"""Appointment response schemas."""
+
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -6,6 +8,8 @@ from models.appointment import AppointmentStatus, PaymentStatus
 
 
 class AppointmentResponse(BaseModel):
+    """Response payload for an appointment."""
+
     id: str
     patient_id: str
     doctor_id: str

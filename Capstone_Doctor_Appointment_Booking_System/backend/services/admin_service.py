@@ -1,12 +1,15 @@
+"""Admin service operations."""
+
 from fastapi import HTTPException, status
 
-from constants.messages import DoctorMessages
+from constants.doctor_constants import DoctorMessages
 from models.appointment import AppointmentStatus
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
 from repositories.user_repository import UserRepository
 from schemas.response.auth_response import UserResponse
 from schemas.response.doctor_response import DoctorResponse
+from schemas.response.admin_response import DashboardResponse
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -17,6 +20,8 @@ appointment_repo = AppointmentRepository()
 
 
 async def get_all_users() -> list[UserResponse]:
+    """Return all users in the system."""
+
     users = await user_repo.find_all()
 
     return [
@@ -26,6 +31,8 @@ async def get_all_users() -> list[UserResponse]:
 
 
 async def get_all_doctors() -> list[DoctorResponse]:
+    """Return all doctors in the system."""
+
     doctors = await doctor_repo.find_all()
 
     return [
@@ -37,6 +44,7 @@ async def get_all_doctors() -> list[DoctorResponse]:
 async def activate_doctor(
     doctor_id: str,
 ) -> DoctorResponse:
+    """Activate a doctor account and its related user account."""
 
     doctor = await doctor_repo.find_by_id(
         doctor_id
@@ -72,6 +80,7 @@ async def activate_doctor(
 async def deactivate_doctor(
     doctor_id: str,
 ) -> DoctorResponse:
+    """Deactivate a doctor account and its related user account."""
 
     doctor = await doctor_repo.find_by_id(
         doctor_id
@@ -105,6 +114,7 @@ async def deactivate_doctor(
 
 
 async def get_dashboard_stats() -> dict:
+    """Return summary counts for the admin dashboard."""
 
     total_users = await user_repo.find_all()
     total_doctors = await doctor_repo.find_all()
@@ -127,11 +137,10 @@ async def get_dashboard_stats() -> dict:
         ]
     )
 
-    return {
-        "total_users": len(total_users),
-        "total_doctors": len(total_doctors),
-        "active_doctors": active_doctors,
-        "total_appointments": total_appointments,
-        "completed_appointments": completed,
-        "cancelled_appointments": cancelled,
-    }
+    return DashboardResponse(
+       total_doctors=total_doctors,
+       active_doctors=active_doctors,
+       total_appointments=total_appointments,
+       completed_appointments=completed,
+       cancelled_appointments=cancelled,
+)

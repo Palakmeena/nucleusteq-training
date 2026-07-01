@@ -1,3 +1,5 @@
+"""Seed script for the default admin account."""
+
 import asyncio
 
 from database.connection import connect_db
@@ -7,6 +9,8 @@ from utils.password_utils import hash_password
 
 
 async def seed_admin():
+    """Create the default admin account if it does not already exist."""
+
     await connect_db(
         [
             User,

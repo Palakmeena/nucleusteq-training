@@ -1,9 +1,13 @@
+"""Slot request schemas."""
+
 from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
 
 class SlotCreateRequest(BaseModel):
+    """Payload for creating a slot."""
+
     date: str
     start_time: str
     end_time: str
@@ -11,6 +15,8 @@ class SlotCreateRequest(BaseModel):
     @field_validator("date")
     @classmethod
     def validate_date(cls, value: str) -> str:
+        """Ensure the slot date uses the expected format and is not in the past."""
+
         try:
             slot_date = datetime.strptime(value, "%Y-%m-%d").date()
         except ValueError:
@@ -24,6 +30,8 @@ class SlotCreateRequest(BaseModel):
     @field_validator("start_time", "end_time")
     @classmethod
     def validate_time(cls, value: str) -> str:
+        """Ensure slot times use the expected 24-hour format."""
+
         try:
             datetime.strptime(value, "%H:%M")
         except ValueError:
@@ -33,6 +41,8 @@ class SlotCreateRequest(BaseModel):
 
 
 class SlotUpdateRequest(BaseModel):
+    """Payload for updating a slot."""
+
     date: str | None = None
     start_time: str | None = None
     end_time: str | None = None
@@ -40,6 +50,8 @@ class SlotUpdateRequest(BaseModel):
     @field_validator("date")
     @classmethod
     def validate_date(cls, value):
+        """Ensure the updated date stays valid when provided."""
+
         if value is None:
             return value
 
@@ -56,6 +68,8 @@ class SlotUpdateRequest(BaseModel):
     @field_validator("start_time", "end_time")
     @classmethod
     def validate_time(cls, value):
+        """Ensure the updated times stay valid when provided."""
+
         if value is None:
             return value
 

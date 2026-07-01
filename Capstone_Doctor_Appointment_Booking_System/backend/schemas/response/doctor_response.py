@@ -1,9 +1,13 @@
+"""Doctor response schemas."""
+
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
 class DoctorBaseResponse(BaseModel):
+    """Shared doctor response fields."""
+
     id: str
     full_name: str
     specialization: str
@@ -18,10 +22,14 @@ class DoctorBaseResponse(BaseModel):
 
 
 class DoctorListResponse(DoctorBaseResponse):
+    """Response payload for doctor search results."""
+
     pass
 
 
 class DoctorResponse(DoctorBaseResponse):
+    """Response payload for a doctor profile."""
+
     user_id: str
     phone: str
     qualification: str

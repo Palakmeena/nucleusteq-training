@@ -1,3 +1,5 @@
+"""Appointment model and related status enums."""
+
 from beanie import Document
 from pydantic import Field
 from datetime import datetime
@@ -5,6 +7,8 @@ from enum import Enum
 
 
 class AppointmentStatus(str, Enum):
+    """Allowed appointment lifecycle states."""
+
     PENDING = "PENDING"
     CONFIRMED = "CONFIRMED"
     CANCELLED = "CANCELLED"
@@ -13,11 +17,15 @@ class AppointmentStatus(str, Enum):
 
 
 class PaymentStatus(str, Enum):
+    """Allowed payment states."""
+
     PENDING = "PENDING"
     PAID = "PAID"
 
 
 class Appointment(Document):
+    """Stored appointment record."""
+
     patient_id: str
     doctor_id: str
     slot_id: str
@@ -30,4 +38,6 @@ class Appointment(Document):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
+        """Beanie collection settings."""
+
         name = "appointments"

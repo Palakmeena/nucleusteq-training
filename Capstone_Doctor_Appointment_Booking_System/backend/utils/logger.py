@@ -1,3 +1,5 @@
+"""Shared application logger configuration."""
+
 import logging
 import os
 from logging.handlers import RotatingFileHandler
@@ -6,6 +8,8 @@ os.makedirs("logs", exist_ok=True)
 
 
 def get_logger(name: str) -> logging.Logger:
+    """Return a configured logger for the given module name."""
+
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 

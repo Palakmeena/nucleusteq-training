@@ -1,3 +1,5 @@
+"""Authentication response schemas."""
+
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
@@ -6,6 +8,8 @@ from models.user import Role
 
 
 class UserResponse(BaseModel):
+    """Response payload for a user account."""
+
     id: str
     full_name: str
     email: EmailStr
@@ -20,6 +24,8 @@ class UserResponse(BaseModel):
 
 
 class LoginResponse(BaseModel):
+    """Response payload for a successful login."""
+
     access_token: str
     token_type: str = "bearer"
     role: Role

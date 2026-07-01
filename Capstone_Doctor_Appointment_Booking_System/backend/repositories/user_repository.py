@@ -1,9 +1,13 @@
+"""User data access helpers."""
+
 from typing import Optional
 
 from models.user import User
 
 
 class UserRepository:
+
+    """Repository methods for user documents."""
 
     async def find_by_id(self, user_id: str) -> Optional[User]:
         return await User.get(user_id)

@@ -1,6 +1,8 @@
+"""Doctor service operations."""
+
 from fastapi import HTTPException, status
 
-from constants.messages import DoctorMessages
+from constants.doctor_constants import DoctorMessages
 from repositories.doctor_repository import DoctorRepository
 from schemas.request.doctor_request import DoctorUpdateRequest
 from schemas.response.doctor_response import (
@@ -17,9 +19,7 @@ doctor_repo = DoctorRepository()
 async def get_doctor_by_id(
     doctor_id: str,
 ) -> DoctorResponse:
-    """
-    Retrieve a doctor profile by doctor ID.
-    """
+    """Retrieve a doctor profile by id."""
 
     doctor = await doctor_repo.find_by_id(doctor_id)
 
@@ -36,9 +36,7 @@ async def search_doctors(
     name: str | None = None,
     specialization: str | None = None,
 ) -> list[DoctorListResponse]:
-    """
-    Search active doctors by name and/or specialization.
-    """
+    """Search active doctors by name or specialization."""
 
     doctors = await doctor_repo.search(
         name=name,
@@ -55,9 +53,7 @@ async def update_doctor_profile(
     user_id: str,
     data: DoctorUpdateRequest,
 ) -> DoctorResponse:
-    """
-    Update the logged-in doctor's profile.
-    """
+    """Update the logged-in doctor's profile."""
 
     doctor = await doctor_repo.find_by_user_id(user_id)
 
