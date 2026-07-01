@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
 from schemas.request.auth_request import LoginRequest
-from schemas.request.register_request import (
+from schemas.request.auth_request import (
     DoctorRegisterRequest,
     PatientRegisterRequest,
 )

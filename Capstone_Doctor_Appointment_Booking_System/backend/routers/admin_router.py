@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from middleware.auth_middleware import require_admin
 from schemas.response.doctor_response import DoctorResponse
-from schemas.response.user_response import UserResponse
+from schemas.response.auth_response import UserResponse
 from services.admin_service import (
     activate_doctor,
     deactivate_doctor,
