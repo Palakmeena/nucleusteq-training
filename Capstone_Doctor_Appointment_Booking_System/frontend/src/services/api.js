@@ -1,14 +1,18 @@
 import axios from 'axios';
 
-// The User Service runs on port 8001
+// Using Vite proxy — requests are forwarded to the real service, avoiding CORS
+// /user-api → http://localhost:8001 (User Service)
+// /appointment-api → http://localhost:8002 (Appointment Service)
+
 export const authApi = axios.create({
-  baseURL: 'http://localhost:8001/api/v1',
+  baseURL: '/user-api/api/v1',
 });
 
-// The Appointment Service runs on port 8002
+// The Appointment Service
 export const appointmentApi = axios.create({
-  baseURL: 'http://localhost:8002/api/v1',
+  baseURL: '/appointment-api/api/v1',
 });
+
 
 // Interceptor to add JWT token to every request for the appointment service
 appointmentApi.interceptors.request.use((config) => {
@@ -31,3 +35,25 @@ authApi.interceptors.request.use((config) => {
 }, (error) => {
   return Promise.reject(error);
 });
+
+// ─── Auth Service Functions ───────────────────────────────────────────────────
+export const authService = {
+  /**
+   * POST /auth/login
+   * @param {{ email: string, password: string }} credentials
+   */
+  login: (credentials) => authApi.post('/auth/login', credentials),
+
+  /**
+   * POST /auth/register/patient
+   * Required fields: full_name, email, password, phone, gender, date_of_birth
+   */
+  registerPatient: (data) => authApi.post('/auth/register/patient', data),
+
+  /**
+   * POST /auth/register/doctor
+   * Required fields: full_name, email, password, phone, qualification,
+   * experience, license_number, specialization, consultation_fee, clinic_address
+   */
+  registerDoctor: (data) => authApi.post('/auth/register/doctor', data),
+};
