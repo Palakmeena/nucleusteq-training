@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class DashboardResponse(BaseModel):
     """Summary counts for the admin dashboard."""
-
+    total_patients: int
     total_doctors: int
     active_doctors: int
     total_appointments: int

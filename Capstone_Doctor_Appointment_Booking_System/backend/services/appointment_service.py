@@ -282,10 +282,26 @@ async def update_appointment_status(
             detail=AppointmentMessages.APPOINTMENT_NOT_FOUND,
         )
 
-    appointment.status = AppointmentStatus(
+    new_status = AppointmentStatus(
         data.status,
     )
 
+    if new_status in (
+        AppointmentStatus.COMPLETED,
+        AppointmentStatus.NO_SHOW,
+    ):
+        appointment_end = datetime.strptime(
+            f"{appointment.appointment_date} {appointment.end_time}",
+            "%Y-%m-%d %H:%M",
+        )
+
+        if datetime.utcnow() < appointment_end:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=AppointmentMessages.APPOINTMENT_NOT_FINISHED,
+            )
+
+    appointment.status = new_status
     appointment.updated_at = datetime.utcnow()
 
     await appointment_repo.update(

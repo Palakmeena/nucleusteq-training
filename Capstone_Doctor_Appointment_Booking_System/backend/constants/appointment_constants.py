@@ -12,3 +12,6 @@ STATUS_UPDATED = "Appointment status updated successfully"
 APPOINTMENT_DATE_IN_PAST = "Appointment date cannot be in the past."
 SLOT_DATE_MISMATCH = "Appointment date must match the slot date."
 INVALID_SLOT = "Selected slot does not belong to the selected doctor."
+APPOINTMENT_NOT_FINISHED = (
+    "Appointment cannot be marked as completed or no-show before its scheduled end time."
+)

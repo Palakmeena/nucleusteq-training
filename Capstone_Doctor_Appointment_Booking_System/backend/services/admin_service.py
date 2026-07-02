@@ -6,16 +6,18 @@ from constants.doctor_constants import DoctorMessages
 from models.appointment import AppointmentStatus
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
+from repositories.patient_repository import PatientRepository
 from repositories.user_repository import UserRepository
+from schemas.response.admin_response import DashboardResponse
 from schemas.response.auth_response import UserResponse
 from schemas.response.doctor_response import DoctorResponse
-from schemas.response.admin_response import DashboardResponse
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 user_repo = UserRepository()
 doctor_repo = DoctorRepository()
+patient_repo = PatientRepository()
 appointment_repo = AppointmentRepository()
 
 
@@ -113,11 +115,14 @@ async def deactivate_doctor(
     )
 
 
-async def get_dashboard_stats() -> dict:
+async def get_dashboard_stats() -> DashboardResponse:
     """Return summary counts for the admin dashboard."""
 
-    total_users = await user_repo.find_all()
-    total_doctors = await doctor_repo.find_all()
+    total_patients = await patient_repo.count()
+
+    total_doctors = await doctor_repo.count()
+
+    active_doctors = await doctor_repo.count_active()
 
     total_appointments = await appointment_repo.count()
 
@@ -129,18 +134,11 @@ async def get_dashboard_stats() -> dict:
         AppointmentStatus.CANCELLED
     )
 
-    active_doctors = len(
-        [
-            doctor
-            for doctor in total_doctors
-            if doctor.is_active
-        ]
-    )
-
     return DashboardResponse(
-       total_doctors=total_doctors,
-       active_doctors=active_doctors,
-       total_appointments=total_appointments,
-       completed_appointments=completed,
-       cancelled_appointments=cancelled,
-)
+        total_patients=total_patients,
+        total_doctors=total_doctors,
+        active_doctors=active_doctors,
+        total_appointments=total_appointments,
+        completed_appointments=completed,
+        cancelled_appointments=cancelled,
+    )

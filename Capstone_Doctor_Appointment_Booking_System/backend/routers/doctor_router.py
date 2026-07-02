@@ -47,12 +47,18 @@ async def update_profile(
 async def get_doctors(
     name: Optional[str] = None,
     specialization: Optional[str] = None,
+    location: Optional[str] = None,
+    min_experience: Optional[int] = None,
+    max_fee: Optional[float] = None,
 ):
-    """Search active doctors by name and specialization."""
+    """Search active doctors using optional filters."""
 
     return await search_doctors(
         name=name,
         specialization=specialization,
+        location=location,
+        min_experience=min_experience,
+        max_fee=max_fee,
     )
 
 

@@ -17,6 +17,9 @@ class PatientRepository:
 
     async def find_all(self):
         return await Patient.find_all().to_list()
+    
+    async def count(self) -> int:
+        return await Patient.find_all().count()
 
     async def save(self, patient: Patient) -> Patient:
         await patient.insert()
@@ -28,3 +31,6 @@ class PatientRepository:
 
     async def delete(self, patient: Patient) -> None:
         await patient.delete()
+
+
+   
