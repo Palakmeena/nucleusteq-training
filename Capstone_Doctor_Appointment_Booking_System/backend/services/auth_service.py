@@ -1,8 +1,12 @@
 """Authentication service operations."""
 
-from fastapi import HTTPException, status
-
-from constants.auth_constants import AuthMessages
+from exceptions.auth_exceptions import (
+    EmailAlreadyExistsException,
+    InactiveAccountException,
+    InvalidCredentialsException,
+    UserNotFoundException,
+)
+from exceptions.doctor_exceptions import DoctorProfileAlreadyExistsException
 from models.doctor import Doctor
 from models.patient import Patient
 from models.user import Role, User
@@ -39,10 +43,7 @@ async def register_patient(
         logger.warning(
             f"Registration failed. Email already exists: {data.email}"
         )
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=AuthMessages.EMAIL_ALREADY_EXISTS,
-        )
+        raise EmailAlreadyExistsException()
 
     user = User(
         full_name=data.full_name,
@@ -79,20 +80,14 @@ async def register_doctor(
         logger.warning(
             f"Registration failed. Email already exists: {data.email}"
         )
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=AuthMessages.EMAIL_ALREADY_EXISTS,
-        )
+        raise EmailAlreadyExistsException()
 
     existing_license = await doctor_repo.find_by_license(
         data.license_number
     )
 
     if existing_license:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="License number already registered.",
-        )
+        raise DoctorProfileAlreadyExistsException()
 
     user = User(
         full_name=data.full_name,
@@ -137,24 +132,15 @@ async def login_user(
 
     if not user:
         logger.warning(f"Login failed. User not found: {email}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=AuthMessages.INVALID_CREDENTIALS,
-        )
+        raise UserNotFoundException()
 
     if not verify_password(password, user.password_hash):
         logger.warning(f"Login failed. Invalid password for: {email}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=AuthMessages.INVALID_CREDENTIALS,
-        )
+        raise InvalidCredentialsException()
 
     if not user.is_active:
         logger.warning(f"Inactive account login attempt: {email}")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=AuthMessages.ACCOUNT_INACTIVE,
-        )
+        raise InactiveAccountException()
 
     access_token = create_access_token(
         user_id=str(user.id),
