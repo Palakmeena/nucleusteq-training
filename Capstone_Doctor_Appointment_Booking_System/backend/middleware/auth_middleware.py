@@ -1,11 +1,14 @@
 """Authentication and role-based access helpers."""
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from constants.auth_constants import AuthMessages
+from exceptions.auth_exceptions import (
+    ForbiddenException,
+    UnauthorizedException,
+)
 from utils.jwt_utils import decode_access_token
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
@@ -13,15 +16,13 @@ def get_current_user(
 ) -> dict:
     """Decode the bearer token and return the current user payload."""
 
+    if credentials is None:
+        raise UnauthorizedException()
+
     token = credentials.credentials
-    try:
-        payload = decode_access_token(token)
-        return payload
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e)
-        )
+
+    payload = decode_access_token(token)
+    return payload
 
 
 def require_role(*roles: str):
@@ -31,10 +32,7 @@ def require_role(*roles: str):
         """Ensure the current user has one of the allowed roles."""
 
         if current_user.get("role") not in roles:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=AuthMessages.FORBIDDEN
-            )
+            raise ForbiddenException()
         return current_user
     return role_checker
 

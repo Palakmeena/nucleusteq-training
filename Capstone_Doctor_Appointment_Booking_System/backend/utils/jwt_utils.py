@@ -4,6 +4,7 @@ import jwt
 from datetime import datetime, timedelta
 
 from config.settings import settings
+from exceptions.auth_exceptions import InvalidTokenException
 
 
 def create_access_token(
@@ -44,7 +45,7 @@ def decode_access_token(
         )
 
     except jwt.ExpiredSignatureError:
-        raise ValueError("Token has expired")
+        raise InvalidTokenException()
 
     except jwt.InvalidTokenError:
-        raise ValueError("Invalid token")
+        raise InvalidTokenException()
