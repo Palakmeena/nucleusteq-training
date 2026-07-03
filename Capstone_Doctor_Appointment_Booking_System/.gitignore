@@ -5,13 +5,19 @@
 
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*.egg-info/
 
 # Virtual Environments
 venv/
+.venv/
+env/
+
+# Environment Files
 .env
+.env.local
+.env.development
+.env.production
 
 # Testing
 .pytest_cache/
@@ -22,18 +28,13 @@ htmlcov/
 logs/
 *.log
 
-# OS Files
-.DS_Store
-Thumbs.db
+# Build Files
+build/
+dist/
 
 # Node Modules (Frontend)
 node_modules/
 
-# Build Files
-dist/
-build/
-
-# Environment Files
-.env.local
-.env.development
-.env.production
+# OS Files
+.DS_Store
+Thumbs.db
