@@ -15,3 +15,6 @@ INVALID_SLOT = "Selected slot does not belong to the selected doctor."
 APPOINTMENT_NOT_FINISHED = (
     "Appointment cannot be marked as completed or no-show before its scheduled end time."
 )
+INVALID_STATUS_UPDATE = (
+    "Appointment status cannot be updated before the appointment ends."
+)

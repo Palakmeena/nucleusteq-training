@@ -1,8 +1,6 @@
 """Doctor service operations."""
 
-from fastapi import HTTPException, status
-
-from constants.doctor_constants import DoctorMessages
+from exceptions.doctor_exceptions import DoctorNotFoundException
 from repositories.doctor_repository import DoctorRepository
 from schemas.request.doctor_request import DoctorUpdateRequest
 from schemas.response.doctor_response import (
@@ -26,10 +24,7 @@ async def get_doctor_by_id(
     )
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     return DoctorResponse.model_validate(
         doctor,
@@ -72,10 +67,7 @@ async def update_doctor_profile(
     )
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     update_data = data.model_dump(
         exclude_unset=True,

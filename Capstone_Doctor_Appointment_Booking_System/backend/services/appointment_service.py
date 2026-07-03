@@ -2,11 +2,15 @@
 
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException, status
-
-from constants.appointment_constants import AppointmentMessages
-from constants.doctor_constants import DoctorMessages
-from constants.slot_constants import SlotMessages
+from constants.appointment_constants import CANCELLED_SUCCESS
+from exceptions.appointment_exceptions import (
+    AppointmentAlreadyCancelledException,
+    AppointmentCancellationException,
+    AppointmentNotFoundException,
+    InvalidAppointmentStatusException,
+)
+from exceptions.doctor_exceptions import DoctorInactiveException, DoctorNotFoundException
+from exceptions.slot_exceptions import SlotAlreadyBookedException, SlotNotFoundException
 from models.appointment import (
     Appointment,
     AppointmentStatus,
@@ -42,42 +46,27 @@ async def book_appointment(
     )
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     if not doctor.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Doctor is not active.",
-        )
+        raise DoctorInactiveException()
 
     slot = await slot_repo.find_by_id(
         data.slot_id,
     )
 
     if not slot:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=SlotMessages.SLOT_NOT_FOUND,
-        )
+        raise SlotNotFoundException()
 
     # -----------------------------
     # Business Validations
     # -----------------------------
 
     if slot.doctor_id != data.doctor_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=AppointmentMessages.INVALID_SLOT,
-        )
+        raise InvalidAppointmentStatusException()
 
     if data.appointment_date != slot.date:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=AppointmentMessages.SLOT_DATE_MISMATCH,
-        )
+        raise InvalidAppointmentStatusException()
 
     appointment_date = datetime.strptime(
         data.appointment_date,
@@ -85,30 +74,21 @@ async def book_appointment(
     ).date()
 
     if appointment_date < datetime.utcnow().date():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=AppointmentMessages.APPOINTMENT_DATE_IN_PAST,
-        )
+        raise InvalidAppointmentStatusException()
 
     # -----------------------------
     # Booking Validation
     # -----------------------------
 
     if slot.is_booked:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=SlotMessages.SLOT_ALREADY_BOOKED,
-        )
+        raise SlotAlreadyBookedException()
 
     existing = await appointment_repo.find_by_slot(
         data.slot_id,
     )
 
     if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=SlotMessages.SLOT_ALREADY_BOOKED,
-        )
+        raise SlotAlreadyBookedException()
 
     slot.is_booked = True
 
@@ -152,10 +132,7 @@ async def process_payment(
     )
 
     if not appointment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=AppointmentMessages.APPOINTMENT_NOT_FOUND,
-        )
+        raise AppointmentNotFoundException()
 
     appointment.payment_status = PaymentStatus.PAID
     appointment.status = AppointmentStatus.CONFIRMED
@@ -186,16 +163,10 @@ async def cancel_appointment(
     )
 
     if not appointment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=AppointmentMessages.APPOINTMENT_NOT_FOUND,
-        )
+        raise AppointmentNotFoundException()
 
     if appointment.status == AppointmentStatus.CANCELLED:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=AppointmentMessages.ALREADY_CANCELLED,
-        )
+        raise AppointmentAlreadyCancelledException()
 
     appointment_datetime = datetime.strptime(
         f"{appointment.appointment_date} {appointment.start_time}",
@@ -203,10 +174,7 @@ async def cancel_appointment(
     )
 
     if datetime.utcnow() >= appointment_datetime - timedelta(hours=2):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=AppointmentMessages.CANNOT_CANCEL,
-        )
+        raise AppointmentCancellationException()
 
     slot = await slot_repo.find_by_id(
         appointment.slot_id,
@@ -230,7 +198,7 @@ async def cancel_appointment(
     )
 
     return {
-        "message": AppointmentMessages.CANCELLED_SUCCESS,
+        "message": CANCELLED_SUCCESS,
     }
 
 
@@ -277,10 +245,7 @@ async def update_appointment_status(
     )
 
     if not appointment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=AppointmentMessages.APPOINTMENT_NOT_FOUND,
-        )
+        raise AppointmentNotFoundException()
 
     new_status = AppointmentStatus(
         data.status,
@@ -296,10 +261,7 @@ async def update_appointment_status(
         )
 
         if datetime.utcnow() < appointment_end:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=AppointmentMessages.APPOINTMENT_NOT_FINISHED,
-            )
+            raise InvalidAppointmentStatusException()
 
     appointment.status = new_status
     appointment.updated_at = datetime.utcnow()

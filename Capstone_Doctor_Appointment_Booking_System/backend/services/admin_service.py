@@ -1,8 +1,6 @@
 """Admin service operations."""
 
-from fastapi import HTTPException, status
-
-from constants.doctor_constants import DoctorMessages
+from exceptions.doctor_exceptions import DoctorNotFoundException
 from models.appointment import AppointmentStatus
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
@@ -53,10 +51,7 @@ async def activate_doctor(
     )
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     user = await user_repo.find_by_id(
         doctor.user_id
@@ -89,10 +84,7 @@ async def deactivate_doctor(
     )
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     user = await user_repo.find_by_id(
         doctor.user_id

@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config.settings import settings
 from database.connection import connect_db
+from exceptions.exception_handler import register_exception_handlers
 
 from models.user import User
 from models.patient import Patient
@@ -49,6 +50,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Register global exception handlers
+register_exception_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,

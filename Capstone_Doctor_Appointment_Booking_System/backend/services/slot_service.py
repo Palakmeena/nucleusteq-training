@@ -2,10 +2,17 @@
 
 from datetime import datetime
 
-from fastapi import HTTPException, status
-
-from constants.doctor_constants import DoctorMessages
-from constants.slot_constants import SlotMessages
+from constants.slot_constants import (
+    SLOT_DELETED,
+)
+from exceptions.doctor_exceptions import DoctorNotFoundException
+from exceptions.slot_exceptions import (
+    InvalidSlotTimeException,
+    SlotAlreadyBookedException,
+    SlotCannotBeDeletedException,
+    SlotNotFoundException,
+    SlotOverlapException,
+)
 from models.slot import Slot
 from repositories.doctor_repository import DoctorRepository
 from repositories.slot_repository import SlotRepository
@@ -48,10 +55,7 @@ async def create_slot(
     doctor = await doctor_repo.find_by_user_id(user_id)
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     start_time = datetime.strptime(
         data.start_time,
@@ -64,10 +68,7 @@ async def create_slot(
     )
 
     if start_time >= end_time:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=SlotMessages.INVALID_SLOT_TIME,
-        )
+        raise InvalidSlotTimeException()
 
     existing_slots = await slot_repo.find_by_doctor_and_date(
         str(doctor.id),
@@ -81,10 +82,7 @@ async def create_slot(
             existing_slot.start_time,
             existing_slot.end_time,
         ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=SlotMessages.SLOT_OVERLAP,
-            )
+            raise SlotOverlapException()
 
     slot = Slot(
         doctor_id=str(doctor.id),
@@ -112,10 +110,7 @@ async def update_slot(
     doctor = await doctor_repo.find_by_user_id(user_id)
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     slot = await slot_repo.find_by_id_and_doctor(
         slot_id,
@@ -123,16 +118,10 @@ async def update_slot(
     )
 
     if not slot:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=SlotMessages.SLOT_NOT_FOUND,
-        )
+        raise SlotNotFoundException()
 
     if slot.is_booked:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=SlotMessages.SLOT_ALREADY_BOOKED,
-        )
+        raise SlotAlreadyBookedException()
 
     new_date = data.date if data.date else slot.date
     new_start = data.start_time if data.start_time else slot.start_time
@@ -149,10 +138,7 @@ async def update_slot(
     )
 
     if start_time >= end_time:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=SlotMessages.INVALID_SLOT_TIME,
-        )
+        raise InvalidSlotTimeException()
 
     existing_slots = await slot_repo.find_by_doctor_and_date(
         str(doctor.id),
@@ -169,10 +155,7 @@ async def update_slot(
             existing_slot.start_time,
             existing_slot.end_time,
         ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=SlotMessages.SLOT_OVERLAP,
-            )
+            raise SlotOverlapException()
 
     update_data = data.model_dump(exclude_unset=True)
 
@@ -197,10 +180,7 @@ async def delete_slot(
     doctor = await doctor_repo.find_by_user_id(user_id)
 
     if not doctor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=DoctorMessages.DOCTOR_NOT_FOUND,
-        )
+        raise DoctorNotFoundException()
 
     slot = await slot_repo.find_by_id_and_doctor(
         slot_id,
@@ -208,16 +188,10 @@ async def delete_slot(
     )
 
     if not slot:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=SlotMessages.SLOT_NOT_FOUND,
-        )
+        raise SlotNotFoundException()
 
     if slot.is_booked:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=SlotMessages.CANNOT_DELETE_BOOKED,
-        )
+        raise SlotCannotBeDeletedException()
 
     await slot_repo.delete(slot)
 
@@ -226,7 +200,7 @@ async def delete_slot(
     )
 
     return {
-        "message": SlotMessages.SLOT_DELETED
+        "message": SLOT_DELETED
     }
 
 
