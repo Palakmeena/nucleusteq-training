@@ -3,8 +3,9 @@
 import asyncio
 
 from database.connection import connect_db
+from enums.user_role import UserRole
 from models.patient import Patient
-from models.user import Role, User
+from models.user import User
 from utils.password_utils import hash_password
 
 
@@ -31,7 +32,7 @@ async def seed_admin():
         email="admin@docbook.com",
         password_hash=hash_password("Admin@123"),
         phone="9999999999",
-        role=Role.ADMIN,
+        role=UserRole.ADMIN,
         is_active=True,
     )
 
