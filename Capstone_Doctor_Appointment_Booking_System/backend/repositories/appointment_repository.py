@@ -2,11 +2,11 @@
 
 from typing import Optional
 
-from models.appointment import Appointment, AppointmentStatus
+from enums.appointment_status import AppointmentStatus
+from models.appointment import Appointment
 
 
 class AppointmentRepository:
-
     """Repository methods for appointment documents."""
 
     async def find_by_id(self, appointment_id: str) -> Optional[Appointment]:
