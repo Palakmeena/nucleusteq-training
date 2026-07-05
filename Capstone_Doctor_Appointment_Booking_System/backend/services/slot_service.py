@@ -13,6 +13,7 @@ from exceptions.slot_exceptions import (
     SlotNotFoundException,
     SlotOverlapException,
 )
+from mappers.slot_mapper import SlotMapper
 from models.slot import Slot
 from repositories.doctor_repository import DoctorRepository
 from repositories.slot_repository import SlotRepository
@@ -97,7 +98,7 @@ async def create_slot(
         f"Slot created by doctor: {doctor.id}"
     )
 
-    return SlotResponse.model_validate(slot)
+    return SlotMapper.to_response(slot)
 
 
 async def update_slot(
@@ -168,7 +169,7 @@ async def update_slot(
         f"Slot updated: {slot.id}"
     )
 
-    return SlotResponse.model_validate(slot)
+    return SlotMapper.to_response(slot)
 
 
 async def delete_slot(
@@ -214,6 +215,6 @@ async def get_slots_by_doctor(
     )
 
     return [
-        SlotResponse.model_validate(slot)
+        SlotMapper.to_response(slot)
         for slot in slots
     ]

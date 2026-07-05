@@ -1,7 +1,9 @@
 """Admin service operations."""
 
+from enums.appointment_status import AppointmentStatus
 from exceptions.doctor_exceptions import DoctorNotFoundException
-from models.appointment import AppointmentStatus
+from mappers.doctor_mapper import DoctorMapper
+from mappers.user_mapper import UserMapper
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
 from repositories.patient_repository import PatientRepository
@@ -25,7 +27,7 @@ async def get_all_users() -> list[UserResponse]:
     users = await user_repo.find_all()
 
     return [
-        UserResponse.model_validate(user)
+        UserMapper.to_response(user)
         for user in users
     ]
 
@@ -36,7 +38,7 @@ async def get_all_doctors() -> list[DoctorResponse]:
     doctors = await doctor_repo.find_all()
 
     return [
-        DoctorResponse.model_validate(doctor)
+        DoctorMapper.to_response(doctor)
         for doctor in doctors
     ]
 
@@ -69,7 +71,7 @@ async def activate_doctor(
         f"Doctor approved: {doctor.id}"
     )
 
-    return DoctorResponse.model_validate(
+    return DoctorMapper.to_response(
         doctor
     )
 
@@ -102,7 +104,7 @@ async def deactivate_doctor(
         f"Doctor deactivated: {doctor.id}"
     )
 
-    return DoctorResponse.model_validate(
+    return DoctorMapper.to_response(
         doctor
     )
 

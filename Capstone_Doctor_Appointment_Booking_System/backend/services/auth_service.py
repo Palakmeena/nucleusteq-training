@@ -1,5 +1,6 @@
 """Authentication service operations."""
 
+from enums.user_role import UserRole
 from exceptions.auth_exceptions import (
     EmailAlreadyExistsException,
     InactiveAccountException,
@@ -7,9 +8,10 @@ from exceptions.auth_exceptions import (
     UserNotFoundException,
 )
 from exceptions.doctor_exceptions import DoctorProfileAlreadyExistsException
+from mappers.user_mapper import UserMapper
 from models.doctor import Doctor
 from models.patient import Patient
-from models.user import Role, User
+from models.user import User
 from repositories.doctor_repository import DoctorRepository
 from repositories.patient_repository import PatientRepository
 from repositories.user_repository import UserRepository
@@ -50,7 +52,7 @@ async def register_patient(
         email=data.email,
         password_hash=hash_password(data.password),
         phone=data.phone,
-        role=Role.PATIENT,
+        role=UserRole.PATIENT,
         is_active=True,
     )
 
@@ -64,9 +66,11 @@ async def register_patient(
 
     await patient_repo.save(patient)
 
-    logger.info(f"Patient registered successfully: {user.email}")
+    logger.info(
+        f"Patient registered successfully: {user.email}"
+    )
 
-    return UserResponse.model_validate(user)
+    return UserMapper.to_response(user)
 
 
 async def register_doctor(
@@ -94,7 +98,7 @@ async def register_doctor(
         email=data.email,
         password_hash=hash_password(data.password),
         phone=data.phone,
-        role=Role.DOCTOR,
+        role=UserRole.DOCTOR,
         is_active=False,
     )
 
@@ -119,7 +123,7 @@ async def register_doctor(
         f"Doctor registered successfully: {user.email}. Awaiting admin approval."
     )
 
-    return UserResponse.model_validate(user)
+    return UserMapper.to_response(user)
 
 
 async def login_user(
@@ -131,15 +135,21 @@ async def login_user(
     user = await user_repo.find_by_email(email)
 
     if not user:
-        logger.warning(f"Login failed. User not found: {email}")
+        logger.warning(
+            f"Login failed. User not found: {email}"
+        )
         raise UserNotFoundException()
 
     if not verify_password(password, user.password_hash):
-        logger.warning(f"Login failed. Invalid password for: {email}")
+        logger.warning(
+            f"Login failed. Invalid password for: {email}"
+        )
         raise InvalidCredentialsException()
 
     if not user.is_active:
-        logger.warning(f"Inactive account login attempt: {email}")
+        logger.warning(
+            f"Inactive account login attempt: {email}"
+        )
         raise InactiveAccountException()
 
     access_token = create_access_token(

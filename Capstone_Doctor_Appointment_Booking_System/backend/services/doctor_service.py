@@ -1,6 +1,7 @@
 """Doctor service operations."""
 
 from exceptions.doctor_exceptions import DoctorNotFoundException
+from mappers.doctor_mapper import DoctorMapper
 from repositories.doctor_repository import DoctorRepository
 from schemas.request.doctor_request import DoctorUpdateRequest
 from schemas.response.doctor_response import (
@@ -26,7 +27,7 @@ async def get_doctor_by_id(
     if not doctor:
         raise DoctorNotFoundException()
 
-    return DoctorResponse.model_validate(
+    return DoctorMapper.to_response(
         doctor,
     )
 
@@ -49,7 +50,7 @@ async def search_doctors(
     )
 
     return [
-        DoctorListResponse.model_validate(
+        DoctorMapper.to_list_response(
             doctor,
         )
         for doctor in doctors
@@ -88,6 +89,6 @@ async def update_doctor_profile(
         f"Doctor profile updated: {doctor.user_id}",
     )
 
-    return DoctorResponse.model_validate(
+    return DoctorMapper.to_response(
         doctor,
     )

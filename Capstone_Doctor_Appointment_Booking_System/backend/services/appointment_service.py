@@ -9,8 +9,15 @@ from exceptions.appointment_exceptions import (
     AppointmentNotFoundException,
     InvalidAppointmentStatusException,
 )
-from exceptions.doctor_exceptions import DoctorInactiveException, DoctorNotFoundException
-from exceptions.slot_exceptions import SlotAlreadyBookedException, SlotNotFoundException
+from exceptions.doctor_exceptions import (
+    DoctorInactiveException,
+    DoctorNotFoundException,
+)
+from exceptions.slot_exceptions import (
+    SlotAlreadyBookedException,
+    SlotNotFoundException,
+)
+from mappers.appointment_mapper import AppointmentMapper
 from models.appointment import (
     Appointment,
     AppointmentStatus,
@@ -115,7 +122,7 @@ async def book_appointment(
         f"Appointment booked: {appointment.id}"
     )
 
-    return AppointmentResponse.model_validate(
+    return AppointmentMapper.to_response(
         appointment,
     )
 
@@ -146,7 +153,7 @@ async def process_payment(
         f"Payment successful: {appointment.id}"
     )
 
-    return AppointmentResponse.model_validate(
+    return AppointmentMapper.to_response(
         appointment,
     )
 
@@ -212,7 +219,7 @@ async def get_patient_appointments(
     )
 
     return [
-        AppointmentResponse.model_validate(a)
+        AppointmentMapper.to_response(a)
         for a in appointments
     ]
 
@@ -227,7 +234,7 @@ async def get_doctor_appointments(
     )
 
     return [
-        AppointmentResponse.model_validate(a)
+        AppointmentMapper.to_response(a)
         for a in appointments
     ]
 
@@ -274,6 +281,6 @@ async def update_appointment_status(
         f"Appointment {appointment.id} updated to {appointment.status}"
     )
 
-    return AppointmentResponse.model_validate(
+    return AppointmentMapper.to_response(
         appointment,
     )
