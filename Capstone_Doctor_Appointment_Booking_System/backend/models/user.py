@@ -1,17 +1,11 @@
-"""User account model and role definitions."""
+"""User account model."""
+
+from datetime import datetime
 
 from beanie import Document
 from pydantic import EmailStr, Field
-from datetime import datetime
-from enum import Enum
 
-
-class Role(str, Enum):
-    """Supported application roles."""
-
-    PATIENT = "PATIENT"
-    DOCTOR = "DOCTOR"
-    ADMIN = "ADMIN"
+from enums.user_role import UserRole
 
 
 class User(Document):
@@ -21,7 +15,7 @@ class User(Document):
     email: EmailStr
     password_hash: str
     phone: str
-    role: Role
+    role: UserRole
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
 

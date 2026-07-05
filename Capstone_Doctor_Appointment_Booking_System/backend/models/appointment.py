@@ -1,26 +1,12 @@
-"""Appointment model and related status enums."""
+"""Appointment model."""
+
+from datetime import datetime
 
 from beanie import Document
 from pydantic import Field
-from datetime import datetime
-from enum import Enum
 
-
-class AppointmentStatus(str, Enum):
-    """Allowed appointment lifecycle states."""
-
-    PENDING = "PENDING"
-    CONFIRMED = "CONFIRMED"
-    CANCELLED = "CANCELLED"
-    COMPLETED = "COMPLETED"
-    NO_SHOW = "NO_SHOW"
-
-
-class PaymentStatus(str, Enum):
-    """Allowed payment states."""
-
-    PENDING = "PENDING"
-    PAID = "PAID"
+from enums.appointment_status import AppointmentStatus
+from enums.payment_status import PaymentStatus
 
 
 class Appointment(Document):
