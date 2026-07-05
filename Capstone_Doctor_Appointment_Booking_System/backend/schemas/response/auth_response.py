@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
 
-from models.user import Role
+from enums.user_role import UserRole
 
 
 class UserResponse(BaseModel):
@@ -14,7 +14,7 @@ class UserResponse(BaseModel):
     full_name: str
     email: EmailStr
     phone: str
-    role: Role
+    role: UserRole
     is_active: bool
     created_at: datetime
 
@@ -28,6 +28,6 @@ class LoginResponse(BaseModel):
 
     access_token: str
     token_type: str = "bearer"
-    role: Role
+    role: UserRole
     user_id: str
     full_name: str

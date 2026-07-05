@@ -4,7 +4,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from models.appointment import AppointmentStatus, PaymentStatus
+from enums.appointment_status import AppointmentStatus
+from enums.payment_status import PaymentStatus
 
 
 class AppointmentResponse(BaseModel):
