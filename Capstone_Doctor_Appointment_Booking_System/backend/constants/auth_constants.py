@@ -1,0 +1,11 @@
+"""Authentication-related constant messages."""
+
+REGISTRATION_SUCCESS = "User registered successfully"
+LOGIN_SUCCESS = "Login successful"
+INVALID_CREDENTIALS = "Invalid email or password"
+EMAIL_ALREADY_EXISTS = "Email already registered"
+USER_NOT_FOUND = "User not found"
+ACCOUNT_INACTIVE = "Your account has been deactivated"
+UNAUTHORIZED = "Unauthorized access"
+FORBIDDEN = "You do not have permission to access this resource"
+INVALID_TOKEN = "Invalid or expired token"
