@@ -1,0 +1,40 @@
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Environment Files
+.env
+.env.local
+.env.development
+.env.production
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/
+*.log
+
+# Build Files
+build/
+dist/
+
+# Node Modules (Frontend)
+node_modules/
+
+# OS Files
+.DS_Store
+Thumbs.db
