@@ -9,7 +9,6 @@ import {
   CalendarMonth as CalendarIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import PageHeader from '../../components/common/PageHeader';
 import DashboardCard from '../../components/cards/DashboardCard';
 import AppointmentCard from '../../components/cards/AppointmentCard';
 import Button from '../../components/buttons/Button';
@@ -51,11 +50,13 @@ const PatientDashboard = () => {
   if (loading) return <DashboardSkeleton />;
 
   return (
-    <Box>
-      <PageHeader
-        title={`Welcome${user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}!`}
-        subtitle="Here's an overview of your healthcare activity"
-      />
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" fontWeight={700} mb={1}>
+        Welcome{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}!
+      </Typography>
+      <Typography variant="body2" color="text.secondary" mb={4}>
+        Here's an overview of your healthcare activity
+      </Typography>
 
       <Grid container spacing={3} mb={4}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -77,61 +78,123 @@ const PatientDashboard = () => {
         </Grid>
       </Grid>
 
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Typography variant="h6" fontWeight={700} gutterBottom>
-            Quick Actions
-          </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <Button component={Link} to="/doctors" startIcon={<SearchIcon />}>
-              Find Doctors
-            </Button>
-            <Button component={Link} to="/appointments" variant="outlined" startIcon={<CalendarIcon />}>
-              My Appointments
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
+      <Grid container spacing={3} mb={4}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} gutterBottom mb={3}>
+                Quick Actions
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Button
+                    component={Link}
+                    to="/find-doctors"
+                    startIcon={<SearchIcon />}
+                    fullWidth
+                    sx={{
+                      py: 2.5,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Find Doctors
+                  </Button>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Button
+                    component={Link}
+                    to="/appointments"
+                    variant="outlined"
+                    startIcon={<CalendarIcon />}
+                    fullWidth
+                    sx={{
+                      py: 2.5,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                    }}
+                  >
+                    My Appointments
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)' }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} color="white" gutterBottom mb={2}>
+                Health Journey
+              </Typography>
+              <Typography variant="body2" color="rgba(255,255,255,0.9)" mb={3}>
+                Track your healthcare progress and stay on top of your appointments
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
+                  <Typography variant="caption" color="white">Completed</Typography>
+                  <Typography variant="subtitle2" fontWeight={600} color="white">{stats.completed}</Typography>
+                </Box>
+                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
+                  <Typography variant="caption" color="white">Upcoming</Typography>
+                  <Typography variant="subtitle2" fontWeight={600} color="white">{stats.upcoming}</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={700} gutterBottom>
+              <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
                 Recent Appointments
               </Typography>
               {recent.length > 0 ? (
-                recent.map((a) => (
-                  <AppointmentCard
-                    key={a.id}
-                    appointment={a}
-                    doctorName={doctorNames[a.doctor_id] ? `Dr. ${doctorNames[a.doctor_id]}` : undefined}
-                  />
-                ))
+                <Stack spacing={2}>
+                  {recent.map((a) => (
+                    <AppointmentCard
+                      key={a.id}
+                      appointment={a}
+                      doctorName={doctorNames[a.doctor_id] ? `Dr. ${doctorNames[a.doctor_id]}` : undefined}
+                    />
+                  ))}
+                </Stack>
               ) : (
                 <EmptyState
                   title="No appointments yet"
                   description="Book your first appointment with a verified doctor"
                   action
                   actionText="Find Doctors"
-                  onAction={() => navigate('/doctors')}
+                  onAction={() => navigate('/find-doctors')}
                 />
               )}
             </CardContent>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
-              <Stack spacing={2} alignItems="center">
-                <Avatar sx={{ width: 72, height: 72, bgcolor: 'primary.main' }}>
+              <Stack spacing={3} alignItems="center">
+                <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: '2rem' }}>
                   {(user?.fullName || user?.email || 'P').charAt(0)}
                 </Avatar>
-                <Typography fontWeight={700}>{user?.fullName || user?.email}</Typography>
-                <Divider flexItem />
-                <Typography variant="body2" color="text.secondary">
-                  Patient account
+                <Typography fontWeight={600} variant="h6" textAlign="center">
+                  {user?.fullName || user?.email}
                 </Typography>
+                <Divider flexItem sx={{ width: '100%' }} />
+                <Box sx={{ width: '100%' }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Total Appointments
+                  </Typography>
+                  <Typography variant="h4" fontWeight={700} color="primary.main">
+                    {appointments.length}
+                  </Typography>
+                </Box>
               </Stack>
             </CardContent>
           </Card>

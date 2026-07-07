@@ -4,7 +4,7 @@ import { Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { getDashboardPath } from '../constants/roles';
 
-const ProtectedRoute = ({ allowedRoles = [] }) => {
+const ProtectedRoute = ({ allowedRoles = [], children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     return <Navigate to={getDashboardPath(user.role)} replace />;
   }
 
-  return <Outlet />;
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;

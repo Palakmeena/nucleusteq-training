@@ -8,6 +8,7 @@ import './index.css';
 
 // Layouts
 import PublicLayout from './components/layout/PublicLayout';
+import MainLayout from './components/layout/MainLayout';
 
 // Route Guards
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -236,7 +237,9 @@ function App() {
 
           <Route
             element={
-              <ProtectedRoute allowedRoles={[ROLES.PATIENT]} />
+              <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                <MainLayout />
+              </ProtectedRoute>
             }
           >
             <Route path="/dashboard" element={<PatientDashboard />} />
@@ -254,7 +257,9 @@ function App() {
 
           <Route
             element={
-              <ProtectedRoute allowedRoles={[ROLES.DOCTOR]} />
+              <ProtectedRoute allowedRoles={[ROLES.DOCTOR]}>
+                <MainLayout />
+              </ProtectedRoute>
             }
           >
             <Route
@@ -282,7 +287,9 @@ function App() {
 
           <Route
             element={
-              <ProtectedRoute allowedRoles={[ROLES.ADMIN]} />
+              <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+                <MainLayout />
+              </ProtectedRoute>
             }
           >
             <Route
