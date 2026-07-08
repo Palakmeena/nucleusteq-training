@@ -5,6 +5,11 @@ from typing import Literal
 
 from pydantic import BaseModel, field_validator
 
+from constants.validation_constants import (
+    APPOINTMENT_DATE_IN_PAST,
+    INVALID_DATE_FORMAT,
+)
+
 
 class AppointmentBookRequest(BaseModel):
     """Payload for booking an appointment."""
@@ -20,17 +25,15 @@ class AppointmentBookRequest(BaseModel):
 
         try:
             appointment_date = datetime.strptime(
-                value, "%Y-%m-%d"
+                value,
+                "%Y-%m-%d",
             ).date()
+
         except ValueError:
-            raise ValueError(
-                "Date must be in YYYY-MM-DD format"
-            )
+            raise ValueError(INVALID_DATE_FORMAT)
 
         if appointment_date < datetime.utcnow().date():
-            raise ValueError(
-                "Appointment date cannot be in the past"
-            )
+            raise ValueError(APPOINTMENT_DATE_IN_PAST)
 
         return value
 

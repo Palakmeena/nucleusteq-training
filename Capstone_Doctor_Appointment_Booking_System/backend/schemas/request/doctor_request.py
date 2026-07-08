@@ -4,6 +4,11 @@ from typing import Literal
 
 from pydantic import BaseModel, field_validator
 
+from constants.validation_constants import (
+    CONSULTATION_FEE_POSITIVE,
+    EXPERIENCE_CANNOT_BE_NEGATIVE,
+)
+
 
 Specialization = Literal[
     "Cardiologist",
@@ -37,7 +42,8 @@ class DoctorProfileRequest(BaseModel):
         """Ensure experience is not negative."""
 
         if value < 0:
-            raise ValueError("Experience cannot be negative")
+            raise ValueError(EXPERIENCE_CANNOT_BE_NEGATIVE)
+
         return value
 
     @field_validator("consultation_fee")
@@ -46,7 +52,8 @@ class DoctorProfileRequest(BaseModel):
         """Ensure consultation fee is positive."""
 
         if value <= 0:
-            raise ValueError("Consultation fee must be greater than 0")
+            raise ValueError(CONSULTATION_FEE_POSITIVE)
+
         return value
 
 
@@ -65,7 +72,8 @@ class DoctorUpdateRequest(BaseModel):
         """Ensure experience is not negative when provided."""
 
         if value is not None and value < 0:
-            raise ValueError("Experience cannot be negative")
+            raise ValueError(EXPERIENCE_CANNOT_BE_NEGATIVE)
+
         return value
 
     @field_validator("consultation_fee")
@@ -74,5 +82,6 @@ class DoctorUpdateRequest(BaseModel):
         """Ensure consultation fee is positive when provided."""
 
         if value is not None and value <= 0:
-            raise ValueError("Consultation fee must be greater than 0")
+            raise ValueError(CONSULTATION_FEE_POSITIVE)
+
         return value
