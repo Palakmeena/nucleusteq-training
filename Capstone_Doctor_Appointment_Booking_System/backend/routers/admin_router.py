@@ -20,9 +20,6 @@ router = APIRouter(
 )
 
 
-# ===========================
-# Dashboard
-# ===========================
 
 @router.get(
     "/dashboard",
@@ -36,9 +33,6 @@ async def dashboard(
     return await get_dashboard_stats()
 
 
-# ===========================
-# User Management
-# ===========================
 
 @router.get(
     "/users",
@@ -52,9 +46,6 @@ async def users(
     return await get_all_users()
 
 
-# ===========================
-# Doctor Management
-# ===========================
 
 @router.get(
     "/doctors",

@@ -7,6 +7,8 @@ from enums.user_role import UserRole
 from models.patient import Patient
 from models.user import User
 from utils.password_utils import hash_password
+from utils.logger import get_logger
+
 
 
 async def seed_admin():
@@ -38,9 +40,12 @@ async def seed_admin():
 
     await admin.insert()
 
-    print("Admin created successfully.")
-    print("Email: admin@docbook.com")
-    print("Password: Admin@123")
+
+    logger = get_logger(__name__)
+
+    logger.info("Admin created successfully.")
+    logger.info("Email: admin@docbook.com")
+    logger.info("Password: Admin@123")
 
 
 if __name__ == "__main__":
