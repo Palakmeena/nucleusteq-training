@@ -123,7 +123,10 @@ async def register_doctor(
         f"Doctor registered successfully: {user.email}. Awaiting admin approval."
     )
 
-    return UserMapper.to_response(user)
+    return UserMapper.to_response(
+    user=user,
+    doctor_id=str(doctor.id),
+)
 
 
 async def login_user(

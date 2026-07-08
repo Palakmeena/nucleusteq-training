@@ -8,7 +8,10 @@ class UserMapper:
     """Converts User documents into response DTOs."""
 
     @staticmethod
-    def to_response(user: User) -> UserResponse:
+    def to_response(
+        user: User,
+        doctor_id: str | None = None,
+    ) -> UserResponse:
         return UserResponse(
             id=str(user.id),
             full_name=user.full_name,
@@ -17,4 +20,5 @@ class UserMapper:
             role=user.role,
             is_active=user.is_active,
             created_at=user.created_at,
+            doctor_id=doctor_id,
         )
