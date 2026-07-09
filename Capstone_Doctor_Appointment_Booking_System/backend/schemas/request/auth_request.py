@@ -4,6 +4,15 @@ import re
 
 from pydantic import BaseModel, EmailStr, field_validator
 
+from constants.validation_constants import (
+    INVALID_PHONE,
+    NAME_MIN_LENGTH,
+    NAME_ONLY_ALPHABETS,
+    PASSWORD_LENGTH,
+    PASSWORD_SPECIAL_CHARACTER,
+    PASSWORD_UPPERCASE,
+)
+
 
 class BaseUserRegisterRequest(BaseModel):
     """Shared validation for registration requests."""
@@ -19,10 +28,10 @@ class BaseUserRegisterRequest(BaseModel):
         """Ensure the name is long enough and alphabetic."""
 
         if len(value.strip()) < 2:
-            raise ValueError("Name must be at least 2 characters")
+            raise ValueError(NAME_MIN_LENGTH)
 
         if not re.fullmatch(r"[A-Za-z\s]+", value):
-            raise ValueError("Name must contain alphabets only")
+            raise ValueError(NAME_ONLY_ALPHABETS)
 
         return value
 
@@ -32,7 +41,7 @@ class BaseUserRegisterRequest(BaseModel):
         """Ensure the phone number has exactly 10 digits."""
 
         if not re.fullmatch(r"\d{10}", value):
-            raise ValueError("Phone must be exactly 10 digits")
+            raise ValueError(INVALID_PHONE)
 
         return value
 
@@ -42,19 +51,13 @@ class BaseUserRegisterRequest(BaseModel):
         """Ensure the password follows the required complexity rules."""
 
         if len(value) < 8 or len(value) > 12:
-            raise ValueError(
-                "Password must be between 8 and 12 characters"
-            )
+            raise ValueError(PASSWORD_LENGTH)
 
         if not re.search(r"[A-Z]", value):
-            raise ValueError(
-                "Password must contain at least one uppercase letter"
-            )
+            raise ValueError(PASSWORD_UPPERCASE)
 
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
-            raise ValueError(
-                "Password must contain at least one special character"
-            )
+            raise ValueError(PASSWORD_SPECIAL_CHARACTER)
 
         return value
 
