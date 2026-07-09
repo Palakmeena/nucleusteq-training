@@ -17,24 +17,28 @@ class AppointmentRepository:
         appointment_id: str,
         patient_id: str,
     ) -> Optional[Appointment]:
-        return await Appointment.find_one(
-            {
-                "_id": appointment_id,
-                "patient_id": patient_id,
-            }
-        )
+        """Find appointment by id and verify it belongs to the patient."""
+
+        appointment = await Appointment.get(appointment_id)
+
+        if appointment and appointment.patient_id == patient_id:
+            return appointment
+
+        return None
 
     async def find_by_id_and_doctor(
         self,
         appointment_id: str,
         doctor_id: str,
     ) -> Optional[Appointment]:
-        return await Appointment.find_one(
-            {
-                "_id": appointment_id,
-                "doctor_id": doctor_id,
-            }
-        )
+        """Find appointment by id and verify it belongs to the doctor."""
+
+        appointment = await Appointment.get(appointment_id)
+
+        if appointment and appointment.doctor_id == doctor_id:
+            return appointment
+
+        return None
 
     async def find_by_patient(self, patient_id: str):
         return await Appointment.find(
