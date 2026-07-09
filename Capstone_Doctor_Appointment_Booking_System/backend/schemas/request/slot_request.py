@@ -4,6 +4,12 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
+from constants.validation_constants import (
+    INVALID_DATE_FORMAT,
+    INVALID_TIME_FORMAT,
+    SLOT_DATE_IN_PAST,
+)
+
 
 class SlotCreateRequest(BaseModel):
     """Payload for creating a slot."""
@@ -18,12 +24,16 @@ class SlotCreateRequest(BaseModel):
         """Ensure the slot date uses the expected format and is not in the past."""
 
         try:
-            slot_date = datetime.strptime(value, "%Y-%m-%d").date()
+            slot_date = datetime.strptime(
+                value,
+                "%Y-%m-%d",
+            ).date()
+
         except ValueError:
-            raise ValueError("Date must be in YYYY-MM-DD format")
+            raise ValueError(INVALID_DATE_FORMAT)
 
         if slot_date < datetime.utcnow().date():
-            raise ValueError("Slot date cannot be in the past")
+            raise ValueError(SLOT_DATE_IN_PAST)
 
         return value
 
@@ -33,9 +43,13 @@ class SlotCreateRequest(BaseModel):
         """Ensure slot times use the expected 24-hour format."""
 
         try:
-            datetime.strptime(value, "%H:%M")
+            datetime.strptime(
+                value,
+                "%H:%M",
+            )
+
         except ValueError:
-            raise ValueError("Time must be in HH:MM format")
+            raise ValueError(INVALID_TIME_FORMAT)
 
         return value
 
@@ -56,12 +70,16 @@ class SlotUpdateRequest(BaseModel):
             return value
 
         try:
-            slot_date = datetime.strptime(value, "%Y-%m-%d").date()
+            slot_date = datetime.strptime(
+                value,
+                "%Y-%m-%d",
+            ).date()
+
         except ValueError:
-            raise ValueError("Date must be in YYYY-MM-DD format")
+            raise ValueError(INVALID_DATE_FORMAT)
 
         if slot_date < datetime.utcnow().date():
-            raise ValueError("Slot date cannot be in the past")
+            raise ValueError(SLOT_DATE_IN_PAST)
 
         return value
 
@@ -74,8 +92,12 @@ class SlotUpdateRequest(BaseModel):
             return value
 
         try:
-            datetime.strptime(value, "%H:%M")
+            datetime.strptime(
+                value,
+                "%H:%M",
+            )
+
         except ValueError:
-            raise ValueError("Time must be in HH:MM format")
+            raise ValueError(INVALID_TIME_FORMAT)
 
         return value
