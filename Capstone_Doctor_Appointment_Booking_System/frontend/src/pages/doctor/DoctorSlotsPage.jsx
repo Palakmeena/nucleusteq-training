@@ -18,12 +18,10 @@ import Input from '../../components/inputs/Input';
 import EmptyState from '../../components/emptyState/EmptyState';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import slotApi from '../../api/slotApi';
-import { useDoctorProfileId } from '../../hooks/useDoctorProfile';
 import { showError } from '../../utils/errorHandler';
 import { formatDate } from '../../utils/formatters';
 
 const DoctorSlotsPage = () => {
-  const { doctorId, loading: profileLoading } = useDoctorProfileId();
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,10 +36,9 @@ const DoctorSlotsPage = () => {
   });
 
   const fetchSlots = async () => {
-    if (!doctorId) return;
     try {
       setLoading(true);
-      const res = await slotApi.getSlotsByDoctor(doctorId);
+      const res = await slotApi.getMySlots();
       setSlots(res.data || []);
     } catch (error) {
       showError(error, 'Failed to load slots');
@@ -51,9 +48,8 @@ const DoctorSlotsPage = () => {
   };
 
   useEffect(() => {
-    if (doctorId) fetchSlots();
-    else if (!profileLoading) setLoading(false);
-  }, [doctorId, profileLoading]);
+    fetchSlots();
+  }, []);
 
   const openCreate = () => {
     setEditingSlot(null);
@@ -101,8 +97,6 @@ const DoctorSlotsPage = () => {
       showError(error, 'Failed to delete slot');
     }
   };
-
-  if (profileLoading) return <LoadingSpinner message="Loading profile..." />;
 
   return (
     <Box>

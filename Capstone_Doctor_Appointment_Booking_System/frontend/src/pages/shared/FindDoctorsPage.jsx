@@ -39,31 +39,27 @@ const FindDoctorsPage = () => {
         subtitle="Search verified specialists and book appointments online"
       />
 
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <FilterPanel filters={filters} onChange={handleFilterChange} onReset={resetFilters} />
-        </Grid>
+      <Box sx={{ mb: 3 }}>
+        <FilterPanel filters={filters} onChange={handleFilterChange} onReset={resetFilters} horizontal />
+      </Box>
 
-        <Grid size={{ xs: 12, md: 9 }}>
-          {loading ? (
-            <ListSkeleton count={4} />
-          ) : filteredDoctors.length > 0 ? (
-            <Grid container spacing={3}>
-              {filteredDoctors.map((doctor) => (
-                <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={doctor.id}>
-                  <DoctorCard doctor={doctor} />
-                </Grid>
-              ))}
+      {loading ? (
+        <ListSkeleton count={4} />
+      ) : filteredDoctors.length > 0 ? (
+        <Grid container spacing={3}>
+          {filteredDoctors.map((doctor) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={doctor.id}>
+              <DoctorCard doctor={doctor} />
             </Grid>
-          ) : (
-            <EmptyState
-              icon={MedicalIcon}
-              title="No doctors found"
-              description="Try adjusting your search or filters"
-            />
-          )}
+          ))}
         </Grid>
-      </Grid>
+      ) : (
+        <EmptyState
+          icon={MedicalIcon}
+          title="No doctors found"
+          description="Try adjusting your search or filters"
+        />
+      )}
     </Box>
   );
 };

@@ -11,6 +11,7 @@ from schemas.response.slot_response import SlotResponse
 from services.slot_service import (
     create_slot,
     delete_slot,
+    get_my_slots as get_my_slots_service,
     get_slots_by_doctor,
     update_slot,
 )
@@ -82,4 +83,18 @@ async def get_doctor_slots(
 
     return await get_slots_by_doctor(
         doctor_id
+    )
+
+
+@router.get(
+    "/doctor",
+    response_model=list[SlotResponse],
+)
+async def get_doctor_slots_self(
+    current_user: dict = Depends(require_doctor),
+):
+    """List all slots for the current doctor (including booked)."""
+
+    return await get_my_slots_service(
+        user_id=current_user["sub"],
     )

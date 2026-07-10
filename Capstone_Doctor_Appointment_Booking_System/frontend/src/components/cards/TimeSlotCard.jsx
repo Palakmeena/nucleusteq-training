@@ -24,6 +24,11 @@ const TimeSlotCard = ({ slot, selected, onSelect, disabled }) => (
         <Typography variant="caption" color="text.secondary">
           to {slot.end_time}
         </Typography>
+        {disabled && (
+          <Typography variant="caption" color="error" fontWeight={600}>
+            Booked
+          </Typography>
+        )}
       </Stack>
     </CardContent>
   </Card>

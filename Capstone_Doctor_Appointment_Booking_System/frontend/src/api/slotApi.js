@@ -8,6 +8,8 @@ const slotApi = {
   deleteSlot: (id) => api.delete(`/slots/${id}`),
 
   getSlotsByDoctor: (doctorId) => api.get(`/slots/doctor/${doctorId}`),
+
+  getDoctorSlots: () => api.get('/slots/doctor'),
 };
 
 export default slotApi;

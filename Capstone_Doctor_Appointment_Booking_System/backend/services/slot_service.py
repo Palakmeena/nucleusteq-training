@@ -210,8 +210,28 @@ async def get_slots_by_doctor(
 ) -> list[SlotResponse]:
     """Retrieve all available slots for a doctor."""
 
-    slots = await slot_repo.find_available_by_doctor(
+    slots = await slot_repo.find_all_by_doctor(
         doctor_id
+    )
+
+    return [
+        SlotMapper.to_response(slot)
+        for slot in slots
+    ]
+
+
+async def get_my_slots(
+    user_id: str,
+) -> list[SlotResponse]:
+    """Retrieve all slots for the current doctor (including booked)."""
+
+    doctor = await doctor_repo.find_by_user_id(user_id)
+
+    if not doctor:
+        raise DoctorNotFoundException()
+
+    slots = await slot_repo.find_all_by_doctor(
+        str(doctor.id)
     )
 
     return [

@@ -10,6 +10,8 @@ const adminApi = {
   activateDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/activate`),
 
   deactivateDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/deactivate`),
+
+  getRecentAppointments: () => api.get('/admin/appointments/recent'),
 };
 
 export default adminApi;

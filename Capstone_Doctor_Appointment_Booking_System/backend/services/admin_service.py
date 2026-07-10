@@ -136,3 +136,11 @@ async def get_dashboard_stats() -> DashboardResponse:
         completed_appointments=completed,
         cancelled_appointments=cancelled,
     )
+
+
+async def get_recent_appointments():
+    """Return recent appointments for the admin dashboard."""
+
+    appointments = await appointment_repo.find_all()
+    
+    return appointments[:10]

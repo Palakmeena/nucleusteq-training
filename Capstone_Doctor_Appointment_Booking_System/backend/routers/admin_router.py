@@ -12,6 +12,7 @@ from services.admin_service import (
     get_all_doctors,
     get_all_users,
     get_dashboard_stats,
+    get_recent_appointments,
 )
 
 router = APIRouter(
@@ -87,3 +88,14 @@ async def deactivate(
     return await deactivate_doctor(
         doctor_id
     )
+
+
+@router.get(
+    "/appointments/recent",
+)
+async def recent_appointments(
+    current_user: dict = Depends(require_admin),
+):
+    """List recent appointments."""
+
+    return await get_recent_appointments()

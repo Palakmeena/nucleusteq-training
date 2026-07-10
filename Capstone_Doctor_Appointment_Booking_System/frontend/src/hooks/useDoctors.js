@@ -13,24 +13,12 @@ export const useDoctors = (initialFilters = {}) => {
       const params = {};
       if (filters.name) params.name = filters.name;
       if (filters.specialization) params.specialization = filters.specialization;
+      if (filters.location) params.location = filters.location;
+      if (filters.minExperience) params.min_experience = Number(filters.minExperience);
+      if (filters.maxFee) params.max_fee = Number(filters.maxFee);
 
       const response = await doctorApi.getDoctors(params);
       let results = response.data || [];
-
-      if (filters.location) {
-        const loc = filters.location.toLowerCase();
-        results = results.filter((d) =>
-          d.clinic_address?.toLowerCase().includes(loc)
-        );
-      }
-
-      if (filters.minExperience) {
-        results = results.filter((d) => d.experience >= Number(filters.minExperience));
-      }
-
-      if (filters.maxFee) {
-        results = results.filter((d) => d.consultation_fee <= Number(filters.maxFee));
-      }
 
       setDoctors(results);
     } catch (error) {

@@ -246,6 +246,7 @@ function App() {
             <Route path="/find-doctors" element={<FindDoctorsPage />} />
             <Route path="/doctor/:id" element={<SharedDoctorProfilePage />} />
             <Route path="/appointments" element={<PatientAppointmentsPage />} />
+            <Route path="/appointments/:id/payment" element={<PaymentPage />} />
             <Route path="/payment" element={<PaymentPage />} />
             <Route
               path="/appointment-success"

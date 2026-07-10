@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import PageHeader from '../../components/common/PageHeader';
 import AppointmentCard from '../../components/cards/AppointmentCard';
 import ConfirmationDialog from '../../components/dialogs/ConfirmationDialog';
+import PaymentModal from '../../components/dialogs/PaymentModal';
 import EmptyState from '../../components/emptyState/EmptyState';
 import Button from '../../components/buttons/Button';
 import { ListSkeleton } from '../../components/loading/SkeletonLoader';
@@ -19,19 +20,21 @@ const PatientAppointmentsPage = () => {
   const { appointments, loading, refetch } = useAppointments('PATIENT');
   const [tab, setTab] = useState(0);
   const [cancelId, setCancelId] = useState(null);
-  const [doctorNames, setDoctorNames] = useState({});
+  const [paymentId, setPaymentId] = useState(null);
+  const [paying, setPaying] = useState(false);
+  const [doctorsCache, setDoctorsCache] = useState({});
 
   useEffect(() => {
     appointments.forEach(async (a) => {
-      if (doctorNames[a.doctor_id]) return;
+      if (doctorsCache[a.doctor_id]) return;
       try {
         const res = await doctorApi.getDoctorById(a.doctor_id);
-        setDoctorNames((prev) => ({ ...prev, [a.doctor_id]: res.data.full_name }));
+        setDoctorsCache((prev) => ({ ...prev, [a.doctor_id]: res.data }));
       } catch {
         // ignore
       }
     });
-  }, [appointments, doctorNames]);
+  }, [appointments, doctorsCache]);
 
   const filtered = useMemo(() => {
     if (tab === 0) return appointments.filter((a) => UPCOMING_STATUSES.includes(a.status));
@@ -47,6 +50,20 @@ const PatientAppointmentsPage = () => {
       refetch();
     } catch (error) {
       showError(error, 'Failed to cancel appointment');
+    }
+  };
+
+  const handlePay = async () => {
+    try {
+      setPaying(true);
+      await appointmentApi.pay(paymentId);
+      toast.success('Payment successful!');
+      setPaymentId(null);
+      refetch();
+    } catch (error) {
+      showError(error, 'Payment failed');
+    } finally {
+      setPaying(false);
     }
   };
 
@@ -75,11 +92,11 @@ const PatientAppointmentsPage = () => {
           <AppointmentCard
             key={a.id}
             appointment={a}
-            doctorName={doctorNames[a.doctor_id] ? `Dr. ${doctorNames[a.doctor_id]}` : undefined}
+            doctorName={doctorsCache[a.doctor_id] ? `Dr. ${doctorsCache[a.doctor_id].full_name}` : undefined}
             onCancel={() => setCancelId(a.id)}
             actions={
               a.status === 'PENDING' && a.payment_status === 'PENDING' ? (
-                <Button size="small" onClick={() => navigate(`/appointments/${a.id}/payment`)}>
+                <Button size="small" onClick={() => setPaymentId(a.id)}>
                   Pay Now
                 </Button>
               ) : null
@@ -98,6 +115,16 @@ const PatientAppointmentsPage = () => {
         message="Are you sure? Cancellations within 2 hours of the appointment may not be allowed."
         confirmText="Cancel Appointment"
         severity="warning"
+      />
+      <PaymentModal
+        open={!!paymentId}
+        onClose={() => setPaymentId(null)}
+        appointment={appointments.find((a) => a.id === paymentId)}
+        doctor={paymentId ? doctorsCache[appointments.find((a) => a.id === paymentId)?.doctor_id] : null}
+        onSuccess={() => {
+          setPaymentId(null);
+          refetch();
+        }}
       />
     </Box>
   );

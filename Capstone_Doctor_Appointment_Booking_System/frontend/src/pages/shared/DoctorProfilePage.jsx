@@ -28,6 +28,7 @@ import doctorApi from '../../api/doctorApi';
 import slotApi from '../../api/slotApi';
 import appointmentApi from '../../api/appointmentApi';
 import { useAuth } from '../../context/AuthContext';
+import PaymentModal from '../../components/dialogs/PaymentModal';
 import TimeSlotCard from '../../components/cards/TimeSlotCard';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import EmptyState from '../../components/emptyState/EmptyState';
@@ -44,6 +45,7 @@ const DoctorProfilePage = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
+  const [paymentAppointment, setPaymentAppointment] = useState(null);
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
@@ -75,14 +77,14 @@ const DoctorProfilePage = () => {
   }, [id, selectedDate]);
 
   const slotsForDate = useMemo(
-    () => slots.filter((s) => s.date === selectedDate && !s.is_booked),
+    () => slots.filter((s) => s.date === selectedDate),
     [slots, selectedDate]
   );
 
   const handleBook = async () => {
     if (!isAuthenticated) {
       toast.info('Please sign in to book an appointment');
-      navigate('/login', { state: { from: `/doctors/${id}` } });
+      navigate('/login', { state: { from: `/doctor/${id}` } });
       return;
     }
     if (!selectedSlot) {
@@ -98,9 +100,7 @@ const DoctorProfilePage = () => {
         appointment_date: selectedDate,
       });
       toast.success('Appointment reserved! Complete payment to confirm.');
-      navigate(`/appointments/${res.data.id}/payment`, {
-        state: { appointment: res.data, doctor },
-      });
+      setPaymentAppointment(res.data);
     } catch (error) {
       showError(error, 'Failed to book appointment');
     } finally {
@@ -220,6 +220,7 @@ const DoctorProfilePage = () => {
                           slot={slot}
                           selected={selectedSlot?.id === slot.id}
                           onSelect={setSelectedSlot}
+                          disabled={slot.is_booked}
                         />
                       </Grid>
                     ))}
@@ -266,6 +267,20 @@ const DoctorProfilePage = () => {
           </CardContent>
         </Card>
       )}
+
+      <PaymentModal
+        open={!!paymentAppointment}
+        onClose={() => setPaymentAppointment(null)}
+        appointment={paymentAppointment}
+        doctor={doctor}
+        onSuccess={() => {
+          setPaymentAppointment(null);
+          navigate('/appointments/success', {
+            state: { appointment: paymentAppointment, doctor },
+            replace: true,
+          });
+        }}
+      />
     </Box>
   );
 };

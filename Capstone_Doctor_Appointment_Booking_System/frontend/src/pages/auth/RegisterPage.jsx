@@ -86,7 +86,7 @@ const RegisterPage = () => {
 
           <div className="auth-brand-text">
             <h2>Join thousands of healthcare professionals</h2>
-            <p>Whether you're a patient looking for care or a doctor ready to serve — MedPulse has you covered.</p>
+            <p>Whether you're a patient looking for care or a doctor ready to serve, MedPulse has you covered.</p>
           </div>
 
           <div className="auth-register-pills">
@@ -390,7 +390,7 @@ const RegisterPage = () => {
                       >
                         <option value="">Select specialization</option>
                         {SPECIALIZATIONS.map((s) => (
-                          <option key={s} value={s}>{s}</option>
+                          <option key={s.value} value={s.value}>{s.label}</option>
                         ))}
                       </select>
                     </div>

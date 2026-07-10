@@ -42,3 +42,7 @@ SLOT_DATE_IN_PAST = (
 APPOINTMENT_DATE_IN_PAST = (
     "Appointment date cannot be in the past"
 )
+
+SLOT_TIME_IN_PAST = (
+    "Time cannot be in the past"
+)

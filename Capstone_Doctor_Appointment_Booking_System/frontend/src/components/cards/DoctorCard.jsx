@@ -51,11 +51,11 @@ const DoctorCard = ({ doctor }) => (
           fullWidth
           startIcon={<CalendarIcon />}
           component={Link}
-          to={`/doctors/${doctor.id}`}
+          to={`/doctor/${doctor.id}`}
         >
           Book Appointment
         </Button>
-        <Button variant="outlined" component={Link} to={`/doctors/${doctor.id}`}>
+        <Button variant="outlined" component={Link} to={`/doctor/${doctor.id}`}>
           Profile
         </Button>
       </Stack>

@@ -8,6 +8,7 @@ from constants.validation_constants import (
     INVALID_DATE_FORMAT,
     INVALID_TIME_FORMAT,
     SLOT_DATE_IN_PAST,
+    SLOT_TIME_IN_PAST,
 )
 
 
@@ -85,19 +86,36 @@ class SlotUpdateRequest(BaseModel):
 
     @field_validator("start_time", "end_time")
     @classmethod
-    def validate_time(cls, value):
-        """Ensure the updated times stay valid when provided."""
+    def validate_time(cls, value, info):
+        """Ensure the updated times stay valid when provided and not in the past for today."""
 
         if value is None:
             return value
 
         try:
-            datetime.strptime(
+            parsed_time = datetime.strptime(
                 value,
                 "%H:%M",
             )
 
         except ValueError:
             raise ValueError(INVALID_TIME_FORMAT)
+
+        # Check if time is in the past when date is today
+        if info.data.get("date"):
+            try:
+                slot_date = datetime.strptime(
+                    info.data["date"],
+                    "%Y-%m-%d",
+                ).date()
+                today = datetime.utcnow().date()
+                
+                if slot_date == today:
+                    now = datetime.utcnow()
+                    slot_datetime = datetime.combine(today, parsed_time.time())
+                    if slot_datetime < now:
+                        raise ValueError(SLOT_TIME_IN_PAST)
+            except:
+                pass
 
         return value

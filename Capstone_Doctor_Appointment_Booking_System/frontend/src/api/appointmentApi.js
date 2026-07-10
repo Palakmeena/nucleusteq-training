@@ -7,7 +7,7 @@ const appointmentApi = {
 
   cancel: (appointmentId) => api.delete(`/appointments/${appointmentId}`),
 
-  getMyAppointments: () => api.get('/appointments/my'),
+  getMyAppointments: () => api.get('/appointments/patient'),
 
   getDoctorAppointments: () => api.get('/appointments/doctor'),
 

@@ -19,17 +19,20 @@ import { showError } from '../../utils/errorHandler';
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [dashRes, doctorsRes] = await Promise.all([
+        const [dashRes, doctorsRes, apptsRes] = await Promise.all([
           adminApi.getDashboard(),
           adminApi.getDoctors(),
+          adminApi.getRecentAppointments(),
         ]);
         setStats(dashRes.data);
         setDoctors((doctorsRes.data || []).slice(0, 5));
+        setAppointments(apptsRes.data || []);
       } catch (error) {
         showError(error, 'Failed to load dashboard');
       } finally {
@@ -139,47 +142,94 @@ const AdminDashboard = () => {
         </Grid>
       </Grid>
 
-      <Card>
-        <CardContent>
-          <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
-            Recent Doctor Registrations
-          </Typography>
-          {doctors.length > 0 ? (
-            <Stack spacing={2}>
-              {doctors.map((d) => (
-                <Card
-                  key={d.id}
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    transition: 'all 0.2s',
-                    '&:hover': { borderColor: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
-                  }}
-                >
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main', width: 48, height: 48 }}>
-                      <DoctorsIcon />
-                    </Avatar>
-                    <Stack flex={1}>
-                      <Typography fontWeight={600}>Dr. {d.full_name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {d.specialization} · {d.license_number}
-                      </Typography>
-                    </Stack>
-                    <StatusChip status={d.is_active ? 'ACTIVE' : 'INACTIVE'} />
-                  </Stack>
-                </Card>
-              ))}
-            </Stack>
-          ) : (
-            <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-              No recent doctor registrations
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
+                Recent Doctor Registrations
+              </Typography>
+              {doctors.length > 0 ? (
+                <Stack spacing={2}>
+                  {doctors.map((d) => (
+                    <Card
+                      key={d.id}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'all 0.2s',
+                        '&:hover': { borderColor: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
+                      }}
+                    >
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main', width: 48, height: 48 }}>
+                          <DoctorsIcon />
+                        </Avatar>
+                        <Stack flex={1}>
+                          <Typography fontWeight={600}>Dr. {d.full_name}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {d.specialization} · {d.license_number}
+                          </Typography>
+                        </Stack>
+                        <StatusChip status={d.is_active ? 'ACTIVE' : 'INACTIVE'} />
+                      </Stack>
+                    </Card>
+                  ))}
+                </Stack>
+              ) : (
+                <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                  No recent doctor registrations
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
+                Recent Appointments
+              </Typography>
+              {appointments.length > 0 ? (
+                <Stack spacing={2}>
+                  {appointments.map((a) => (
+                    <Card
+                      key={a.id}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'all 0.2s',
+                        '&:hover': { borderColor: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
+                      }}
+                    >
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Avatar sx={{ bgcolor: 'info.light', color: 'info.main', width: 48, height: 48 }}>
+                          <AppointmentsIcon />
+                        </Avatar>
+                        <Stack flex={1}>
+                          <Typography fontWeight={600}>Appointment #{a.id?.slice(-6)}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {a.appointment_date} · Doctor: {a.doctor_id?.slice(-6)}
+                          </Typography>
+                        </Stack>
+                        <StatusChip status={a.status} />
+                      </Stack>
+                    </Card>
+                  ))}
+                </Stack>
+              ) : (
+                <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+                  No recent appointments
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

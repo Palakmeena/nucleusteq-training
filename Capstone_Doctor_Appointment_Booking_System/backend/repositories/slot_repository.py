@@ -1,6 +1,7 @@
 """Slot data access helpers."""
 
 from typing import Optional
+from bson import ObjectId
 
 from models.slot import Slot
 
@@ -20,12 +21,15 @@ class SlotRepository:
         slot_id: str,
         doctor_id: str,
     ) -> Optional[Slot]:
-        return await Slot.find_one(
-            {
-                "_id": slot_id,
-                "doctor_id": doctor_id,
-            }
-        )
+        try:
+            return await Slot.find_one(
+                {
+                    "_id": ObjectId(slot_id),
+                    "doctor_id": doctor_id,
+                }
+            )
+        except:
+            return None
 
     async def find_by_doctor_and_date(
         self,
@@ -47,6 +51,16 @@ class SlotRepository:
             {
                 "doctor_id": doctor_id,
                 "is_booked": False,
+            }
+        ).to_list()
+
+    async def find_all_by_doctor(
+        self,
+        doctor_id: str,
+    ) -> list[Slot]:
+        return await Slot.find(
+            {
+                "doctor_id": doctor_id,
             }
         ).to_list()
 

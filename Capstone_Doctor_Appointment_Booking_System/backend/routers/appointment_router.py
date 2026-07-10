@@ -77,13 +77,13 @@ async def cancel(
 
 
 @router.get(
-    "/my",
+    "/patient",
     response_model=list[AppointmentResponse],
 )
-async def my_appointments(
+async def patient_appointments(
     current_user: dict = Depends(require_patient),
 ):
-    """List the current patient's appointments."""
+    """List appointments for the current patient."""
 
     return await get_patient_appointments(
         patient_id=current_user["sub"],

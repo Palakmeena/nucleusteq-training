@@ -49,7 +49,10 @@ class DoctorRepository:
             }
 
         if specialization:
-            query["specialization"] = specialization
+            query["specialization"] = {
+                "$regex": specialization,
+                "$options": "i",
+            }
 
         if location:
             query["clinic_address"] = {
