@@ -79,7 +79,7 @@ const DateSection = ({ date, slots, selectedSlot, onSelect }) => (
         sx={{ bgcolor: '#f0fdf4', color: '#15803d', fontWeight: 600, fontSize: '0.65rem', height: 18 }}
       />
     </Stack>
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(108px, 1fr))', gap: 1.25 }}>
       {slots.map((slot) => (
         <TimeSlotCard
           key={slot.id}
@@ -202,7 +202,7 @@ const DoctorProfilePage = () => {
   }
 
   return (
-    <Box maxWidth={960} mx="auto">
+    <Box maxWidth={1120} mx="auto">
       {/* Back link */}
       <Button
         startIcon={<ArrowBackIcon />}
@@ -305,9 +305,9 @@ const DoctorProfilePage = () => {
       <Grid container spacing={3} alignItems="flex-start">
 
         {/* ── LEFT: Doctor details ── */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
               <Stack direction="row" spacing={1} alignItems="center" mb={2.5}>
                 <SchoolIcon color="primary" fontSize="small" />
                 <Typography variant="h6" fontWeight={700}>About</Typography>
@@ -326,9 +326,9 @@ const DoctorProfilePage = () => {
         </Grid>
 
         {/* ── RIGHT: Slot booking ── */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
               {/* Section header */}
               <Stack direction="row" spacing={1} alignItems="center" mb={3}>
                 <SlotIcon color="primary" fontSize="small" />
@@ -349,7 +349,7 @@ const DoctorProfilePage = () => {
                       sx={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', mb: 1 }}>
                       Select a Date
                     </Typography>
-                    <Stack direction="row" flexWrap="wrap" gap={1}>
+                    <Stack direction="row" flexWrap="wrap" gap={1.25}>
                       {availableDates.map(d => (
                         <Chip
                           key={d}
@@ -406,13 +406,15 @@ const DoctorProfilePage = () => {
                   {/* Book CTA */}
                   {selectedSlot && (
                     <Box
-                      mt={3} pt={3}
-                      borderTop="1px solid"
-                      borderColor="divider"
+                      mt={3} p={{ xs: 2, sm: 2.5 }}
+                      border="1px solid"
+                      borderColor="primary.light"
+                      borderRadius={2.5}
+                      bgcolor="rgba(37, 99, 235, 0.035)"
                     >
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between">
                         <Box>
-                          <Typography variant="body2" color="text.secondary">Selected slot</Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight={700} textTransform="uppercase" letterSpacing={0.6}>Selected slot</Typography>
                           <Typography variant="subtitle1" fontWeight={700}>
                             {formatDate(selectedSlot.date)} · {selectedSlot.start_time} – {selectedSlot.end_time}
                           </Typography>
@@ -422,7 +424,7 @@ const DoctorProfilePage = () => {
                           size="large"
                           onClick={handleBook}
                           disabled={booking}
-                          sx={{ px: 4, flexShrink: 0 }}
+                          sx={{ px: 3, minWidth: { sm: 210 }, flexShrink: 0 }}
                         >
                           {booking ? 'Booking…' : `Confirm — ${formatCurrency(doctor.consultation_fee)}`}
                         </Button>

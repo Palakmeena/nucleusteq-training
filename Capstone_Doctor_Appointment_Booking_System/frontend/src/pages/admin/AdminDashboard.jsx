@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Grid, Card, CardContent, Stack, Avatar, Typography } from '@mui/material';
 import {
@@ -6,7 +6,6 @@ import {
   People as PatientsIcon,
   CalendarMonth as AppointmentsIcon,
   CheckCircle as CompletedIcon,
-  Cancel as CancelledIcon,
   EventAvailable as ActiveIcon,
 } from '@mui/icons-material';
 import DashboardCard from '../../components/cards/DashboardCard';
@@ -14,6 +13,7 @@ import StatusChip from '../../components/common/StatusChip';
 import Button from '../../components/buttons/Button';
 import { DashboardSkeleton } from '../../components/loading/SkeletonLoader';
 import adminApi from '../../api/adminApi';
+import appointmentApi from '../../api/appointmentApi';
 import { showError } from '../../utils/errorHandler';
 
 const AdminDashboard = () => {
@@ -28,11 +28,15 @@ const AdminDashboard = () => {
         const [dashRes, doctorsRes, apptsRes] = await Promise.all([
           adminApi.getDashboard(),
           adminApi.getDoctors(),
-          adminApi.getRecentAppointments(),
+          appointmentApi.getAdminAppointments(),
         ]);
         setStats(dashRes.data);
         setDoctors((doctorsRes.data || []).slice(0, 5));
-        setAppointments(apptsRes.data || []);
+        setAppointments(
+          [...(apptsRes.data || [])]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 5)
+        );
       } catch (error) {
         showError(error, 'Failed to load dashboard');
       } finally {
@@ -44,7 +48,7 @@ const AdminDashboard = () => {
 
   if (loading) return <DashboardSkeleton />;
 
-  const totalPatients = (stats?.total_users || 0) - (stats?.total_doctors || 0);
+  const totalPatients = stats?.total_patients ?? 0;
 
   return (
     <Box sx={{ p: 3 }}>
@@ -166,17 +170,21 @@ const AdminDashboard = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
-                Recent Appointments
-              </Typography>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+                <Box>
+                  <Typography variant="h6" fontWeight={700}>Recent appointments</Typography>
+                  <Typography variant="body2" color="text.secondary">Latest bookings across the platform</Typography>
+                </Box>
+                <Button component={Link} to="/admin/appointments" variant="text" sx={{ px: 1 }}>View all</Button>
+              </Stack>
               {appointments.length > 0 ? (
-                <Stack spacing={2}>
+                <Stack spacing={1.25}>
                   {appointments.map((a) => (
                     <Card
                       key={a.id}
                       sx={{
-                        p: 2,
+                        p: { xs: 1.5, sm: 2 },
                         borderRadius: 2,
                         border: '1px solid',
                         borderColor: 'divider',
@@ -184,12 +192,14 @@ const AdminDashboard = () => {
                         '&:hover': { borderColor: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
                       }}
                     >
-                      <Stack direction="row" spacing={2} alignItems="center">
+                      <Stack direction="row" spacing={1.5} alignItems="center">
                         <Avatar sx={{ bgcolor: 'info.light', color: 'info.main', width: 48, height: 48 }}>
                           <AppointmentsIcon />
                         </Avatar>
-                        <Stack flex={1}>
-                          <Typography fontWeight={600}>Appointment #{a.id?.slice(-6)}</Typography>
+                        <Stack flex={1} minWidth={0} spacing={0.25}>
+                          <Typography fontWeight={700} noWrap>
+                            {a.patient_name || 'Patient'} with Dr. {a.doctor_name || 'Doctor'}
+                          </Typography>
                           <Typography variant="body2" color="text.secondary">
                             {a.appointment_date} · Doctor: {a.doctor_id?.slice(-6)}
                           </Typography>

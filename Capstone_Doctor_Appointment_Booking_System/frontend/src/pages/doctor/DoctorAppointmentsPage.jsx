@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Paper, Tab, Tabs } from '@mui/material';
 import { toast } from 'react-toastify';
 import PageHeader from '../../components/common/PageHeader';
@@ -14,6 +15,7 @@ import dayjs from 'dayjs';
 
 const DoctorAppointmentsPage = () => {
   const { appointments, loading, refetch } = useAppointments('DOCTOR');
+  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null });
 
@@ -35,15 +37,12 @@ const DoctorAppointmentsPage = () => {
     }
   };
 
-  const handleCancelConfirm = async () => {
-    try {
-      await appointmentApi.updateStatus(cancelModal.appointmentId, 'CANCELLED');
-      toast.success('Appointment cancelled successfully');
-      setCancelModal({ open: false, appointmentId: null });
-      refetch();
-    } catch (error) {
-      showError(error, 'Failed to cancel appointment');
-    }
+  const handleCancelConfirm = () => {
+    const appointment = appointments.find((item) => item.id === cancelModal.appointmentId);
+    setCancelModal({ open: false, appointmentId: null });
+    navigate('/doctor/leave', {
+      state: { appointmentDate: appointment?.appointment_date },
+    });
   };
 
   return (
@@ -78,12 +77,11 @@ const DoctorAppointmentsPage = () => {
 
       <ConfirmationDialog
         open={cancelModal.open}
-        title="Cancel Appointment"
-        message="Are you sure you want to cancel this appointment? This action cannot be undone."
-        confirmText="Cancel Appointment"
-        confirmColor="error"
+        title="Request leave for this appointment?"
+        message="Continue to Leave & Availability to provide the dates and reason for your unavailability. The appointment will remain unchanged unless the leave request is approved."
+        confirmText="Continue to Leave Request"
         onConfirm={handleCancelConfirm}
-        onCancel={() => setCancelModal({ open: false, appointmentId: null })}
+        onClose={() => setCancelModal({ open: false, appointmentId: null })}
       />
     </Box>
   );

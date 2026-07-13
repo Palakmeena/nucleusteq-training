@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -65,22 +65,36 @@ const PaymentModal = ({ open, onClose, appointment, doctor, onSuccess }) => {
   ];
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogContent sx={{ p: { xs: 2, md: 4 } }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h5" fontWeight={800}>Complete Payment</Typography>
-          <IconButton onClick={onClose} size="small">
-            <CloseIcon />
-          </IconButton>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      scroll="paper"
+      slotProps={{ paper: { sx: { width: 'calc(100% - 32px)', maxWidth: 920, borderRadius: { xs: 2.5, sm: 3 }, m: 2, overflow: 'hidden', boxShadow: '0 24px 64px rgba(15, 23, 42, 0.24)' } } }}
+    >
+      <DialogContent sx={{ position: 'relative', p: { xs: 2.5, sm: 3.5, md: 4 } }}>
+        <IconButton
+          onClick={onClose}
+          aria-label="Close payment dialog"
+          sx={{ position: 'absolute', top: { xs: 16, sm: 20 }, right: { xs: 16, sm: 20 }, color: 'text.secondary', bgcolor: 'background.default', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+        <Box mb={3} pr={5}>
+          <Box>
+            <Typography variant="h5" fontWeight={800} lineHeight={1.2}>Complete payment</Typography>
+            <Typography variant="body2" color="text.secondary" mt={0.75}>Review your appointment and choose a payment method.</Typography>
+          </Box>
         </Box>
 
-        <Alert severity="info" sx={{ mb: 3 }} icon={<SecureIcon />}>
+        <Alert severity="info" sx={{ mb: 3, borderRadius: 2, '& .MuiAlert-message': { py: 0.25 } }} icon={<SecureIcon />}>
           This is a demo payment. No actual charges will be made.
         </Alert>
 
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={5}>
-            <Stack spacing={3}>
+        <Grid container spacing={{ xs: 2.5, md: 3 }}>
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Stack spacing={2.5} sx={{ p: { xs: 2.25, sm: 2.5 }, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 2.5, height: '100%' }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontSize: 28 }}>
                   {doctor?.full_name?.charAt(0) || 'D'}
@@ -97,8 +111,8 @@ const PaymentModal = ({ open, onClose, appointment, doctor, onSuccess }) => {
 
               <Divider />
 
-              <Stack spacing={2}>
-                <Typography variant="subtitle2" fontWeight={600} color="text.secondary">
+              <Stack spacing={1.5}>
+                <Typography variant="caption" fontWeight={700} color="text.secondary" letterSpacing={0.7}>
                   APPOINTMENT DETAILS
                 </Typography>
                 <Stack direction="row" spacing={2} alignItems="center">
@@ -117,45 +131,47 @@ const PaymentModal = ({ open, onClose, appointment, doctor, onSuccess }) => {
 
               <Divider />
 
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="body1" color="text.secondary">
+              <Stack spacing={0.5} sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(37, 99, 235, 0.06)' }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700} letterSpacing={0.5}>
                   Consultation Fee
                 </Typography>
-                <Typography variant="h5" color="primary.main" fontWeight={800}>
+                <Typography variant="h5" color="primary.main" fontWeight={800} lineHeight={1.15}>
                   {formatCurrency(doctor?.consultation_fee)}
                 </Typography>
               </Stack>
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={7}>
-            <Typography variant="h6" fontWeight={700} gutterBottom mb={2}>
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Typography variant="h6" fontWeight={700} mb={0.75}>
               Select Payment Method
             </Typography>
+            <Typography variant="body2" color="text.secondary" mb={2.25}>Choose how you would like to pay.</Typography>
 
             <RadioGroup value={method} onChange={(e) => setMethod(e.target.value)}>
-              <Stack spacing={2}>
+              <Stack spacing={1.5}>
                 {paymentMethods.map((pm) => (
                   <Paper
                     key={pm.value}
-                    elevation={method === pm.value ? 3 : 1}
+                      elevation={0}
                     sx={{
-                      p: 2,
+                      p: 1.75,
                       border: '2px solid',
                       borderColor: method === pm.value ? 'primary.main' : 'divider',
-                      borderRadius: 2,
+                      borderRadius: 2.5,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      '&:hover': { borderColor: method === pm.value ? 'primary.main' : 'primary.light' },
+                      bgcolor: method === pm.value ? 'rgba(37, 99, 235, 0.045)' : 'background.paper',
+                      '&:hover': { borderColor: 'primary.main', transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.10)' },
                     }}
                     onClick={() => setMethod(pm.value)}
                   >
                     <FormControlLabel
                       value={pm.value}
-                      control={<Radio />}
+                      control={<Radio size="small" />}
                       label={
-                        <Stack direction="row" spacing={2} alignItems="center" sx={{ ml: 1 }}>
-                          <Box sx={{ color: 'primary.main' }}>{pm.icon}</Box>
+                        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ ml: 0.5 }}>
+                          <Box sx={{ color: method === pm.value ? 'primary.main' : 'text.secondary', display: 'flex' }}>{pm.icon}</Box>
                           <Typography fontWeight={600}>{pm.label}</Typography>
                         </Stack>
                       }
@@ -166,14 +182,14 @@ const PaymentModal = ({ open, onClose, appointment, doctor, onSuccess }) => {
               </Stack>
             </RadioGroup>
 
-            <Divider sx={{ my: 3 }} />
+            <Divider sx={{ my: 2.5 }} />
 
-            <Stack spacing={2}>
+            <Stack spacing={1.5} sx={{ p: 2, borderRadius: 2, bgcolor: 'background.default' }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6" fontWeight={700}>
+                <Typography variant="body1" fontWeight={700}>
                   Total Amount
                 </Typography>
-                <Typography variant="h5" color="primary.main" fontWeight={800}>
+                <Typography variant="h6" color="primary.main" fontWeight={800}>
                   {formatCurrency(doctor?.consultation_fee)}
                 </Typography>
               </Stack>
@@ -182,7 +198,7 @@ const PaymentModal = ({ open, onClose, appointment, doctor, onSuccess }) => {
             <Button
               fullWidth
               size="large"
-              sx={{ mt: 3, py: 2.5 }}
+              sx={{ mt: 2.5, py: 1.75, borderRadius: 2.5 }}
               loading={paying}
               onClick={handlePay}
               startIcon={<SecureIcon />}

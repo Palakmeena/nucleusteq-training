@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Box, Card, CardContent, Tabs, Tab, Paper } from '@mui/material';
+import { useState, useMemo } from 'react';
+import { Box, Tabs, Tab, Paper, Stack, Chip } from '@mui/material';
 import PageHeader from '../../components/common/PageHeader';
 import AppointmentCard from '../../components/cards/AppointmentCard';
 import EmptyState from '../../components/emptyState/EmptyState';
@@ -13,9 +13,9 @@ const AdminAppointmentsPage = () => {
 
   const filtered = useMemo(() => {
     const today = dayjs().format('YYYY-MM-DD');
-    if (tab === 0) return appointments.filter((a) => a.appointment_date === today);
-    if (tab === 1) return appointments.filter((a) => a.appointment_date > today);
-    if (tab === 2) return appointments.filter((a) => a.appointment_date < today);
+    if (tab === 1) return appointments.filter((a) => a.appointment_date === today);
+    if (tab === 2) return appointments.filter((a) => a.appointment_date > today);
+    if (tab === 3) return appointments.filter((a) => a.appointment_date < today);
     return appointments;
   }, [appointments, tab]);
 
@@ -26,13 +26,16 @@ const AdminAppointmentsPage = () => {
         subtitle="Platform-wide appointment overview"
       />
 
-      <Paper sx={{ mb: 3 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)}>
-          <Tab label="Today" />
-          <Tab label="Upcoming" />
-          <Tab label="Past" />
-          <Tab label="All" />
-        </Tabs>
+      <Paper variant="outlined" sx={{ mb: 3, px: { xs: 1, sm: 2 }, py: 1.25 }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'center' }} gap={1}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
+            <Tab label={`All (${appointments.length})`} />
+            <Tab label="Today" />
+            <Tab label="Upcoming" />
+            <Tab label="Past" />
+          </Tabs>
+          <Chip label={`${filtered.length} shown`} size="small" color="primary" variant="outlined" />
+        </Stack>
       </Paper>
 
       {loading ? (
