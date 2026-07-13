@@ -30,7 +30,7 @@ async def seed_admin():
         return
 
     admin = User(
-        full_name="Super Admin",
+        full_name="Admin",
         email="admin@docbook.com",
         password_hash=hash_password("Admin@123"),
         phone="9999999999",

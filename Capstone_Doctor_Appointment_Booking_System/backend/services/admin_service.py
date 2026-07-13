@@ -57,8 +57,6 @@ async def get_all_doctors() -> list[DoctorResponse]:
     ]
 
 
-# ─── Part 1: Registration Approval ──────────────────────────────────────────
-
 async def approve_doctor(
     doctor_id: str,
 ) -> DoctorResponse:
@@ -71,9 +69,7 @@ async def approve_doctor(
 
     user = await user_repo.find_by_id(doctor.user_id)
 
-    # Set registration status to APPROVED
     doctor.status = DoctorStatus.APPROVED
-    # Also make the doctor available (is_active=True) upon approval
     doctor.is_active = True
 
     if user:
@@ -107,8 +103,6 @@ async def reject_doctor(
     return DoctorMapper.to_response(doctor)
 
 
-# ─── Part 2: Deactivation Request Management ────────────────────────────────
-
 async def get_all_deactivation_requests() -> list[DeactivationRequestAdminResponse]:
     """Return all deactivation requests for the admin panel."""
 
@@ -139,11 +133,8 @@ async def get_all_deactivation_requests() -> list[DeactivationRequestAdminRespon
 async def approve_deactivation_request(
     request_id: str,
 ) -> DeactivationRequestAdminResponse:
-    """Approve a doctor's deactivation request.
-
-    Sets the doctor as temporarily unavailable and removes all
-    unbooked slots within the approved date range.
-    """
+    """Approve a doctor's deactivation request."""
+    
 
     req = await deactivation_repo.find_by_id(request_id)
 
@@ -165,16 +156,34 @@ async def approve_deactivation_request(
         doctor.unavailable_to = req.end_date
         await doctor_repo.update(doctor)
 
-        # Auto-delete unbooked slots within the unavailable period
         deleted_count = await slot_repo.delete_unbooked_in_date_range(
             doctor_id=req.doctor_id,
             start_date=req.start_date,
             end_date=req.end_date,
         )
 
+        active_appointments = await appointment_repo.find_active_by_doctor_in_date_range(
+            doctor_id=req.doctor_id,
+            start_date=req.start_date,
+            end_date=req.end_date,
+        )
+
+        cancelled_count = 0
+        for appt in active_appointments:
+            appt.status = AppointmentStatus.CANCELLED
+            appt.updated_at = datetime.utcnow()
+            await appointment_repo.update(appt)
+
+            linked_slot = await slot_repo.find_by_id(appt.slot_id)
+            if linked_slot:
+                await slot_repo.delete(linked_slot)
+
+            cancelled_count += 1
+
         logger.info(
             f"Deactivation approved for doctor {req.doctor_id}. "
-            f"Deleted {deleted_count} unbooked slots in range "
+            f"Deleted {deleted_count} unbooked slots, "
+            f"cancelled {cancelled_count} appointments in range "
             f"{req.start_date} to {req.end_date}."
         )
 
@@ -232,7 +241,6 @@ async def reject_deactivation_request(
     )
 
 
-# ─── Dashboard ───────────────────────────────────────────────────────────────
 
 async def get_dashboard_stats() -> DashboardResponse:
     """Return summary counts for the admin dashboard."""

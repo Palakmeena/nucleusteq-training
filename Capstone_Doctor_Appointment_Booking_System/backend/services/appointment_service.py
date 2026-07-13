@@ -67,9 +67,7 @@ async def book_appointment(
     if not slot:
         raise SlotNotFoundException()
 
-    # -----------------------------
-    # Business Validations
-    # -----------------------------
+
 
     if slot.doctor_id != data.doctor_id:
         raise InvalidAppointmentStatusException()
@@ -85,14 +83,11 @@ async def book_appointment(
     if appointment_date < datetime.utcnow().date():
         raise InvalidAppointmentStatusException()
 
-    # -----------------------------
-    # Booking Validation
-    # -----------------------------
 
     if slot.is_booked:
         raise SlotAlreadyBookedException()
 
-    existing = await appointment_repo.find_by_slot(
+    existing = await appointment_repo.find_active_by_slot(
         data.slot_id,
     )
 

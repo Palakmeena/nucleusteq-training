@@ -40,17 +40,35 @@ class SlotCreateRequest(BaseModel):
 
     @field_validator("start_time", "end_time")
     @classmethod
-    def validate_time(cls, value: str) -> str:
-        """Ensure slot times use the expected 24-hour format."""
+    def validate_time(cls, value: str, info) -> str:
+        """Ensure slot times use the expected 24-hour format and are not in the past for today."""
 
         try:
-            datetime.strptime(
+            parsed_time = datetime.strptime(
                 value,
                 "%H:%M",
             )
 
         except ValueError:
             raise ValueError(INVALID_TIME_FORMAT)
+
+        if info.data.get("date"):
+            slot_date = datetime.strptime(
+                info.data["date"],
+                "%Y-%m-%d",
+            ).date()
+
+            today = datetime.utcnow().date()
+
+            if slot_date == today:
+                now = datetime.utcnow()
+                slot_datetime = datetime.combine(
+                    today,
+                    parsed_time.time(),
+                )
+
+                if slot_datetime < now:
+                    raise ValueError(SLOT_TIME_IN_PAST)
 
         return value
 
@@ -101,21 +119,22 @@ class SlotUpdateRequest(BaseModel):
         except ValueError:
             raise ValueError(INVALID_TIME_FORMAT)
 
-        # Check if time is in the past when date is today
         if info.data.get("date"):
-            try:
-                slot_date = datetime.strptime(
-                    info.data["date"],
-                    "%Y-%m-%d",
-                ).date()
-                today = datetime.utcnow().date()
-                
-                if slot_date == today:
-                    now = datetime.utcnow()
-                    slot_datetime = datetime.combine(today, parsed_time.time())
-                    if slot_datetime < now:
-                        raise ValueError(SLOT_TIME_IN_PAST)
-            except:
-                pass
+            slot_date = datetime.strptime(
+                info.data["date"],
+                "%Y-%m-%d",
+            ).date()
+
+            today = datetime.utcnow().date()
+
+            if slot_date == today:
+                now = datetime.utcnow()
+                slot_datetime = datetime.combine(
+                    today,
+                    parsed_time.time(),
+                )
+
+                if slot_datetime < now:
+                    raise ValueError(SLOT_TIME_IN_PAST)
 
         return value

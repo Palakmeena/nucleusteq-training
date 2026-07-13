@@ -72,7 +72,6 @@ async def create_slot(
     if start_time >= end_time:
         raise InvalidSlotTimeException()
 
-    # Check if the selected date and start time is in the past
     ist_tz = timezone(timedelta(hours=5, minutes=30))
     slot_datetime_str = f"{data.date} {data.start_time}"
     slot_datetime = datetime.strptime(slot_datetime_str, "%Y-%m-%d %H:%M").replace(tzinfo=ist_tz)

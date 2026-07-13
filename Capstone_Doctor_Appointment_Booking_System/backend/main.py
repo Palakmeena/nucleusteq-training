@@ -54,7 +54,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Register global exception handlers
 register_exception_handlers(app)
 
 app.add_middleware(

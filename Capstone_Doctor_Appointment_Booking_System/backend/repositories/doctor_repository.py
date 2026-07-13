@@ -1,5 +1,6 @@
 """Doctor data access helpers."""
 
+from datetime import date
 from typing import Optional
 
 from models.doctor import Doctor
@@ -51,11 +52,19 @@ class DoctorRepository:
         max_fee: float | None = None,
     ):
         """Search approved and available doctors using optional filters."""
+        
+        today = date.today().isoformat()  
 
-        # Only show doctors who are approved AND currently available (is_active=True)
+       
         query = {
             "status": DoctorStatus.APPROVED,
-            "is_active": True,
+            "$or": [
+                {"is_active": True},
+                {
+                    "is_active": False,
+                    "unavailable_to": {"$lt": today},
+                },
+            ],
         }
 
         if name:
@@ -86,9 +95,21 @@ class DoctorRepository:
                 "$lte": max_fee,
             }
 
-        return await Doctor.find(
-            query
-        ).to_list()
+        doctors = await Doctor.find(query).to_list()
+
+        
+        for doctor in doctors:
+            if (
+                not doctor.is_active
+                and doctor.unavailable_to is not None
+                and doctor.unavailable_to < today
+            ):
+                doctor.is_active = True
+                doctor.unavailable_from = None
+                doctor.unavailable_to = None
+                await doctor.save()
+
+        return doctors
 
     async def save(self, doctor: Doctor) -> Doctor:
         await doctor.insert()

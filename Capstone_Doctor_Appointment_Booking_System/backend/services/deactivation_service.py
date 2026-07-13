@@ -92,10 +92,9 @@ async def get_my_deactivation_requests(
 async def reactivate_self(
     user_id: str,
 ) -> dict:
-    """Allow a doctor to reactivate themselves immediately.
+    """Allow a doctor to reactivate themselves immediately."""
 
-    Does NOT require admin approval — only deactivation requests do.
-    """
+    
 
     doctor = await doctor_repo.find_by_user_id(user_id)
 

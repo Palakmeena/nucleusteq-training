@@ -61,7 +61,6 @@ async def doctors(
     return await get_all_doctors()
 
 
-# ─── Part 1: Registration Approval ──────────────────────────────────────────
 
 @router.patch(
     "/doctors/{doctor_id}/approve",
@@ -88,8 +87,6 @@ async def reject(
 
     return await reject_doctor(doctor_id)
 
-
-# ─── Part 2: Deactivation Request Management ────────────────────────────────
 
 @router.get(
     "/deactivation-requests",
@@ -128,8 +125,6 @@ async def reject_deactivation(
 
     return await reject_deactivation_request(request_id)
 
-
-# ─── Recent Appointments ─────────────────────────────────────────────────────
 
 @router.get(
     "/appointments/recent",

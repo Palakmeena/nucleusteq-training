@@ -1,5 +1,6 @@
 """Appointment data access helpers."""
 
+from datetime import datetime
 from typing import Optional
 
 from enums.appointment_status import AppointmentStatus
@@ -54,10 +55,19 @@ class AppointmentRepository:
             }
         ).to_list()
 
-    async def find_by_slot(self, slot_id: str) -> Optional[Appointment]:
+    async def find_active_by_slot(
+        self,
+        slot_id: str,
+    ) -> Optional[Appointment]:
+        """Find an appointment that still reserves a slot.
+
+        Cancelled appointments are retained for history but must not prevent
+        the slot from being booked again.
+        """
         return await Appointment.find_one(
             {
                 "slot_id": slot_id,
+                "status": {"$ne": AppointmentStatus.CANCELLED},
             }
         )
 
@@ -76,6 +86,24 @@ class AppointmentRepository:
                 "status": status,
             }
         ).count()
+
+    async def find_active_by_doctor_in_date_range(
+        self,
+        doctor_id: str,
+        start_date: str,
+        end_date: str,
+    ) -> list["Appointment"]:
+        """Return all non-cancelled appointments for a doctor within a date range."""
+        return await Appointment.find(
+            {
+                "doctor_id": doctor_id,
+                "appointment_date": {
+                    "$gte": start_date,
+                    "$lte": end_date,
+                },
+                "status": {"$nin": [AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED]},
+            }
+        ).to_list()
 
     async def save(self, appointment: Appointment) -> Appointment:
         await appointment.insert()
