@@ -14,6 +14,9 @@ const StatusChip = ({ status, sx }) => {
       INACTIVE: 'error',
       AVAILABLE: 'success',
       BOOKED: 'error',
+      // Doctor registration approval statuses
+      APPROVED: 'success',
+      REJECTED: 'error',
     };
     return statusMap[status] || 'default';
   };

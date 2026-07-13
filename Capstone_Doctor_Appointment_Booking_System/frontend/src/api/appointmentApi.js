@@ -11,6 +11,8 @@ const appointmentApi = {
 
   getDoctorAppointments: () => api.get('/appointments/doctor'),
 
+  getAdminAppointments: () => api.get('/appointments/admin'),
+
   updateStatus: (appointmentId, status) =>
     api.patch(`/appointments/${appointmentId}/status`, { status }),
 };

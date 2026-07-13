@@ -14,6 +14,7 @@ from schemas.response.doctor_response import (
 )
 from services.doctor_service import (
     get_doctor_by_id,
+    get_doctor_by_user_id,
     search_doctors,
     update_doctor_profile,
 )
@@ -22,6 +23,20 @@ router = APIRouter(
     prefix="/api/v1/doctors",
     tags=["Doctors"],
 )
+
+
+@router.get(
+    "/profile",
+    response_model=DoctorResponse,
+)
+async def get_profile(
+    current_user: dict = Depends(require_doctor),
+):
+    """Retrieve the current doctor's profile."""
+
+    return await get_doctor_by_user_id(
+        user_id=current_user["sub"],
+    )
 
 
 @router.put(

@@ -9,10 +9,14 @@ export const useAppointments = (role = 'PATIENT') => {
   const fetchAppointments = useCallback(async () => {
     try {
       setLoading(true);
-      const response =
-        role === 'DOCTOR'
-          ? await appointmentApi.getDoctorAppointments()
-          : await appointmentApi.getMyAppointments();
+      let response;
+      if (role === 'DOCTOR') {
+        response = await appointmentApi.getDoctorAppointments();
+      } else if (role === 'ADMIN') {
+        response = await appointmentApi.getAdminAppointments();
+      } else {
+        response = await appointmentApi.getMyAppointments();
+      }
       setAppointments(response.data || []);
     } catch (error) {
       showError(error, 'Failed to load appointments');

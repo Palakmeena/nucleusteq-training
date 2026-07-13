@@ -5,6 +5,8 @@ const doctorApi = {
 
   getDoctorById: (id) => api.get(`/doctors/${id}`),
 
+  getProfile: () => api.get('/doctors/profile'),
+
   updateProfile: (data) => api.put('/doctors/profile', data),
 };
 

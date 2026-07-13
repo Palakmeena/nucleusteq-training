@@ -64,6 +64,41 @@ class SlotRepository:
             }
         ).to_list()
 
+    async def find_unbooked_in_date_range(
+        self,
+        doctor_id: str,
+        start_date: str,
+        end_date: str,
+    ) -> list[Slot]:
+        """Return unbooked slots for a doctor within a date range (inclusive)."""
+        return await Slot.find(
+            {
+                "doctor_id": doctor_id,
+                "is_booked": False,
+                "date": {
+                    "$gte": start_date,
+                    "$lte": end_date,
+                },
+            }
+        ).to_list()
+
+    async def delete_unbooked_in_date_range(
+        self,
+        doctor_id: str,
+        start_date: str,
+        end_date: str,
+    ) -> int:
+        """Delete all unbooked slots for a doctor within a date range.
+        Returns the number of slots deleted."""
+        slots = await self.find_unbooked_in_date_range(
+            doctor_id, start_date, end_date
+        )
+        count = 0
+        for slot in slots:
+            await slot.delete()
+            count += 1
+        return count
+
     async def save(
         self,
         slot: Slot,

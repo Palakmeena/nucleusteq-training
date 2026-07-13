@@ -10,6 +10,8 @@ const slotApi = {
   getSlotsByDoctor: (doctorId) => api.get(`/slots/doctor/${doctorId}`),
 
   getDoctorSlots: () => api.get('/slots/doctor'),
+
+  getMySlots: () => api.get('/slots/doctor'),
 };
 
 export default slotApi;

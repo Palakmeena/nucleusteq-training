@@ -74,7 +74,7 @@ const AdminDashboard = () => {
       </Grid>
 
       <Grid container spacing={3} mb={4}>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: 12 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom mb={3}>
@@ -115,28 +115,6 @@ const AdminDashboard = () => {
                   </Button>
                 </Grid>
               </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)' }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} color="white" gutterBottom mb={2}>
-                Platform Health
-              </Typography>
-              <Typography variant="body2" color="rgba(255,255,255,0.9)" mb={3}>
-                System operating normally with all services active
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
-                  <Typography variant="caption" color="white">Uptime</Typography>
-                  <Typography variant="subtitle2" fontWeight={600} color="white">99.9%</Typography>
-                </Box>
-                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
-                  <Typography variant="caption" color="white">Response</Typography>
-                  <Typography variant="subtitle2" fontWeight={600} color="white">&lt;100ms</Typography>
-                </Box>
-              </Box>
             </CardContent>
           </Card>
         </Grid>

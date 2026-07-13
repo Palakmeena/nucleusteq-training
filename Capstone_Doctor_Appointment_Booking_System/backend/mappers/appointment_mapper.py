@@ -10,11 +10,15 @@ class AppointmentMapper:
     @staticmethod
     def to_response(
         appointment: Appointment,
+        patient_name: str | None = None,
+        doctor_name: str | None = None,
     ) -> AppointmentResponse:
         return AppointmentResponse(
             id=str(appointment.id),
             patient_id=appointment.patient_id,
             doctor_id=appointment.doctor_id,
+            patient_name=patient_name,
+            doctor_name=doctor_name,
             slot_id=appointment.slot_id,
             appointment_date=appointment.appointment_date,
             start_time=appointment.start_time,

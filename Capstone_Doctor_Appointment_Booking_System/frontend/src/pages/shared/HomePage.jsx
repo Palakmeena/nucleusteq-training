@@ -197,7 +197,7 @@ const HomePage = () => {
           </p>
 
           {/* Search bar */}
-          <div className="hero-search">
+          {/* <div className="hero-search">
             <div className="hero-search-field">
               <span className="hero-search-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -219,7 +219,7 @@ const HomePage = () => {
             <Link to="/doctors" className="hero-search-btn" id="hero-find-doctor-btn">
               Find Doctor
             </Link>
-          </div>
+          </div> */}
 
           {/* Social proof */}
           <div className="hero-proof">
@@ -261,11 +261,11 @@ const HomePage = () => {
                 </div>
                 <h3 className="feature-card-title">{f.title}</h3>
                 <p className="feature-card-desc">{f.desc}</p>
-                {f.featured && (
+                {/* {f.featured && (
                   <Link to="/doctors" className="feature-card-btn" id={`feature-${f.title.replace(/\s/g, '-').toLowerCase()}`}>
                     Start Now
                   </Link>
-                )}
+                )} */}
               </div>
             ))}
           </div>
@@ -284,9 +284,9 @@ const HomePage = () => {
               <Link to="/register" className="cta-btn cta-btn--primary" id="cta-get-started-btn">
                 Get Started for Free
               </Link>
-              <Link to="/doctors" className="cta-btn cta-btn--outline" id="cta-find-doctors-btn">
+              {/* <Link to="/doctors" className="cta-btn cta-btn--outline" id="cta-find-doctors-btn">
                 Browse Doctors
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

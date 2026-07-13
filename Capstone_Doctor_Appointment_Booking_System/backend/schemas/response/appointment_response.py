@@ -14,6 +14,8 @@ class AppointmentResponse(BaseModel):
     id: str
     patient_id: str
     doctor_id: str
+    patient_name: str | None = None
+    doctor_name: str | None = None
     slot_id: str
     appointment_date: str
     start_time: str

@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }) => {
           setUser({
             userId: decoded.sub,
             email: decoded.email,
-            role: decoded.role
+            role: decoded.role,
+            fullName: localStorage.getItem('fullName') || ''
           });
         }
       } catch (error) {
@@ -38,18 +39,24 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (token) => {
+  const login = (token, userData = {}) => {
     localStorage.setItem('token', token);
+    if (userData?.fullName) {
+      localStorage.setItem('fullName', userData.fullName);
+    }
     const decoded = jwtDecode(token);
     setUser({
       userId: decoded.sub,
       email: decoded.email,
-      role: decoded.role
+      role: decoded.role,
+      fullName: userData?.fullName || localStorage.getItem('fullName') || ''
     });
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('doctorProfileId');
     setUser(null);
   };
 

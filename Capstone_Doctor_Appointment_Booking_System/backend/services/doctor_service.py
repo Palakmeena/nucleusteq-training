@@ -92,3 +92,20 @@ async def update_doctor_profile(
     return DoctorMapper.to_response(
         doctor,
     )
+
+
+async def get_doctor_by_user_id(
+    user_id: str,
+) -> DoctorResponse:
+    """Retrieve a doctor profile by user id."""
+
+    doctor = await doctor_repo.find_by_user_id(
+        user_id,
+    )
+
+    if not doctor:
+        raise DoctorNotFoundException()
+
+    return DoctorMapper.to_response(
+        doctor,
+    )

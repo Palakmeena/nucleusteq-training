@@ -15,12 +15,14 @@ from models.patient import Patient
 from models.doctor import Doctor
 from models.slot import Slot
 from models.appointment import Appointment
+from models.deactivation_request import DeactivationRequest
 
 from routers.auth_router import router as auth_router
 from routers.admin_router import router as admin_router
 from routers.doctor_router import router as doctor_router
 from routers.slot_router import router as slot_router
 from routers.appointment_router import router as appointment_router
+from routers.deactivation_router import router as deactivation_router
 
 
 @asynccontextmanager
@@ -34,6 +36,7 @@ async def lifespan(app: FastAPI):
             Doctor,
             Slot,
             Appointment,
+            DeactivationRequest,
         ]
     )
 
@@ -67,6 +70,7 @@ app.include_router(admin_router)
 app.include_router(doctor_router)
 app.include_router(slot_router)
 app.include_router(appointment_router)
+app.include_router(deactivation_router)
 
 
 @app.get("/")

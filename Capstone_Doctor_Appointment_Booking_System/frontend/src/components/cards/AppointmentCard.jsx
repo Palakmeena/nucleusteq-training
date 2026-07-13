@@ -5,6 +5,7 @@ import {
   MedicalServices as DoctorIcon,
   Person as PersonIcon,
 } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import StatusChip from '../common/StatusChip';
 import { formatDate, formatTime } from '../../utils/formatters';
 
@@ -33,9 +34,19 @@ const AppointmentCard = ({
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
               <Box>
                 <Typography variant="subtitle1" fontWeight={700}>
-                  {view === 'doctor'
-                    ? patientLabel || `Patient ${appointment.patient_id?.slice(-6)}`
-                    : doctorName || `Doctor ${appointment.doctor_id?.slice(-6)}`}
+                  {view === 'admin' ? (
+                    `${patientLabel || appointment.patient_name || 'Patient'} ➔ ${doctorName || (appointment.doctor_name ? `Dr. ${appointment.doctor_name}` : 'Doctor')}`
+                  ) : view === 'doctor'
+                    ? appointment.patient_name || patientLabel || `Patient ${appointment.patient_id?.slice(-6)}`
+                    : (
+                      <Link
+                        to={`/doctor/${appointment.doctor_id}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                        className="doctor-profile-link"
+                      >
+                        {appointment.doctor_name ? `Dr. ${appointment.doctor_name}` : doctorName || `Doctor ${appointment.doctor_id?.slice(-6)}`}
+                      </Link>
+                    )}
                 </Typography>
                 <Stack direction="row" spacing={2} sx={{ mt: 0.5 }}>
                   <Stack direction="row" spacing={0.5} alignItems="center">
@@ -61,7 +72,7 @@ const AppointmentCard = ({
 
           <Stack direction="row" spacing={1}>
             {actions}
-            {view === 'patient' && isUpcoming && onCancel && (
+            {isUpcoming && onCancel && (
               <Button variant="outlined" color="error" size="small" onClick={onCancel}>
                 Cancel
               </Button>

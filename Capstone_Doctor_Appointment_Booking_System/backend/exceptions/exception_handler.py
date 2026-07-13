@@ -29,6 +29,12 @@ from constants.slot_constants import (
     SLOT_ALREADY_BOOKED,
     SLOT_NOT_FOUND,
     SLOT_OVERLAP,
+    SLOT_IN_PAST,
+)
+from constants.deactivation_constants import (
+    DEACTIVATION_REQUEST_NOT_FOUND,
+    DEACTIVATION_REQUEST_ALREADY_PROCESSED,
+    INVALID_DATE_RANGE,
 )
 
 from exceptions.appointment_exceptions import (
@@ -57,6 +63,12 @@ from exceptions.slot_exceptions import (
     SlotCannotBeDeletedException,
     SlotNotFoundException,
     SlotOverlapException,
+    SlotInPastException,
+)
+from exceptions.deactivation_exceptions import (
+    DeactivationRequestNotFoundException,
+    DeactivationRequestAlreadyProcessedException,
+    InvalidDateRangeException,
 )
 
 
@@ -255,6 +267,17 @@ def register_exception_handlers(app: FastAPI) -> None:
             },
         )
 
+    @app.exception_handler(SlotInPastException)
+    async def slot_in_past_handler(
+        request: Request,
+        exc: SlotInPastException,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": SLOT_IN_PAST,
+            },
+        )
 
     # ==========================
     # Appointment Exceptions
@@ -305,5 +328,45 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
                 "detail": INVALID_STATUS_UPDATE,
+            },
+        )
+
+    # ==========================
+    # Deactivation Exceptions
+    # ==========================
+
+    @app.exception_handler(DeactivationRequestNotFoundException)
+    async def deactivation_not_found_handler(
+        request: Request,
+        exc: DeactivationRequestNotFoundException,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "detail": DEACTIVATION_REQUEST_NOT_FOUND,
+            },
+        )
+
+    @app.exception_handler(DeactivationRequestAlreadyProcessedException)
+    async def deactivation_already_processed_handler(
+        request: Request,
+        exc: DeactivationRequestAlreadyProcessedException,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={
+                "detail": DEACTIVATION_REQUEST_ALREADY_PROCESSED,
+            },
+        )
+
+    @app.exception_handler(InvalidDateRangeException)
+    async def invalid_date_range_handler(
+        request: Request,
+        exc: InvalidDateRangeException,
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": INVALID_DATE_RANGE,
             },
         )

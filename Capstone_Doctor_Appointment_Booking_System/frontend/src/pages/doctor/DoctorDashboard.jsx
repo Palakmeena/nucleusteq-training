@@ -63,7 +63,7 @@ const DoctorDashboard = () => {
       </Grid>
 
       <Grid container spacing={3} mb={4}>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: 12 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom mb={3}>
@@ -106,32 +106,10 @@ const DoctorDashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)' }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight={600} color="white" gutterBottom mb={2}>
-                Practice Summary
-              </Typography>
-              <Typography variant="body2" color="rgba(255,255,255,0.9)" mb={3}>
-                Your practice is performing well this month
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
-                  <Typography variant="caption" color="white">Completed</Typography>
-                  <Typography variant="subtitle2" fontWeight={600} color="white">{stats.completed}</Typography>
-                </Box>
-                <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', px: 2, py: 1, borderRadius: 1 }}>
-                  <Typography variant="caption" color="white">Upcoming</Typography>
-                  <Typography variant="subtitle2" fontWeight={600} color="white">{stats.upcoming}</Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight={600} gutterBottom mb={4}>
@@ -146,29 +124,6 @@ const DoctorDashboard = () => {
               ) : (
                 <EmptyState title="No appointments yet" description="Add slots to start receiving bookings" />
               )}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Stack spacing={3} alignItems="center">
-                <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: '2rem' }}>
-                  {(user?.fullName || 'D').charAt(0)}
-                </Avatar>
-                <Typography fontWeight={600} variant="h6" textAlign="center">
-                  {user?.fullName || user?.email}
-                </Typography>
-                <Divider flexItem sx={{ width: '100%' }} />
-                <Box sx={{ width: '100%' }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Total Completed Visits
-                  </Typography>
-                  <Typography variant="h4" fontWeight={700} color="primary.main">
-                    {stats.completed}
-                  </Typography>
-                </Box>
-              </Stack>
             </CardContent>
           </Card>
         </Grid>

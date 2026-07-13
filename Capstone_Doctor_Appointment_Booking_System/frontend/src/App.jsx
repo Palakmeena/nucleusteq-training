@@ -32,12 +32,14 @@ import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorAppointmentsPage from './pages/doctor/DoctorAppointmentsPage';
 import DoctorProfilePage from './pages/doctor/DoctorProfilePage';
 import DoctorSlotsPage from './pages/doctor/DoctorSlotsPage';
+import DoctorLeavePage from './pages/doctor/DoctorLeavePage';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminDoctorsPage from './pages/admin/AdminDoctorsPage';
 import AdminPatientsPage from './pages/admin/AdminPatientsPage';
 import AdminAppointmentsPage from './pages/admin/AdminAppointmentsPage';
+import AdminDeactivationRequestsPage from './pages/admin/AdminDeactivationRequestsPage';
 
 // Shared Pages
 import FindDoctorsPage from './pages/shared/FindDoctorsPage';
@@ -282,6 +284,11 @@ function App() {
               path="/doctor/slots"
               element={<DoctorSlotsPage />}
             />
+
+            <Route
+              path="/doctor/leave"
+              element={<DoctorLeavePage />}
+            />
           </Route>
 
           {/* ================= ADMIN ROUTES ================= */}
@@ -311,6 +318,11 @@ function App() {
             <Route
               path="/admin/appointments"
               element={<AdminAppointmentsPage />}
+            />
+
+            <Route
+              path="/admin/deactivation-requests"
+              element={<AdminDeactivationRequestsPage />}
             />
           </Route>
 

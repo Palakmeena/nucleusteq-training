@@ -18,4 +18,8 @@ class InvalidSlotTimeException(Exception):
 
 
 class SlotCannotBeDeletedException(Exception):
-    """Raised when a slot cannot be deleted because it is booked."""
+    """Raised when a slot cannot be deleted because it is booked."""
+
+
+class SlotInPastException(Exception):
+    """Raised when a slot date and time is in the past."""

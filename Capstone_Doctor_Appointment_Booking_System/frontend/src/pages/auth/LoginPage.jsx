@@ -83,7 +83,7 @@ const LoginPage = () => {
 
           <div className="auth-brand-text">
             <h2>Healthcare at your fingertips</h2>
-            <p>Connect with verified doctors, book appointments, and manage your health — all in one place.</p>
+            <p>Connect with verified doctors, book appointments, and manage your health all in one place.</p>
           </div>
 
           <div className="auth-feature-list">

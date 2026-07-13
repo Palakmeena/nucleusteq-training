@@ -72,6 +72,14 @@ const DoctorSlotsPage = () => {
   };
 
   const onSubmit = async (data) => {
+    // Validate if slot is in the past
+    const slotDateTimeStr = `${data.date}T${data.start_time}`;
+    const slotDateTime = new Date(slotDateTimeStr);
+    if (slotDateTime < new Date()) {
+      toast.error('Cannot create or update a slot in the past.');
+      return;
+    }
+
     try {
       if (editingSlot) {
         await slotApi.updateSlot(editingSlot.id, data);
@@ -183,6 +191,7 @@ const DoctorSlotsPage = () => {
               label="Date"
               type="date"
               InputLabelProps={{ shrink: true }}
+              inputProps={{ min: dayjs().format('YYYY-MM-DD') }}
               {...register('date', { required: true })}
             />
             <Input

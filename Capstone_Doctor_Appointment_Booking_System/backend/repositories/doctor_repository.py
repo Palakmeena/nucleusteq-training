@@ -3,6 +3,7 @@
 from typing import Optional
 
 from models.doctor import Doctor
+from enums.doctor_status import DoctorStatus
 
 
 class DoctorRepository:
@@ -20,14 +21,25 @@ class DoctorRepository:
     async def find_all(self):
         return await Doctor.find_all().to_list()
 
+    async def find_by_status(self, status: DoctorStatus):
+        """Return all doctors with the given registration status."""
+        return await Doctor.find({"status": status}).to_list()
+
+    async def find_by_ids(self, doctor_ids: list[str]):
+        from beanie import PydanticObjectId
+        obj_ids = [PydanticObjectId(did) for did in set(doctor_ids) if did]
+        if not obj_ids:
+            return []
+        return await Doctor.find({"_id": {"$in": obj_ids}}).to_list()
+
     async def count(self) -> int:
         """Return the total number of doctors."""
         return await Doctor.find_all().count()
 
     async def count_active(self) -> int:
-        """Return the total number of active doctors."""
+        """Return the total number of approved doctors."""
         return await Doctor.find(
-            {"is_active": True}
+            {"status": DoctorStatus.APPROVED}
         ).count()
 
     async def search(
@@ -38,9 +50,13 @@ class DoctorRepository:
         min_experience: int | None = None,
         max_fee: float | None = None,
     ):
-        """Search active doctors using optional filters."""
+        """Search approved and available doctors using optional filters."""
 
-        query = {"is_active": True}
+        # Only show doctors who are approved AND currently available (is_active=True)
+        query = {
+            "status": DoctorStatus.APPROVED,
+            "is_active": True,
+        }
 
         if name:
             query["full_name"] = {

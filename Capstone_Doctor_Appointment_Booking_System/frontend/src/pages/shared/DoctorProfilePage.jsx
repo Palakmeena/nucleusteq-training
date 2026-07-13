@@ -11,9 +11,6 @@ import {
   Avatar,
   Stack,
   Divider,
-  Tabs,
-  Tab,
-  Paper,
 } from '@mui/material';
 import {
   LocationOn as LocationIcon,
@@ -21,6 +18,10 @@ import {
   Work as WorkIcon,
   ArrowBack as ArrowBackIcon,
   Verified as VerifiedIcon,
+  AttachMoney as FeeIcon,
+  Badge as LicenseIcon,
+  CalendarMonth as CalendarIcon,
+  EventAvailable as SlotIcon,
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
@@ -35,52 +36,133 @@ import EmptyState from '../../components/emptyState/EmptyState';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { showError } from '../../utils/errorHandler';
 
+/* ── Small info row ────────────────────────────────────────────────── */
+const InfoRow = ({ icon, label, value }) => (
+  <Stack direction="row" spacing={1.5} alignItems="flex-start">
+    <Box
+      sx={{
+        width: 32,
+        height: 32,
+        borderRadius: 1.5,
+        bgcolor: '#eff6ff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    >
+      {React.cloneElement(icon, { sx: { fontSize: 16, color: '#2563eb' } })}
+    </Box>
+    <Box>
+      <Typography variant="caption" color="text.secondary" fontWeight={600}
+        sx={{ textTransform: 'uppercase', letterSpacing: 0.4, display: 'block' }}>
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight={500}>
+        {value || '—'}
+      </Typography>
+    </Box>
+  </Stack>
+);
+
+/* ── Slot date group heading ────────────────────────────────────────── */
+const DateSection = ({ date, slots, selectedSlot, onSelect }) => (
+  <Box>
+    <Stack direction="row" spacing={1} alignItems="center" mb={1.5}>
+      <CalendarIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+      <Typography variant="subtitle2" fontWeight={700} color="primary.main">
+        {formatDate(date)}
+      </Typography>
+      <Chip
+        label={`${slots.filter(s => !s.is_booked).length} available`}
+        size="small"
+        sx={{ bgcolor: '#f0fdf4', color: '#15803d', fontWeight: 600, fontSize: '0.65rem', height: 18 }}
+      />
+    </Stack>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+      {slots.map((slot) => (
+        <TimeSlotCard
+          key={slot.id}
+          slot={slot}
+          selected={selectedSlot?.id === slot.id}
+          onSelect={onSelect}
+          disabled={slot.is_booked}
+        />
+      ))}
+    </Box>
+  </Box>
+);
+
+/* ── Main page component ─────────────────────────────────────────────── */
 const DoctorProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+
   const [doctor, setDoctor] = useState(null);
   const [slots, setSlots] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);   // null until slots load
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [paymentAppointment, setPaymentAppointment] = useState(null);
-  const [tab, setTab] = useState(0);
 
+  /* ── fetch doctor profile ── */
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         const res = await doctorApi.getDoctorById(id);
         setDoctor(res.data);
-      } catch (error) {
-        showError(error, 'Failed to load doctor profile');
+      } catch (err) {
+        showError(err, 'Failed to load doctor profile');
       } finally {
         setLoading(false);
       }
     };
-    load();
+    if (id) load();
   }, [id]);
 
+  /* ── fetch all slots for this doctor, pick earliest available date ── */
   useEffect(() => {
     const loadSlots = async () => {
       try {
         const res = await slotApi.getSlotsByDoctor(id);
-        setSlots(res.data || []);
+        const all = res.data || [];
+        setSlots(all);
         setSelectedSlot(null);
+
+        const today = dayjs().format('YYYY-MM-DD');
+        const futureDates = [...new Set(all.map(s => s.date))]
+          .filter(d => d >= today)
+          .sort();
+        if (futureDates.length > 0) setSelectedDate(futureDates[0]);
       } catch {
         setSlots([]);
       }
     };
     if (id) loadSlots();
-  }, [id, selectedDate]);
+  }, [id]);
 
-  const slotsForDate = useMemo(
-    () => slots.filter((s) => s.date === selectedDate),
-    [slots, selectedDate]
-  );
+  /* ── group future slots by date, sorted ── */
+  const slotsByDate = useMemo(() => {
+    const today = dayjs().format('YYYY-MM-DD');
+    const future = slots.filter(s => s.date >= today);
+    const grouped = {};
+    future.forEach(s => {
+      if (!grouped[s.date]) grouped[s.date] = [];
+      grouped[s.date].push(s);
+    });
+    // sort each date's slots by start time
+    Object.values(grouped).forEach(arr =>
+      arr.sort((a, b) => a.start_time.localeCompare(b.start_time))
+    );
+    return Object.fromEntries(Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)));
+  }, [slots]);
 
+  const availableDates = Object.keys(slotsByDate);
+
+  /* ── book ── */
   const handleBook = async () => {
     if (!isAuthenticated) {
       toast.info('Please sign in to book an appointment');
@@ -88,186 +170,273 @@ const DoctorProfilePage = () => {
       return;
     }
     if (!selectedSlot) {
-      toast.error('Please select a time slot');
+      toast.error('Please select a time slot first');
       return;
     }
-
     try {
       setBooking(true);
       const res = await appointmentApi.book({
         doctor_id: id,
         slot_id: selectedSlot.id,
-        appointment_date: selectedDate,
+        appointment_date: selectedSlot.date,
       });
       toast.success('Appointment reserved! Complete payment to confirm.');
       setPaymentAppointment(res.data);
-    } catch (error) {
-      showError(error, 'Failed to book appointment');
+    } catch (err) {
+      showError(err, 'Failed to book appointment');
     } finally {
       setBooking(false);
     }
   };
 
-  if (loading) return <LoadingSpinner message="Loading doctor profile..." />;
+  /* ── guards ── */
+  if (loading) return <LoadingSpinner message="Loading doctor profile…" />;
   if (!doctor) {
     return (
       <EmptyState
         title="Doctor not found"
         description="This profile may have been removed"
-        action
-        actionText="Go Back"
-        onAction={() => navigate(-1)}
+        action actionText="Go Back" onAction={() => navigate(-1)}
       />
     );
   }
 
   return (
-    <Box>
-      <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-        Back
+    <Box maxWidth={960} mx="auto">
+      {/* Back link */}
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 2.5, color: 'text.secondary' }}
+      >
+        Find Doctors
       </Button>
 
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Grid container spacing={3} alignItems="center">
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Box position="relative" display="inline-block">
-                <Avatar sx={{ width: 120, height: 120, bgcolor: 'primary.main', fontSize: 48 }}>
-                  {doctor.full_name?.charAt(0)}
-                </Avatar>
+      {/* ══════ HERO HEADER ══════ */}
+      <Card
+        sx={{
+          mb: 3,
+          background: 'linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%)',
+          color: '#fff',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
+        {/* decorative blobs */}
+        <Box sx={{ position: 'absolute', width: 260, height: 260, borderRadius: '50%',
+          bgcolor: 'rgba(255,255,255,0.05)', top: -60, right: -40 }} />
+        <Box sx={{ position: 'absolute', width: 160, height: 160, borderRadius: '50%',
+          bgcolor: 'rgba(255,255,255,0.06)', bottom: -30, right: 140 }} />
+
+        <CardContent sx={{ p: { xs: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ xs: 'center', sm: 'flex-start' }}>
+            {/* Avatar */}
+            <Avatar sx={{
+              width: 100, height: 100, fontSize: 38, fontWeight: 800,
+              bgcolor: 'rgba(255,255,255,0.18)', border: '3px solid rgba(255,255,255,0.35)',
+              color: '#fff', flexShrink: 0,
+            }}>
+              {doctor.full_name?.charAt(0)}
+            </Avatar>
+
+            {/* Meta */}
+            <Box flex={1} textAlign={{ xs: 'center', sm: 'left' }}>
+              <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent={{ xs: 'center', sm: 'flex-start' }} mb={0.5}>
+                <Typography variant="h4" fontWeight={800} color="inherit">
+                  Dr. {doctor.full_name}
+                </Typography>
                 {doctor.is_active && (
                   <Chip
                     icon={<VerifiedIcon />}
                     label="Verified"
-                    color="success"
                     size="small"
-                    sx={{ position: 'absolute', bottom: -4, right: -4 }}
+                    sx={{ bgcolor: 'rgba(22,163,74,0.3)', color: '#fff',
+                      border: '1px solid rgba(22,163,74,0.5)', fontWeight: 700 }}
                   />
                 )}
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 12, md: 9 }}>
-              <Typography variant="h4" fontWeight={800}>
-                Dr. {doctor.full_name}
-              </Typography>
-              <Typography variant="h6" color="primary.main" fontWeight={600}>
+              </Stack>
+
+              <Typography variant="h6" fontWeight={600}
+                sx={{ color: 'rgba(255,255,255,0.85)', mb: 1.5 }}>
                 {doctor.specialization}
               </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
+
+              {/* Key stats in a row */}
+              <Stack
+                direction="row" spacing={0} flexWrap="wrap"
+                divider={<Box sx={{ mx: 1.5, opacity: 0.3 }}>·</Box>}
+                justifyContent={{ xs: 'center', sm: 'flex-start' }}
+              >
                 <Stack direction="row" spacing={0.5} alignItems="center">
-                  <LocationIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{doctor.clinic_address}</Typography>
+                  <WorkIcon sx={{ fontSize: 14, opacity: 0.8 }} />
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    {doctor.experience} yrs experience
+                  </Typography>
                 </Stack>
                 <Stack direction="row" spacing={0.5} alignItems="center">
-                  <WorkIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{doctor.experience} years</Typography>
-                </Stack>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <SchoolIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{doctor.qualification}</Typography>
+                  <LocationIcon sx={{ fontSize: 14, opacity: 0.8 }} />
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    {doctor.clinic_address}
+                  </Typography>
                 </Stack>
               </Stack>
-              <Typography variant="h5" color="primary.main" fontWeight={700} mt={2}>
-                {formatCurrency(doctor.consultation_fee)} per visit
+            </Box>
+
+            {/* Fee badge */}
+            <Box
+              sx={{
+                bgcolor: 'rgba(255,255,255,0.15)', borderRadius: 2,
+                border: '1px solid rgba(255,255,255,0.25)',
+                px: 2.5, py: 1.5, textAlign: 'center', flexShrink: 0,
+              }}
+            >
+              <Typography variant="caption" sx={{ opacity: 0.8, display: 'block' }}>
+                Consultation Fee
               </Typography>
-            </Grid>
-          </Grid>
+              <Typography variant="h5" fontWeight={800} color="inherit">
+                {formatCurrency(doctor.consultation_fee)}
+              </Typography>
+            </Box>
+          </Stack>
         </CardContent>
       </Card>
 
-      <Paper sx={{ mb: 3 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)}>
-          <Tab label="Book Appointment" />
-          <Tab label="About" />
-        </Tabs>
-      </Paper>
+      {/* ══════ TWO-COLUMN LAYOUT ══════ */}
+      <Grid container spacing={3} alignItems="flex-start">
 
-      {tab === 0 && (
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Select Date
-                </Typography>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  min={dayjs().format('YYYY-MM-DD')}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border: '1px solid #d0d7e2',
-                    fontSize: '1rem',
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Available Slots — {formatDate(selectedDate)}
-                </Typography>
-                {slotsForDate.length > 0 ? (
-                  <Grid container spacing={2}>
-                    {slotsForDate.map((slot) => (
-                      <Grid size={{ xs: 6, sm: 4, md: 3 }} key={slot.id}>
-                        <TimeSlotCard
-                          slot={slot}
-                          selected={selectedSlot?.id === slot.id}
-                          onSelect={setSelectedSlot}
-                          disabled={slot.is_booked}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                ) : (
-                  <EmptyState
-                    title="No slots available"
-                    description="Try another date or check back later"
-                  />
+        {/* ── LEFT: Doctor details ── */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent sx={{ p: 3 }}>
+              <Stack direction="row" spacing={1} alignItems="center" mb={2.5}>
+                <SchoolIcon color="primary" fontSize="small" />
+                <Typography variant="h6" fontWeight={700}>About</Typography>
+              </Stack>
+              <Stack spacing={2.5} divider={<Divider />}>
+                <InfoRow icon={<SchoolIcon />}  label="Qualification"    value={doctor.qualification} />
+                <InfoRow icon={<WorkIcon />}    label="Experience"       value={`${doctor.experience} years`} />
+                <InfoRow icon={<LocationIcon />} label="Clinic Address"  value={doctor.clinic_address} />
+                <InfoRow icon={<FeeIcon />}     label="Consultation Fee" value={formatCurrency(doctor.consultation_fee)} />
+                {user?.role !== 'PATIENT' && (
+                  <InfoRow icon={<LicenseIcon />} label="License No."      value={doctor.license_number} />
                 )}
-                {selectedSlot && (
-                  <Box textAlign="center" mt={3}>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      onClick={handleBook}
-                      disabled={booking}
-                    >
-                      {booking ? 'Booking...' : `Book — ${formatCurrency(doctor.consultation_fee)}`}
-                    </Button>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
-      )}
 
-      {tab === 1 && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" fontWeight={700} gutterBottom>
-              About Dr. {doctor.full_name}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Dr. {doctor.full_name} is a {doctor.specialization?.toLowerCase()} with{' '}
-              {doctor.experience} years of clinical experience, practicing at{' '}
-              {doctor.clinic_address}.
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle2" color="text.secondary">
-              License: {doctor.license_number}
-            </Typography>
-          </CardContent>
-        </Card>
-      )}
+        {/* ── RIGHT: Slot booking ── */}
+        <Grid item xs={12} md={8}>
+          <Card>
+            <CardContent sx={{ p: 3 }}>
+              {/* Section header */}
+              <Stack direction="row" spacing={1} alignItems="center" mb={3}>
+                <SlotIcon color="primary" fontSize="small" />
+                <Typography variant="h6" fontWeight={700}>Book an Appointment</Typography>
+              </Stack>
 
+              {availableDates.length === 0 ? (
+                /* No slots at all */
+                <EmptyState
+                  title="No availability yet"
+                  description="This doctor hasn't added any slots. Check back soon."
+                />
+              ) : (
+                <>
+                  {/* Date tabs (clickable chips) */}
+                  <Box mb={3}>
+                    <Typography variant="caption" color="text.secondary" fontWeight={600}
+                      sx={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', mb: 1 }}>
+                      Select a Date
+                    </Typography>
+                    <Stack direction="row" flexWrap="wrap" gap={1}>
+                      {availableDates.map(d => (
+                        <Chip
+                          key={d}
+                          label={
+                            <Stack alignItems="center" spacing={0}>
+                              <Typography variant="caption" sx={{ lineHeight: 1.2, fontWeight: 700, fontSize: '0.75rem' }}>
+                                {dayjs(d).format('MMM D')}
+                              </Typography>
+                              <Typography variant="caption" sx={{ lineHeight: 1, fontSize: '0.6rem', opacity: 0.8 }}>
+                                {dayjs(d).format('ddd')}
+                              </Typography>
+                            </Stack>
+                          }
+                          onClick={() => {
+                            setSelectedDate(d);
+                            setSelectedSlot(null);
+                          }}
+                          sx={{
+                            height: 48,
+                            px: 1,
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            border: '1.5px solid',
+                            borderColor: d === selectedDate ? 'primary.main' : 'divider',
+                            bgcolor: d === selectedDate ? 'primary.main' : 'background.paper',
+                            color: d === selectedDate ? '#fff' : 'text.primary',
+                            '&:hover': {
+                              bgcolor: d === selectedDate ? 'primary.dark' : '#f1f5f9',
+                              borderColor: 'primary.main',
+                            },
+                            '& .MuiChip-label': { px: 1.5 },
+                          }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+
+                  <Divider sx={{ mb: 3 }} />
+
+                  {/* Slots for selected date */}
+                  {selectedDate && slotsByDate[selectedDate] ? (
+                    <DateSection
+                      date={selectedDate}
+                      slots={slotsByDate[selectedDate]}
+                      selectedSlot={selectedSlot}
+                      onSelect={setSelectedSlot}
+                    />
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      Select a date above to see available time slots.
+                    </Typography>
+                  )}
+
+                  {/* Book CTA */}
+                  {selectedSlot && (
+                    <Box
+                      mt={3} pt={3}
+                      borderTop="1px solid"
+                      borderColor="divider"
+                    >
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between">
+                        <Box>
+                          <Typography variant="body2" color="text.secondary">Selected slot</Typography>
+                          <Typography variant="subtitle1" fontWeight={700}>
+                            {formatDate(selectedSlot.date)} · {selectedSlot.start_time} – {selectedSlot.end_time}
+                          </Typography>
+                        </Box>
+                        <Button
+                          variant="contained"
+                          size="large"
+                          onClick={handleBook}
+                          disabled={booking}
+                          sx={{ px: 4, flexShrink: 0 }}
+                        >
+                          {booking ? 'Booking…' : `Confirm — ${formatCurrency(doctor.consultation_fee)}`}
+                        </Button>
+                      </Stack>
+                    </Box>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Payment modal */}
       <PaymentModal
         open={!!paymentAppointment}
         onClose={() => setPaymentAppointment(null)}
@@ -275,7 +444,7 @@ const DoctorProfilePage = () => {
         doctor={doctor}
         onSuccess={() => {
           setPaymentAppointment(null);
-          navigate('/appointments/success', {
+          navigate('/appointment-success', {
             state: { appointment: paymentAppointment, doctor },
             replace: true,
           });

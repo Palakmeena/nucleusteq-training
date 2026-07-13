@@ -73,20 +73,6 @@ async def delete(
 
 
 @router.get(
-    "/doctor/{doctor_id}",
-    response_model=list[SlotResponse],
-)
-async def get_doctor_slots(
-    doctor_id: str,
-):
-    """List the available slots for a doctor."""
-
-    return await get_slots_by_doctor(
-        doctor_id
-    )
-
-
-@router.get(
     "/doctor",
     response_model=list[SlotResponse],
 )
@@ -97,4 +83,18 @@ async def get_doctor_slots_self(
 
     return await get_my_slots_service(
         user_id=current_user["sub"],
+    )
+
+
+@router.get(
+    "/doctor/{doctor_id}",
+    response_model=list[SlotResponse],
+)
+async def get_doctor_slots(
+    doctor_id: str,
+):
+    """List the available slots for a doctor."""
+
+    return await get_slots_by_doctor(
+        doctor_id
     )

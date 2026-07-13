@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, status
 
 from middleware.auth_middleware import (
+    require_admin,
     require_doctor,
     require_patient,
 )
@@ -16,6 +17,7 @@ from schemas.response.appointment_response import (
 from services.appointment_service import (
     book_appointment,
     cancel_appointment,
+    get_all_appointments,
     get_doctor_appointments,
     get_patient_appointments,
     process_payment,
@@ -102,6 +104,18 @@ async def doctor_appointments(
     return await get_doctor_appointments(
         doctor_id=current_user["sub"],
     )
+
+
+@router.get(
+    "/admin",
+    response_model=list[AppointmentResponse],
+)
+async def admin_appointments(
+    current_user: dict = Depends(require_admin),
+):
+    """List all appointments in the system."""
+
+    return await get_all_appointments()
 
 
 @router.patch(

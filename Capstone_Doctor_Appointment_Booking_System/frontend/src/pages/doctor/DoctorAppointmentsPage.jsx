@@ -5,6 +5,7 @@ import PageHeader from '../../components/common/PageHeader';
 import AppointmentCard from '../../components/cards/AppointmentCard';
 import EmptyState from '../../components/emptyState/EmptyState';
 import { ListSkeleton } from '../../components/loading/SkeletonLoader';
+import ConfirmationDialog from '../../components/dialogs/ConfirmationDialog';
 import { useAppointments } from '../../hooks/useAppointments';
 import appointmentApi from '../../api/appointmentApi';
 import { showError } from '../../utils/errorHandler';
@@ -14,6 +15,7 @@ import dayjs from 'dayjs';
 const DoctorAppointmentsPage = () => {
   const { appointments, loading, refetch } = useAppointments('DOCTOR');
   const [tab, setTab] = useState(0);
+  const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null });
 
   const filtered = useMemo(() => {
     const today = dayjs().format('YYYY-MM-DD');
@@ -30,6 +32,17 @@ const DoctorAppointmentsPage = () => {
       refetch();
     } catch (error) {
       showError(error, 'Failed to update appointment');
+    }
+  };
+
+  const handleCancelConfirm = async () => {
+    try {
+      await appointmentApi.updateStatus(cancelModal.appointmentId, 'CANCELLED');
+      toast.success('Appointment cancelled successfully');
+      setCancelModal({ open: false, appointmentId: null });
+      refetch();
+    } catch (error) {
+      showError(error, 'Failed to cancel appointment');
     }
   };
 
@@ -54,7 +67,7 @@ const DoctorAppointmentsPage = () => {
             key={a.id}
             appointment={a}
             view="doctor"
-            patientLabel={`Patient #${a.patient_id?.slice(-6)}`}
+            onCancel={() => setCancelModal({ open: true, appointmentId: a.id })}
             onMarkCompleted={() => updateStatus(a.id, 'COMPLETED')}
             onMarkNoShow={() => updateStatus(a.id, 'NO_SHOW')}
           />
@@ -62,6 +75,16 @@ const DoctorAppointmentsPage = () => {
       ) : (
         <EmptyState title="No appointments" description="Nothing scheduled in this view" />
       )}
+
+      <ConfirmationDialog
+        open={cancelModal.open}
+        title="Cancel Appointment"
+        message="Are you sure you want to cancel this appointment? This action cannot be undone."
+        confirmText="Cancel Appointment"
+        confirmColor="error"
+        onConfirm={handleCancelConfirm}
+        onCancel={() => setCancelModal({ open: false, appointmentId: null })}
+      />
     </Box>
   );
 };

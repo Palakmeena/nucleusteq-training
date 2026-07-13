@@ -92,7 +92,6 @@ const PatientAppointmentsPage = () => {
           <AppointmentCard
             key={a.id}
             appointment={a}
-            doctorName={doctorsCache[a.doctor_id] ? `Dr. ${doctorsCache[a.doctor_id].full_name}` : undefined}
             onCancel={() => setCancelId(a.id)}
             actions={
               a.status === 'PENDING' && a.payment_status === 'PENDING' ? (

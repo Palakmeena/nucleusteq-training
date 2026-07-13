@@ -7,9 +7,19 @@ const adminApi = {
 
   getDoctors: () => api.get('/admin/doctors'),
 
-  activateDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/activate`),
+  // ── Part 1: Registration Approval ────────────────────────────────────────
+  approveDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/approve`),
 
-  deactivateDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/deactivate`),
+  rejectDoctor: (doctorId) => api.patch(`/admin/doctors/${doctorId}/reject`),
+
+  // ── Part 2: Deactivation Request Management ──────────────────────────────
+  getDeactivationRequests: () => api.get('/admin/deactivation-requests'),
+
+  approveDeactivationRequest: (requestId) =>
+    api.patch(`/admin/deactivation-requests/${requestId}/approve`),
+
+  rejectDeactivationRequest: (requestId) =>
+    api.patch(`/admin/deactivation-requests/${requestId}/reject`),
 
   getRecentAppointments: () => api.get('/admin/appointments/recent'),
 };

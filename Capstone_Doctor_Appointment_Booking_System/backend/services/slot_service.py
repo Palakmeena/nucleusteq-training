@@ -1,6 +1,6 @@
 """Slot service operations."""
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from constants.slot_constants import (
     SLOT_DELETED,
@@ -12,6 +12,7 @@ from exceptions.slot_exceptions import (
     SlotCannotBeDeletedException,
     SlotNotFoundException,
     SlotOverlapException,
+    SlotInPastException,
 )
 from mappers.slot_mapper import SlotMapper
 from models.slot import Slot
@@ -70,6 +71,14 @@ async def create_slot(
 
     if start_time >= end_time:
         raise InvalidSlotTimeException()
+
+    # Check if the selected date and start time is in the past
+    ist_tz = timezone(timedelta(hours=5, minutes=30))
+    slot_datetime_str = f"{data.date} {data.start_time}"
+    slot_datetime = datetime.strptime(slot_datetime_str, "%Y-%m-%d %H:%M").replace(tzinfo=ist_tz)
+    
+    if slot_datetime < datetime.now(ist_tz):
+        raise SlotInPastException()
 
     existing_slots = await slot_repo.find_by_doctor_and_date(
         str(doctor.id),
@@ -140,6 +149,14 @@ async def update_slot(
 
     if start_time >= end_time:
         raise InvalidSlotTimeException()
+
+    # Check if the selected date and start time is in the past
+    ist_tz = timezone(timedelta(hours=5, minutes=30))
+    slot_datetime_str = f"{new_date} {new_start}"
+    slot_datetime = datetime.strptime(slot_datetime_str, "%Y-%m-%d %H:%M").replace(tzinfo=ist_tz)
+    
+    if slot_datetime < datetime.now(ist_tz):
+        raise SlotInPastException()
 
     existing_slots = await slot_repo.find_by_doctor_and_date(
         str(doctor.id),

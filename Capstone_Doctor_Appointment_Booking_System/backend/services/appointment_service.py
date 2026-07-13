@@ -26,6 +26,7 @@ from models.appointment import (
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
 from repositories.slot_repository import SlotRepository
+from repositories.user_repository import UserRepository
 from schemas.request.appointment_request import (
     AppointmentBookRequest,
     AppointmentStatusRequest,
@@ -40,6 +41,7 @@ logger = get_logger(__name__)
 appointment_repo = AppointmentRepository()
 doctor_repo = DoctorRepository()
 slot_repo = SlotRepository()
+user_repo = UserRepository()
 
 
 async def book_appointment(
@@ -218,8 +220,19 @@ async def get_patient_appointments(
         patient_id,
     )
 
+    doctor_ids = [a.doctor_id for a in appointments]
+    doctors = await doctor_repo.find_by_ids(doctor_ids)
+    doctor_map = {str(d.id): d.full_name for d in doctors}
+
+    user = await user_repo.find_by_id(patient_id)
+    patient_name = user.full_name if user else None
+
     return [
-        AppointmentMapper.to_response(a)
+        AppointmentMapper.to_response(
+            a,
+            patient_name=patient_name,
+            doctor_name=doctor_map.get(a.doctor_id),
+        )
         for a in appointments
     ]
 
@@ -229,12 +242,47 @@ async def get_doctor_appointments(
 ) -> list[AppointmentResponse]:
     """Return all appointments for a doctor."""
 
+    doctor = await doctor_repo.find_by_user_id(doctor_id)
+    if not doctor:
+        raise DoctorNotFoundException()
+
     appointments = await appointment_repo.find_by_doctor(
-        doctor_id,
+        str(doctor.id),
     )
 
+    patient_ids = [a.patient_id for a in appointments]
+    users = await user_repo.find_by_ids(patient_ids)
+    user_map = {str(u.id): u.full_name for u in users}
+
     return [
-        AppointmentMapper.to_response(a)
+        AppointmentMapper.to_response(
+            a,
+            patient_name=user_map.get(a.patient_id),
+            doctor_name=doctor.full_name,
+        )
+        for a in appointments
+    ]
+
+
+async def get_all_appointments() -> list[AppointmentResponse]:
+    """Return all appointments in the system for admin."""
+
+    appointments = await appointment_repo.find_all()
+
+    doctor_ids = [a.doctor_id for a in appointments]
+    doctors = await doctor_repo.find_by_ids(doctor_ids)
+    doctor_map = {str(d.id): d.full_name for d in doctors}
+
+    patient_ids = [a.patient_id for a in appointments]
+    users = await user_repo.find_by_ids(patient_ids)
+    user_map = {str(u.id): u.full_name for u in users}
+
+    return [
+        AppointmentMapper.to_response(
+            a,
+            patient_name=user_map.get(a.patient_id),
+            doctor_name=doctor_map.get(a.doctor_id),
+        )
         for a in appointments
     ]
 
@@ -246,9 +294,13 @@ async def update_appointment_status(
 ) -> AppointmentResponse:
     """Update the status of a doctor's appointment."""
 
+    doctor = await doctor_repo.find_by_user_id(doctor_id)
+    if not doctor:
+        raise DoctorNotFoundException()
+
     appointment = await appointment_repo.find_by_id_and_doctor(
         appointment_id,
-        doctor_id,
+        str(doctor.id),
     )
 
     if not appointment:
@@ -269,6 +321,16 @@ async def update_appointment_status(
 
         if datetime.utcnow() < appointment_end:
             raise InvalidAppointmentStatusException()
+            
+    if new_status == AppointmentStatus.CANCELLED:
+        slot = await slot_repo.find_by_id(
+            appointment.slot_id,
+        )
+        if slot:
+            slot.is_booked = False
+            await slot_repo.update(
+                slot,
+            )
 
     appointment.status = new_status
     appointment.updated_at = datetime.utcnow()

@@ -6,20 +6,23 @@ from middleware.auth_middleware import require_admin
 from schemas.response.doctor_response import DoctorResponse
 from schemas.response.auth_response import UserResponse
 from schemas.response.admin_response import DashboardResponse
+from schemas.response.deactivation_response import DeactivationRequestAdminResponse
 from services.admin_service import (
-    activate_doctor,
-    deactivate_doctor,
+    approve_doctor,
+    reject_doctor,
     get_all_doctors,
     get_all_users,
     get_dashboard_stats,
     get_recent_appointments,
+    get_all_deactivation_requests,
+    approve_deactivation_request,
+    reject_deactivation_request,
 )
 
 router = APIRouter(
     prefix="/api/v1/admin",
     tags=["Admin"],
 )
-
 
 
 @router.get(
@@ -34,7 +37,6 @@ async def dashboard(
     return await get_dashboard_stats()
 
 
-
 @router.get(
     "/users",
     response_model=list[UserResponse],
@@ -45,7 +47,6 @@ async def users(
     """List all users."""
 
     return await get_all_users()
-
 
 
 @router.get(
@@ -60,35 +61,75 @@ async def doctors(
     return await get_all_doctors()
 
 
+# ─── Part 1: Registration Approval ──────────────────────────────────────────
+
 @router.patch(
-    "/doctors/{doctor_id}/activate",
+    "/doctors/{doctor_id}/approve",
     response_model=DoctorResponse,
 )
-async def activate(
+async def approve(
     doctor_id: str,
     current_user: dict = Depends(require_admin),
 ):
-    """Activate a doctor account."""
+    """Approve a doctor's registration."""
 
-    return await activate_doctor(
-        doctor_id
-    )
+    return await approve_doctor(doctor_id)
 
 
 @router.patch(
-    "/doctors/{doctor_id}/deactivate",
+    "/doctors/{doctor_id}/reject",
     response_model=DoctorResponse,
 )
-async def deactivate(
+async def reject(
     doctor_id: str,
     current_user: dict = Depends(require_admin),
 ):
-    """Deactivate a doctor account."""
+    """Reject a doctor's registration."""
 
-    return await deactivate_doctor(
-        doctor_id
-    )
+    return await reject_doctor(doctor_id)
 
+
+# ─── Part 2: Deactivation Request Management ────────────────────────────────
+
+@router.get(
+    "/deactivation-requests",
+    response_model=list[DeactivationRequestAdminResponse],
+)
+async def list_deactivation_requests(
+    current_user: dict = Depends(require_admin),
+):
+    """List all doctor deactivation requests."""
+
+    return await get_all_deactivation_requests()
+
+
+@router.patch(
+    "/deactivation-requests/{request_id}/approve",
+    response_model=DeactivationRequestAdminResponse,
+)
+async def approve_deactivation(
+    request_id: str,
+    current_user: dict = Depends(require_admin),
+):
+    """Approve a doctor's deactivation request and remove unbooked slots."""
+
+    return await approve_deactivation_request(request_id)
+
+
+@router.patch(
+    "/deactivation-requests/{request_id}/reject",
+    response_model=DeactivationRequestAdminResponse,
+)
+async def reject_deactivation(
+    request_id: str,
+    current_user: dict = Depends(require_admin),
+):
+    """Reject a doctor's deactivation request."""
+
+    return await reject_deactivation_request(request_id)
+
+
+# ─── Recent Appointments ─────────────────────────────────────────────────────
 
 @router.get(
     "/appointments/recent",
