@@ -1,16 +1,24 @@
 """Authentication request schemas."""
 
 import re
+from datetime import date
 
 from pydantic import BaseModel, EmailStr, field_validator
 
 from constants.validation_constants import (
     INVALID_PHONE,
+    INVALID_DATE_OF_BIRTH,
+    INVALID_GENDER,
     NAME_MIN_LENGTH,
     NAME_ONLY_ALPHABETS,
     PASSWORD_LENGTH,
+    PASSWORD_LOWERCASE,
+    PASSWORD_NUMBER,
     PASSWORD_SPECIAL_CHARACTER,
     PASSWORD_UPPERCASE,
+    REQUIRED_TEXT_FIELD,
+    CONSULTATION_FEE_POSITIVE,
+    EXPERIENCE_CANNOT_BE_NEGATIVE,
 )
 
 
@@ -33,7 +41,7 @@ class BaseUserRegisterRequest(BaseModel):
         if not re.fullmatch(r"[A-Za-z\s]+", value):
             raise ValueError(NAME_ONLY_ALPHABETS)
 
-        return value
+        return value.strip()
 
     @field_validator("phone")
     @classmethod
@@ -56,6 +64,12 @@ class BaseUserRegisterRequest(BaseModel):
         if not re.search(r"[A-Z]", value):
             raise ValueError(PASSWORD_UPPERCASE)
 
+        if not re.search(r"[a-z]", value):
+            raise ValueError(PASSWORD_LOWERCASE)
+
+        if not re.search(r"\d", value):
+            raise ValueError(PASSWORD_NUMBER)
+
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
             raise ValueError(PASSWORD_SPECIAL_CHARACTER)
 
@@ -68,6 +82,32 @@ class PatientRegisterRequest(BaseUserRegisterRequest):
     gender: str
     date_of_birth: str
 
+    @field_validator("gender")
+    @classmethod
+    def validate_gender(cls, value: str) -> str:
+        """Allow only supported patient gender values."""
+
+        normalized_value = value.strip().title()
+        if normalized_value not in {"Male", "Female", "Other"}:
+            raise ValueError(INVALID_GENDER)
+
+        return normalized_value
+
+    @field_validator("date_of_birth")
+    @classmethod
+    def validate_date_of_birth(cls, value: str) -> str:
+        """Ensure the date of birth is valid and not in the future."""
+
+        try:
+            parsed_date = date.fromisoformat(value)
+        except ValueError as error:
+            raise ValueError(INVALID_DATE_OF_BIRTH) from error
+
+        if parsed_date >= date.today():
+            raise ValueError(INVALID_DATE_OF_BIRTH)
+
+        return value
+
 
 class DoctorRegisterRequest(BaseUserRegisterRequest):
     """Registration payload for a doctor account."""
@@ -78,6 +118,41 @@ class DoctorRegisterRequest(BaseUserRegisterRequest):
     specialization: str
     consultation_fee: float
     clinic_address: str
+
+    @field_validator(
+        "qualification",
+        "license_number",
+        "specialization",
+        "clinic_address",
+    )
+    @classmethod
+    def validate_required_text_fields(cls, value: str) -> str:
+        """Reject whitespace-only doctor profile fields."""
+
+        if not value.strip():
+            raise ValueError(REQUIRED_TEXT_FIELD)
+
+        return value.strip()
+
+    @field_validator("experience")
+    @classmethod
+    def validate_experience(cls, value: int) -> int:
+        """Ensure experience is not negative."""
+
+        if value < 0:
+            raise ValueError(EXPERIENCE_CANNOT_BE_NEGATIVE)
+
+        return value
+
+    @field_validator("consultation_fee")
+    @classmethod
+    def validate_consultation_fee(cls, value: float) -> float:
+        """Ensure a doctor consultation fee is positive."""
+
+        if value <= 0:
+            raise ValueError(CONSULTATION_FEE_POSITIVE)
+
+        return value
 
 
 class LoginRequest(BaseModel):

@@ -176,3 +176,122 @@ def test_login_missing_password():
         LoginRequest(
             email="user@example.com",
         )
+
+
+def test_patient_password_requires_lowercase():
+    """Password should contain a lowercase letter."""
+
+    with pytest.raises(ValidationError):
+        PatientRegisterRequest(
+            full_name="Palak Meena",
+            email="palak@example.com",
+            password="PASSWORD@1",
+            phone="9876543210",
+            gender="Female",
+            date_of_birth="2002-11-14",
+        )
+
+
+def test_patient_password_requires_number():
+    """Password should contain a number."""
+
+    with pytest.raises(ValidationError):
+        PatientRegisterRequest(
+            full_name="Palak Meena",
+            email="palak@example.com",
+            password="Password@",
+            phone="9876543210",
+            gender="Female",
+            date_of_birth="2002-11-14",
+        )
+
+
+def test_patient_invalid_gender():
+    """Unsupported gender values should fail validation."""
+
+    with pytest.raises(ValidationError):
+        PatientRegisterRequest(
+            full_name="Palak Meena",
+            email="palak@example.com",
+            password="Password@1",
+            phone="9876543210",
+            gender="Unknown",
+            date_of_birth="2002-11-14",
+        )
+
+
+@pytest.mark.parametrize("date_of_birth", ["not-a-date", "2999-01-01"])
+def test_patient_invalid_date_of_birth(date_of_birth):
+    """Date of birth must be a valid date in the past."""
+
+    with pytest.raises(ValidationError):
+        PatientRegisterRequest(
+            full_name="Palak Meena",
+            email="palak@example.com",
+            password="Password@1",
+            phone="9876543210",
+            gender="Female",
+            date_of_birth=date_of_birth,
+        )
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["qualification", "license_number", "specialization", "clinic_address"],
+)
+def test_doctor_rejects_blank_text_fields(field):
+    """Doctor profile text fields cannot be blank or whitespace only."""
+
+    data = {
+        "full_name": "Dr Smith",
+        "email": "doctor@example.com",
+        "password": "Password@1",
+        "phone": "9876543210",
+        "qualification": "MBBS",
+        "experience": 5,
+        "license_number": "LIC12345",
+        "specialization": "Cardiology",
+        "consultation_fee": 500,
+        "clinic_address": "Indore",
+    }
+    data[field] = "   "
+
+    with pytest.raises(ValidationError):
+        DoctorRegisterRequest(**data)
+
+
+def test_doctor_rejects_negative_experience():
+    """A doctor cannot have negative experience."""
+
+    with pytest.raises(ValidationError):
+        DoctorRegisterRequest(
+            full_name="Dr Smith",
+            email="doctor@example.com",
+            password="Password@1",
+            phone="9876543210",
+            qualification="MBBS",
+            experience=-1,
+            license_number="LIC12345",
+            specialization="Cardiology",
+            consultation_fee=500,
+            clinic_address="Indore",
+        )
+
+
+@pytest.mark.parametrize("consultation_fee", [0, -100])
+def test_doctor_requires_positive_consultation_fee(consultation_fee):
+    """Consultation fee must be greater than zero."""
+
+    with pytest.raises(ValidationError):
+        DoctorRegisterRequest(
+            full_name="Dr Smith",
+            email="doctor@example.com",
+            password="Password@1",
+            phone="9876543210",
+            qualification="MBBS",
+            experience=5,
+            license_number="LIC12345",
+            specialization="Cardiology",
+            consultation_fee=consultation_fee,
+            clinic_address="Indore",
+        )

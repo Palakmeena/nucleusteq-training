@@ -18,7 +18,6 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: datetime
 
-    # NEW
     doctor_id: str | None = None
 
     model_config = {

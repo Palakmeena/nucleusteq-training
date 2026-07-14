@@ -15,9 +15,23 @@ PASSWORD_UPPERCASE = (
     "Password must contain at least one uppercase letter"
 )
 
+PASSWORD_LOWERCASE = (
+    "Password must contain at least one lowercase letter"
+)
+
+PASSWORD_NUMBER = (
+    "Password must contain at least one number"
+)
+
 PASSWORD_SPECIAL_CHARACTER = (
     "Password must contain at least one special character"
 )
+
+REQUIRED_TEXT_FIELD = "This field cannot be blank"
+
+INVALID_GENDER = "Gender must be Male, Female, or Other"
+
+INVALID_DATE_OF_BIRTH = "Date of birth must be a valid past date in YYYY-MM-DD format"
 
 EXPERIENCE_CANNOT_BE_NEGATIVE = (
     "Experience cannot be negative"
