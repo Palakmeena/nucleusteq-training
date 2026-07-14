@@ -55,6 +55,17 @@ def test_invalid_end_date_format():
         )
 
 
+@pytest.mark.parametrize("invalid_date", ["2026-02-30", "2026-13-01"])
+def test_invalid_calendar_date_is_rejected(invalid_date):
+    """Dates with a valid shape but invalid calendar values should fail."""
+
+    with pytest.raises(ValidationError):
+        DeactivationRequestCreate(
+            start_date=invalid_date,
+            end_date="2026-07-25",
+        )
+
+
 def test_both_dates_invalid():
     """Both dates in wrong format should fail."""
 

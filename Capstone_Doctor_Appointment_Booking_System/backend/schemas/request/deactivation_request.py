@@ -1,5 +1,6 @@
 """Deactivation request schemas."""
 
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, field_validator
@@ -15,8 +16,10 @@ class DeactivationRequestCreate(BaseModel):
     @field_validator("start_date", "end_date")
     @classmethod
     def validate_date_format(cls, value: str) -> str:
-        """Ensure dates are in YYYY-MM-DD format."""
-        import re
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        """Ensure dates are valid calendar dates in YYYY-MM-DD format."""
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+        except ValueError:
             raise ValueError("Date must be in YYYY-MM-DD format")
+
         return value
