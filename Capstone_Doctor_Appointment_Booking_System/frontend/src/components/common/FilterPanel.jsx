@@ -8,10 +8,6 @@ import {
   FormControl,
   Select,
   MenuItem,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Checkbox,
   Button,
   Stack,
   Divider,
@@ -74,18 +70,6 @@ const FilterPanel = ({ filters, onChange, onReset, horizontal = false }) => {
               onChange={(e) => onChange('maxFee', e.target.value)}
               sx={{ minWidth: 120 }}
             />
-            <FormControl size="small" sx={{ minWidth: 140 }}>
-              <Select
-                value={filters.availability || ''}
-                displayEmpty
-                onChange={(e) => onChange('availability', e.target.value)}
-              >
-                <MenuItem value="">Any Time</MenuItem>
-                <MenuItem value="today">Today</MenuItem>
-                <MenuItem value="tomorrow">Tomorrow</MenuItem>
-                <MenuItem value="week">This Week</MenuItem>
-              </Select>
-            </FormControl>
             <Button size="small" onClick={onReset} variant="outlined">
               Reset
             </Button>
@@ -184,21 +168,6 @@ const FilterPanel = ({ filters, onChange, onReset, horizontal = false }) => {
             />
           </Box>
 
-          <Box>
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Availability
-            </Typography>
-            <FormControl component="fieldset">
-              <RadioGroup
-                value={filters.availability || ''}
-                onChange={(e) => onChange('availability', e.target.value)}
-              >
-                <FormControlLabel value="today" control={<Radio size="small" />} label="Today" />
-                <FormControlLabel value="tomorrow" control={<Radio size="small" />} label="Tomorrow" />
-                <FormControlLabel value="week" control={<Radio size="small" />} label="This Week" />
-              </RadioGroup>
-            </FormControl>
-          </Box>
         </Stack>
       </CardContent>
     </Card>

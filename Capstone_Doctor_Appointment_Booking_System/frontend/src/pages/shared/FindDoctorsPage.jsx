@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Box, Grid } from '@mui/material';
 import PageHeader from '../../components/common/PageHeader';
 import FilterPanel from '../../components/common/FilterPanel';
@@ -14,7 +14,6 @@ const DEFAULT_FILTERS = {
   location: '',
   minExperience: '',
   maxFee: '',
-  availability: '',
 };
 
 const FindDoctorsPage = () => {
@@ -25,12 +24,6 @@ const FindDoctorsPage = () => {
   };
 
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
-
-  const filteredDoctors = useMemo(() => {
-    if (!filters.availability) return doctors;
-    // Availability is UI-only until backend supports it
-    return doctors;
-  }, [doctors, filters.availability]);
 
   return (
     <Box>
@@ -45,9 +38,9 @@ const FindDoctorsPage = () => {
 
       {loading ? (
         <ListSkeleton count={4} />
-      ) : filteredDoctors.length > 0 ? (
+      ) : doctors.length > 0 ? (
         <Grid container spacing={3}>
-          {filteredDoctors.map((doctor) => (
+          {doctors.map((doctor) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={doctor.id}>
               <DoctorCard doctor={doctor} />
             </Grid>
