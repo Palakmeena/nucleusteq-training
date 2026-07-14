@@ -1,0 +1,10 @@
+"""Slot-related constant messages."""
+
+SLOT_CREATED = "Slot created successfully"
+SLOT_UPDATED = "Slot updated successfully"
+SLOT_DELETED = "Slot deleted successfully"
+SLOT_NOT_FOUND = "Slot not found"
+SLOT_ALREADY_BOOKED = "Slot is already booked"
+CANNOT_DELETE_BOOKED = "Cannot delete a booked slot"
+SLOT_OVERLAP = "Slot overlaps with an existing slot."
+INVALID_SLOT_TIME = "Start time must be earlier than end time."
