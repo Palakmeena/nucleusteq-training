@@ -493,6 +493,11 @@
 }
 
 /* ── HOW IT WORKS ── */
+#specialties,
+#how-it-works {
+  scroll-margin-top: 80px;
+}
+
 .how-it-works {
   display: grid;
   grid-template-columns: 1fr 1fr;

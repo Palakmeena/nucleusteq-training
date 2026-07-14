@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -14,12 +14,19 @@ const PublicNavbar = () => {
   }, []);
 
   const navLinks = [
-    { path: '/doctors', label: 'Find Doctors' },
-    { path: '/how-it-works', label: 'How it Works' },
-    { path: '/specialties', label: 'Specialties' },
+    { to: '/', label: 'Home' },
+    { to: '/find-doctors', label: 'Find Doctors' },
+    { to: '/#how-it-works', label: 'How It Works' },
+    { to: '/#specialties', label: 'Specialties' },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (link) => {
+    if (link.to.startsWith('/#')) {
+      return location.pathname === '/' && location.hash === link.to.slice(1);
+    }
+
+    return location.pathname === link.to && !location.hash;
+  };
 
   return (
     <header className={`pub-nav ${scrolled ? 'pub-nav--scrolled' : ''}`}>
@@ -38,9 +45,9 @@ const PublicNavbar = () => {
         <nav className="pub-nav-links">
           {navLinks.map((link) => (
             <Link
-              key={link.path}
-              to={link.path}
-              className={`pub-nav-link ${isActive(link.path) ? 'pub-nav-link--active' : ''}`}
+              key={link.to}
+              to={link.to}
+              className={`pub-nav-link ${isActive(link) ? 'pub-nav-link--active' : ''}`}
             >
               {link.label}
             </Link>

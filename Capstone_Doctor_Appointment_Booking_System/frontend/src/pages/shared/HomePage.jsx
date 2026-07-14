@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Footer from '../../components/layout/Footer';
 import './HomePage.css';
 
@@ -175,8 +175,24 @@ const testimonials = [
 ];
 
 const HomePage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      document.querySelector(location.hash)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  }, [location.hash]);
+
   return (
-    <div className="home">
+    <div className="home" id="home">
       {/* ── HERO ── */}
       <section className="hero">
         <div className="hero-inner">
@@ -293,7 +309,7 @@ const HomePage = () => {
       </section>
 
       {/* ── SPECIALTIES ── */}
-      <section className="section section--white">
+      <section className="section section--white" id="specialties">
         <div className="section-inner">
           <div className="section-header">
             <span className="section-tag">Specialties</span>
@@ -322,7 +338,7 @@ const HomePage = () => {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="section section--gray">
+      <section className="section section--gray" id="how-it-works">
         <div className="section-inner">
           <div className="how-it-works">
             <div className="how-left">
