@@ -1,0 +1,42 @@
+services:
+  frontend:
+    image: doctor-booking-frontend:1.0
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+  backend:
+    image: doctor-booking-backend:1.0
+    build:
+      context: ./backend
+    environment:
+      MONGO_URI: mongodb://mongodb:27017
+      DB_NAME: doctor_appointment_db
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in the project-root .env file.}
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRY_MINUTES: 30
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+    expose:
+      - "8000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:7.0
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  mongodb_data:

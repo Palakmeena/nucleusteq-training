@@ -142,3 +142,54 @@ Authorization: Bearer <access_token>
 - Doctor accounts must be approved by an administrator before they can be used for appointment booking.
 - Environment files are excluded from version control. Do not commit database credentials or JWT secrets.
 - The backend includes a local-development admin seed script at `backend/scripts/seed_admin.py`. Review and change its default credentials before using it outside local development.
+
+
+# Docker deployment
+
+This project runs entirely in Docker: the React frontend, FastAPI backend, and
+MongoDB database are separate containers. MongoDB data is retained in Docker's
+named `mongodb_data` volume.
+
+## Run on a machine that may download images
+
+1. In the project root, copy `.env.example` to `.env`.
+2. Set `JWT_SECRET` in `.env` to a long random value. Do not commit this file.
+3. Build and start the application:
+
+   ```powershell
+   docker compose up --build -d
+   ```
+
+4. Open `http://localhost:8080`. Stop it with `docker compose down`.
+
+MongoDB is intentionally not exposed to the host. The frontend forwards API
+requests to the backend internally.
+
+## Offline company-laptop handoff
+
+On the personal laptop, after completing the online build, export every image:
+
+```powershell
+docker compose build
+docker pull mongo:7.0
+docker save -o doctor-booking-images.tar doctor-booking-frontend:1.0 doctor-booking-backend:1.0 mongo:7.0
+```
+
+Copy the project folder, `doctor-booking-images.tar`, and a prepared `.env`
+file (with the same secret) to the company laptop. On that laptop, open
+PowerShell in the project root and run:
+
+```powershell
+docker load -i doctor-booking-images.tar
+docker compose up -d --no-build
+```
+
+Then open `http://localhost:8080`. This path requires Docker Desktop but does
+not install Node.js, Python, MongoDB, or project dependencies on the company
+laptop, and does not download any images or packages there.
+
+## Persistent data
+
+`docker compose down` keeps database data. To intentionally delete all stored
+application data, run `docker compose down -v`.
+
