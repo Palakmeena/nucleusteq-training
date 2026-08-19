@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -35,6 +35,9 @@ import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import EmptyState from '../../components/emptyState/EmptyState';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { showError } from '../../utils/errorHandler';
+import { useSocket } from '../../context/SocketContext';
+import { useSocketEvent } from '../../hooks/useSocketEvent';
+import { SOCKET_EVENTS } from '../../constants/socketEvents';
 
 /* ── Small info row ────────────────────────────────────────────────── */
 const InfoRow = ({ icon, label, value }) => (
@@ -98,6 +101,7 @@ const DoctorProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const { subscribeToDoctor } = useSocket();
 
   const [doctor, setDoctor] = useState(null);
   const [slots, setSlots] = useState([]);
@@ -106,6 +110,22 @@ const DoctorProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [paymentAppointment, setPaymentAppointment] = useState(null);
+  const [slotRefreshVersion, setSlotRefreshVersion] = useState(0);
+
+  const refreshDoctorSlots = useCallback((slot) => {
+    if (String(slot.doctor_id) === String(id)) {
+      setSlotRefreshVersion((version) => version + 1);
+    }
+  }, [id]);
+
+  useSocketEvent(SOCKET_EVENTS.SLOT_CREATED, refreshDoctorSlots);
+  useSocketEvent(SOCKET_EVENTS.SLOT_UPDATED, refreshDoctorSlots);
+  useSocketEvent(SOCKET_EVENTS.SLOT_DELETED, refreshDoctorSlots);
+
+  useEffect(() => {
+    if (!id) return undefined;
+    return subscribeToDoctor(id);
+  }, [id, subscribeToDoctor]);
 
   /* ── fetch doctor profile ── */
   useEffect(() => {
@@ -121,7 +141,7 @@ const DoctorProfilePage = () => {
       }
     };
     if (id) load();
-  }, [id]);
+  }, [id, slotRefreshVersion]);
 
   /* ── fetch all slots for this doctor, pick earliest available date ── */
   useEffect(() => {

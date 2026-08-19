@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends
 
-from middleware.auth_middleware import require_doctor
+from dependencies.authentication_dependency import require_doctor
 from schemas.request.doctor_request import (
     DoctorUpdateRequest,
 )

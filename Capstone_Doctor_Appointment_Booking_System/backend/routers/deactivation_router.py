@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends
 
-from middleware.auth_middleware import require_doctor
+from dependencies.authentication_dependency import require_doctor
 from schemas.request.deactivation_request import DeactivationRequestCreate
 from schemas.response.deactivation_response import DeactivationRequestResponse
 from services.deactivation_service import (

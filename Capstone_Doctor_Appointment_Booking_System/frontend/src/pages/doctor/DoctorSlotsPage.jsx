@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Grid, Card, CardContent, Stack, Typography } from '@mui/material';
 import {
@@ -20,6 +20,8 @@ import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import slotApi from '../../api/slotApi';
 import { showError } from '../../utils/errorHandler';
 import { formatDate } from '../../utils/formatters';
+import { useSocketEvent } from '../../hooks/useSocketEvent';
+import { SOCKET_EVENTS } from '../../constants/socketEvents';
 
 const DoctorSlotsPage = () => {
   const [slots, setSlots] = useState([]);
@@ -35,7 +37,7 @@ const DoctorSlotsPage = () => {
     },
   });
 
-  const fetchSlots = async () => {
+  const fetchSlots = useCallback(async () => {
     try {
       setLoading(true);
       const res = await slotApi.getMySlots();
@@ -45,11 +47,15 @@ const DoctorSlotsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSlots();
-  }, []);
+  }, [fetchSlots]);
+
+  useSocketEvent(SOCKET_EVENTS.SLOT_CREATED, fetchSlots);
+  useSocketEvent(SOCKET_EVENTS.SLOT_UPDATED, fetchSlots);
+  useSocketEvent(SOCKET_EVENTS.SLOT_DELETED, fetchSlots);
 
   const openCreate = () => {
     setEditingSlot(null);

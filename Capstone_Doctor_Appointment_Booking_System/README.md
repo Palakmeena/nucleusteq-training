@@ -45,7 +45,8 @@ A full-stack web application for managing doctor appointments. Patients can find
 |   |-- routers/         # FastAPI endpoints
 |   |-- services/        # Application business logic
 |   |-- repositories/    # Database access layer
-|   |-- middleware/      # Authentication and role checks
+|   |-- dependencies/    # Route dependencies, including authentication
+|   |-- middleware/      # HTTP middleware, including CORS and request logging
 |   |-- tests/           # Backend unit tests
 |   `-- main.py          # Backend entry point
 `-- frontend/
@@ -81,6 +82,7 @@ JWT_ALGORITHM=HS256
 JWT_EXPIRY_MINUTES=30
 APP_HOST=127.0.0.1
 APP_PORT=8000
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 Start the API:
@@ -187,6 +189,27 @@ docker compose up -d --no-build
 Then open `http://localhost:8080`. This path requires Docker Desktop but does
 not install Node.js, Python, MongoDB, or project dependencies on the company
 laptop, and does not download any images or packages there.
+
+## Real-time updates
+
+The application uses FastAPI's built-in WebSocket support for live appointment
+and slot updates. After changing WebSocket code, rebuild the Docker services:
+
+```powershell
+docker compose up --build -d
+```
+
+To see it working, sign in to the same doctor profile in two browser sessions:
+
+1. Sign in as a patient and open the doctor's profile page.
+2. In an incognito window, sign in as the doctor and create, update, or delete
+   a slot.
+3. The patient's slot list updates without refreshing the page.
+
+For appointment updates, keep the doctor's appointments page open in one
+session and book or pay for an appointment as a patient in the other session.
+The doctor's list refreshes automatically. When the doctor updates an
+appointment status, the patient's appointments page refreshes automatically.
 
 ## Persistent data
 

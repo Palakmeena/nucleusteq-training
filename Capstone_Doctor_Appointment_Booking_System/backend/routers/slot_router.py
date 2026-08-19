@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, status
 
-from middleware.auth_middleware import require_doctor
+from dependencies.authentication_dependency import require_doctor
 from schemas.request.slot_request import (
     SlotCreateRequest,
     SlotUpdateRequest,

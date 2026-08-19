@@ -3,6 +3,12 @@
 from datetime import datetime, timedelta
 
 from constants.appointment_constants import CANCELLED_SUCCESS
+from constants.socket_constants import (
+    SOCKET_EVENT_APPOINTMENT_CANCELLED,
+    SOCKET_EVENT_APPOINTMENT_CREATED,
+    SOCKET_EVENT_APPOINTMENT_UPDATED,
+    SOCKET_EVENT_SLOT_UPDATED,
+)
 from exceptions.appointment_exceptions import (
     AppointmentAlreadyCancelledException,
     AppointmentCancellationException,
@@ -18,6 +24,7 @@ from exceptions.slot_exceptions import (
     SlotNotFoundException,
 )
 from mappers.appointment_mapper import AppointmentMapper
+from mappers.slot_mapper import SlotMapper
 from models.appointment import (
     Appointment,
     AppointmentStatus,
@@ -34,6 +41,7 @@ from schemas.request.appointment_request import (
 from schemas.response.appointment_response import (
     AppointmentResponse,
 )
+from sockets.socket_events import emit_appointment_event, emit_slot_event
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -119,9 +127,19 @@ async def book_appointment(
         f"Appointment booked: {appointment.id}"
     )
 
-    return AppointmentMapper.to_response(
-        appointment,
+    response = AppointmentMapper.to_response(appointment)
+    await emit_appointment_event(
+        SOCKET_EVENT_APPOINTMENT_CREATED,
+        response,
+        doctor.user_id,
     )
+    await emit_slot_event(
+        SOCKET_EVENT_SLOT_UPDATED,
+        SlotMapper.to_response(slot),
+        doctor.user_id,
+    )
+
+    return response
 
 
 async def process_payment(
@@ -150,9 +168,16 @@ async def process_payment(
         f"Payment successful: {appointment.id}"
     )
 
-    return AppointmentMapper.to_response(
-        appointment,
-    )
+    doctor = await doctor_repo.find_by_id(appointment.doctor_id)
+    response = AppointmentMapper.to_response(appointment)
+    if doctor:
+        await emit_appointment_event(
+            SOCKET_EVENT_APPOINTMENT_UPDATED,
+            response,
+            doctor.user_id,
+        )
+
+    return response
 
 
 async def cancel_appointment(
@@ -200,6 +225,21 @@ async def cancel_appointment(
     logger.info(
         f"Appointment cancelled: {appointment.id}"
     )
+
+    doctor = await doctor_repo.find_by_id(appointment.doctor_id)
+    if doctor:
+        response = AppointmentMapper.to_response(appointment)
+        await emit_appointment_event(
+            SOCKET_EVENT_APPOINTMENT_CANCELLED,
+            response,
+            doctor.user_id,
+        )
+        if slot:
+            await emit_slot_event(
+                SOCKET_EVENT_SLOT_UPDATED,
+                SlotMapper.to_response(slot),
+                doctor.user_id,
+            )
 
     return {
         "message": CANCELLED_SUCCESS,
@@ -317,6 +357,7 @@ async def update_appointment_status(
         if datetime.utcnow() < appointment_end:
             raise InvalidAppointmentStatusException()
             
+    slot = None
     if new_status == AppointmentStatus.CANCELLED:
         slot = await slot_repo.find_by_id(
             appointment.slot_id,
@@ -338,6 +379,17 @@ async def update_appointment_status(
         f"Appointment {appointment.id} updated to {appointment.status}"
     )
 
-    return AppointmentMapper.to_response(
-        appointment,
+    response = AppointmentMapper.to_response(appointment)
+    await emit_appointment_event(
+        SOCKET_EVENT_APPOINTMENT_UPDATED,
+        response,
+        doctor.user_id,
     )
+    if new_status == AppointmentStatus.CANCELLED and slot:
+        await emit_slot_event(
+            SOCKET_EVENT_SLOT_UPDATED,
+            SlotMapper.to_response(slot),
+            doctor.user_id,
+        )
+
+    return response

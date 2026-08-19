@@ -5,6 +5,11 @@ from datetime import datetime, timezone, timedelta
 from constants.slot_constants import (
     SLOT_DELETED,
 )
+from constants.socket_constants import (
+    SOCKET_EVENT_SLOT_CREATED,
+    SOCKET_EVENT_SLOT_DELETED,
+    SOCKET_EVENT_SLOT_UPDATED,
+)
 from exceptions.doctor_exceptions import DoctorNotFoundException
 from exceptions.slot_exceptions import (
     InvalidSlotTimeException,
@@ -23,6 +28,7 @@ from schemas.request.slot_request import (
     SlotUpdateRequest,
 )
 from schemas.response.slot_response import SlotResponse
+from sockets.socket_events import emit_slot_event
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -106,7 +112,9 @@ async def create_slot(
         f"Slot created by doctor: {doctor.id}"
     )
 
-    return SlotMapper.to_response(slot)
+    response = SlotMapper.to_response(slot)
+    await emit_slot_event(SOCKET_EVENT_SLOT_CREATED, response, doctor.user_id)
+    return response
 
 
 async def update_slot(
@@ -185,7 +193,9 @@ async def update_slot(
         f"Slot updated: {slot.id}"
     )
 
-    return SlotMapper.to_response(slot)
+    response = SlotMapper.to_response(slot)
+    await emit_slot_event(SOCKET_EVENT_SLOT_UPDATED, response, doctor.user_id)
+    return response
 
 
 async def delete_slot(
@@ -210,11 +220,14 @@ async def delete_slot(
     if slot.is_booked:
         raise SlotCannotBeDeletedException()
 
+    response = SlotMapper.to_response(slot)
     await slot_repo.delete(slot)
 
     logger.info(
         f"Slot deleted: {slot.id}"
     )
+
+    await emit_slot_event(SOCKET_EVENT_SLOT_DELETED, response, doctor.user_id)
 
     return {
         "message": SLOT_DELETED

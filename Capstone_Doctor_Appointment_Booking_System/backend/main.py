@@ -3,12 +3,14 @@
 import uvicorn
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, FastAPI
 
 from config.settings import settings
 from database.connection import connect_db
 from exceptions.exception_handler import register_exception_handlers
+from dependencies.request_context_dependency import get_request_id
+from middleware.cors_middleware import configure_cors_middleware
+from middleware.request_logging_middleware import configure_request_logging_middleware
 
 from models.user import User
 from models.patient import Patient
@@ -23,6 +25,7 @@ from routers.doctor_router import router as doctor_router
 from routers.slot_router import router as slot_router
 from routers.appointment_router import router as appointment_router
 from routers.deactivation_router import router as deactivation_router
+from routers.websocket_router import router as websocket_router
 
 
 @asynccontextmanager
@@ -55,14 +58,8 @@ app = FastAPI(
 )
 
 register_exception_handlers(app)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+configure_request_logging_middleware(app)
+configure_cors_middleware(app)
 
 app.include_router(auth_router)
 app.include_router(admin_router)
@@ -70,6 +67,7 @@ app.include_router(doctor_router)
 app.include_router(slot_router)
 app.include_router(appointment_router)
 app.include_router(deactivation_router)
+app.include_router(websocket_router)
 
 
 @app.get("/")
@@ -82,11 +80,12 @@ async def root():
 
 
 @app.get("/health")
-async def health():
+async def health(request_id: str = Depends(get_request_id)):
     """Return the service health status."""
 
     return {
-        "status": "healthy"
+        "status": "healthy",
+        "request_id": request_id,
     }
 
 

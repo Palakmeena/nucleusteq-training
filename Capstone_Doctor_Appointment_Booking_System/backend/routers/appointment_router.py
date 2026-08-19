@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, status
 
-from middleware.auth_middleware import (
+from dependencies.authentication_dependency import (
     require_admin,
     require_doctor,
     require_patient,
