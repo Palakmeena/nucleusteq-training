@@ -141,7 +141,7 @@ const DoctorProfilePage = () => {
       }
     };
     if (id) load();
-  }, [id, slotRefreshVersion]);
+  }, [id]);
 
   /* ── fetch all slots for this doctor, pick earliest available date ── */
   useEffect(() => {
@@ -162,7 +162,7 @@ const DoctorProfilePage = () => {
       }
     };
     if (id) loadSlots();
-  }, [id]);
+  }, [id, slotRefreshVersion]);
 
   /* ── group future slots by date, sorted ── */
   const slotsByDate = useMemo(() => {
