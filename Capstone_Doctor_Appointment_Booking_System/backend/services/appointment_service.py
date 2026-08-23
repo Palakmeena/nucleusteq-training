@@ -42,6 +42,7 @@ from schemas.response.appointment_response import (
     AppointmentResponse,
 )
 from sockets.socket_events import emit_appointment_event, emit_slot_event
+from decorators.audit_decorator import audit_action
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -52,6 +53,7 @@ slot_repo = SlotRepository()
 user_repo = UserRepository()
 
 
+@audit_action("APPOINTMENT_BOOKED")
 async def book_appointment(
     patient_id: str,
     data: AppointmentBookRequest,
@@ -142,6 +144,7 @@ async def book_appointment(
     return response
 
 
+@audit_action("APPOINTMENT_PAID")
 async def process_payment(
     appointment_id: str,
     patient_id: str,
@@ -180,6 +183,7 @@ async def process_payment(
     return response
 
 
+@audit_action("APPOINTMENT_CANCELLED")
 async def cancel_appointment(
     appointment_id: str,
     patient_id: str,
@@ -322,6 +326,7 @@ async def get_all_appointments() -> list[AppointmentResponse]:
     ]
 
 
+@audit_action("APPOINTMENT_STATUS_UPDATED")
 async def update_appointment_status(
     appointment_id: str,
     doctor_id: str,
